@@ -19,18 +19,18 @@ class DatabaseSeeder extends Seeder
             PostLabelSeeder::class,
             PostKategoriSeeder::class,
             TestiKategoriSeeder::class,
-            // KontenJurusanSeeder::class,
-            // KontenProdiSeeder::class,
-            // KontenTipeSeeder::class,
-            // KontenPageConfigSeeder::class,
-            // KontenMainSeeder::class,
-            // DmProdiSeeder::class,
-            // DmJurusanSeeder::class,
+            KontenJurusanSeeder::class,
+            KontenProdiSeeder::class,
+            KontenTipeSeeder::class,
+            KontenPageConfigSeeder::class,
+            KontenMainSeeder::class,
+            DmProdiSeeder::class,
+            DmJurusanSeeder::class,
             DmInfografisSeeder::class,
             PartnerSeeder::class,
-            // KontenConfigSeeder::class
-            // KontenSeeder::class,
-            // PostSeeder::class,
+            KontenConfigSeeder::class,
+            KontenSeeder::class,
+            PostSeeder::class,
         ]);
     }
 }

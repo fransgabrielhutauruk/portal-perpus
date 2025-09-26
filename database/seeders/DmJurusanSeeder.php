@@ -15,12 +15,30 @@ class DmJurusanSeeder extends Seeder
      */
     public function run(): void
     {
-        $get_jurusan = Jurusan::all();
+        // $contents = [];
+        // $get_jurusan = Jurusan::all();
 
-        foreach ($get_jurusan as $row) {
-            $contents[] = [
-                'alias_jurusan' => $row->alias,
-                'nama_jurusan' => $row->jurusan,
+        // foreach ($get_jurusan as $row) {
+        //     $contents[] = [
+        //         'alias_jurusan' => $row->alias,
+        //         'nama_jurusan' => $row->jurusan,
+        //         'sync_log' => json_encode([
+        //             'synced_by' => 'DEV',
+        //             'synced_at' => now(),
+        //         ]),
+        //         'created_by' => 'DZB',
+        //         'updated_by' => null,
+        //         'deleted_by' => null,
+        //         'created_at' => Carbon::now(),
+        //         'updated_at' => Carbon::now(),
+        //         'deleted_at' => null,
+        //     ];
+        // }
+
+        $contents = [
+            [
+                'alias_jurusan' => 'JTI',
+                'nama_jurusan' => 'Jurusan Teknologi Informasi',
                 'sync_log' => json_encode([
                     'synced_by' => 'DEV',
                     'synced_at' => now(),
@@ -31,8 +49,22 @@ class DmJurusanSeeder extends Seeder
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
                 'deleted_at' => null,
-            ];
-        }
+            ],
+            [
+                'alias_jurusan' => 'JTIN',
+                'nama_jurusan' => 'Jurusan Teknik Industri',
+                'sync_log' => json_encode([
+                    'synced_by' => 'DEV',
+                    'synced_at' => now(),
+                ]),
+                'created_by' => 'DZB',
+                'updated_by' => null,
+                'deleted_by' => null,
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
+                'deleted_at' => null,
+            ],
+        ];
 
         DB::table('dm_jurusan')->insert($contents);
     }
