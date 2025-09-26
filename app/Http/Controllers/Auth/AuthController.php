@@ -34,8 +34,10 @@ class AuthController extends Controller
                 'wahyudi@pcr.ac.id',
                 'fajar@pcr.ac.id',
                 'brilian21ti@mahasiswa.pcr.ac.id',
-            ];
-
+                'frans22si@mahasiswa.pcr.ac.id',
+                'jessica23ti@mahasiswa.pcr.ac.id'
+            ];  
+            
             if (!in_array($googleUser->getEmail(), $allowedEmails)) {
                 return redirect()->route('login')->with('error', 'Email tidak diizinkan untuk login.');
             }
@@ -49,11 +51,9 @@ class AuthController extends Controller
                     'password' => bcrypt(uniqid()), 
                 ]);
             }
-
             Auth::login($user, true);
 
             return redirect()->intended('/app/dashboard');
-
         } catch (\Exception $e) {
             return redirect()->route('login')->with('error', 'Google login failed!');
         }
