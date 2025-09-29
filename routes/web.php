@@ -32,6 +32,58 @@ Route::prefix('app')
 
         generalRoute(App\Http\Controllers\Admin\MediaController::class, 'media', 'app', false);
         generalRoute(App\Http\Controllers\Admin\MasterController::class, 'master', 'app');
+
+        generalRoute(App\Http\Controllers\Admin\UserController::class, 'user', 'app');
+
+        // Dev-only: Keen Icons gallery to see icon class names quickly
+        Route::get('icons', function () {
+            // Restrict to debug mode to avoid exposing in production
+            if (!config('app.debug')) {
+                abort(403, 'Icon gallery is only available in debug mode.');
+            }
+
+            $cssFile = public_path('theme/plugins/global/plugins.bundle.css');
+            if (!file_exists($cssFile)) {
+                abort(500, 'Keen Icons CSS not found at '.$cssFile);
+            }
+
+            $css = @file_get_contents($cssFile) ?: '';
+
+            // Extract icon names for each family
+            $outline = [];
+            $solid = [];
+            $duotone = [];
+
+            if ($css) {
+                // Matches patterns like .ki-setting-3.ki-outline:before
+                if (preg_match_all('/\.ki-([a-z0-9\-]+)\.ki-outline:before/', $css, $m)) {
+                    $outline = array_values(array_unique($m[1]));
+                    sort($outline);
+                }
+
+                // Matches patterns like .ki-setting-3.ki-solid:before
+                if (preg_match_all('/\.ki-([a-z0-9\-]+)\.ki-solid:before/', $css, $m2)) {
+                    $solid = array_values(array_unique($m2[1]));
+                    sort($solid);
+                }
+
+                // Duotone icons are defined like .ki-setting-3 .path1:before
+                if (preg_match_all('/\.ki-([a-z0-9\-]+)\s*\.path1:before/', $css, $m3)) {
+                    $duotone = array_values(array_unique($m3[1]));
+                    sort($duotone);
+                }
+            }
+
+            // Provide minimal $pageData for layout/sidebar bindings
+            $pageData = (object) [
+                'activeMenu' => 'icons',
+                'activeRoot' => 'dev',
+                'title' => 'Keen Icons Gallery',
+                'breadCrump' => [],
+            ];
+
+            return view('dev.icons', compact('outline', 'solid', 'duotone', 'pageData'));
+        })->name('app.icons');
     });
 
 // //temporary
