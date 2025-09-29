@@ -70,5 +70,9 @@
             <x-theme.submenu link="{{ url('#') }}" text="System Log" :active="$pageData->activeMenu == 'log'" />
             <x-theme.submenu link="{{ url('#') }}" text="Error Log" :active="$pageData->activeMenu == 'error_log'" />
         </x-theme.menu> --}}
+
+        <x-theme.menu text="Manajemen Sistem" icon="ki-outline ki-setting-3" :active="$pageData->activeRoot == 'manajemen_sistem'" >
+                <x-theme.submenu link="{{ route('app.user.index') }}" text="Pengguna" :active="$pageData->activeMenu == 'pengguna'"/>
+        </x-theme.menu>
     </div>
 </div>
