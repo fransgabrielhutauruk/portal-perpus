@@ -75,4 +75,24 @@ class UserController extends Controller
             abort(404, 'Halaman tidak ditemukan');
         }
     }
+
+    public function store(Request $req): JsonResponse
+    {
+        validate_and_response([
+            'name' => ['Nama', 'required'],
+            'email' => ['Email', 'required|email'],
+        ]);
+
+        $data['name'] = clean_post('name');
+        $data['email'] = clean_post('email');
+        $data['password'] = bcrypt(uniqid());
+
+        $inserted = User::create($data);
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Pengguna berhasil ditambah.',
+            'data' => ['id' => encid($inserted->id)]
+        ]);
+    }
 }
