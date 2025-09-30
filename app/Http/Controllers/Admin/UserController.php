@@ -76,23 +76,46 @@ class UserController extends Controller
         }
     }
 
-    public function store(Request $req): JsonResponse
+    public function store(Request $req, $param1 = ''): JsonResponse
     {
-        validate_and_response([
-            'name' => ['Nama', 'required'],
-            'email' => ['Email', 'required|email'],
-        ]);
+        if ($param1 == '') {
+            validate_and_response([
+                'name' => ['Nama', 'required'],
+                'email' => ['Email', 'required|email'],
+            ]);
 
-        $data['name'] = clean_post('name');
-        $data['email'] = clean_post('email');
-        $data['password'] = bcrypt(uniqid());
+            $data['name'] = clean_post('name');
+            $data['email'] = clean_post('email');
+            $data['password'] = bcrypt(uniqid());
 
-        $inserted = User::create($data);
+            $inserted = User::create($data);
 
-        return response()->json([
-            'status' => true,
-            'message' => 'Pengguna berhasil ditambah.',
-            'data' => ['id' => encid($inserted->id)]
-        ]);
+            return response()->json([
+                'status' => true,
+                'message' => 'Pengguna berhasil ditambah.',
+                'data' => ['id' => encid($inserted->id)]
+            ]);
+        } else {
+            abort(404, 'Halaman tidak ditemukan');
+        }
+    }
+
+    public function destroy(Request $req, $param1 = ''): JsonResponse
+    {
+        if ($param1 == '') {
+            validate_and_response([
+                'id' => ['Parameter data', 'required'],
+            ]);
+
+            $currData = User::findOrFail(decid($req->input('id')));
+
+            $currData->delete();
+            return response()->json([
+                'status' => true,
+                'message' => 'Data berhasil dihapus'
+            ]);
+        } else {
+            abort(404, 'Halaman tidak ditemukan');
+        }
     }
 }

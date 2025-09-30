@@ -178,8 +178,9 @@
                             callback: function(origin, resp) {
                                 refreshData()
                                 onDelete(resp.data)
-                            }
-                        })
+                            },
+                            swal_success: true
+                        });
                     }
                 });
             });
