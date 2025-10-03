@@ -71,6 +71,17 @@ class UserController extends Controller
             $data['data'] = $resp;
 
             return response()->json($data);
+        } else if ($param1 = 'detail') {
+            validate_and_response([
+                'id' => ['Paramater data', 'required'],
+            ]);
+            $currData = User::findOrFail(decid($req->input('id')));
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Data loaded',
+                'data' => $currData
+            ]);
         } else {
             abort(404, 'Halaman tidak ditemukan');
         }
@@ -113,6 +124,32 @@ class UserController extends Controller
             return response()->json([
                 'status' => true,
                 'message' => 'Data berhasil dihapus'
+            ]);
+        } else {
+            abort(404, 'Halaman tidak ditemukan');
+        }
+    }
+
+    public function update(Request $req, $param1 = ''): JsonResponse
+    {
+        if ($param1 == '') {
+            validate_and_response([
+                'name' => ['Nama', 'required'],
+                'email' => ['Email', 'required|email'],
+            ]);
+
+            $id = $req->input('id');
+            $currData = User::findOrFail($id);
+
+            $data['name'] = clean_post('name');
+            $data['email'] = clean_post('email');
+
+            $currData->update($data);
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Update data berhasil.',
+                'data' => ['id' => $id]
             ]);
         } else {
             abort(404, 'Halaman tidak ditemukan');

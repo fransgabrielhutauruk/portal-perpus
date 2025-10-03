@@ -187,7 +187,6 @@
 
             // Tambahkan event handler untuk tombol simpan
             $(document).on('click', '[jf-save="' + name + '"]', function() {
-                console.log(123)
                 var form = $('[jf-form="' + name + '"]');
                 var confirm = $(this).data('confirmation')
                 var message = $(this).data('message')
