@@ -9,6 +9,7 @@ use Yajra\DataTables\Html\Column;
 use App\Models\User;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\DB;
 
 class UserController extends Controller
 {
@@ -99,13 +100,19 @@ class UserController extends Controller
             $data['email'] = clean_post('email');
             $data['password'] = bcrypt(uniqid());
 
-            $inserted = User::create($data);
-
-            return response()->json([
-                'status' => true,
-                'message' => 'Pengguna berhasil ditambah.',
-                'data' => ['id' => encid($inserted->id)]
-            ]);
+            DB::beginTransaction();
+            try {
+                $inserted = User::create($data);
+                DB::commit();
+                return response()->json([
+                    'status' => true,
+                    'message' => 'Pengguna berhasil ditambah.',
+                    'data' => ['id' => encid($inserted->id)]
+                ]);
+            } catch (\Throwable $th) {
+                DB::rollback();
+                abort(404, 'Tambah data gagal, ' . $th->getMessage());
+            }
         } else {
             abort(404, 'Halaman tidak ditemukan');
         }
@@ -120,11 +127,18 @@ class UserController extends Controller
 
             $currData = User::findOrFail(decid($req->input('id')));
 
-            $currData->delete();
-            return response()->json([
-                'status' => true,
-                'message' => 'Data berhasil dihapus'
-            ]);
+            DB::beginTransaction();
+            try {
+                $currData->delete();
+                DB::commit();
+                return response()->json([
+                    'status' => true,
+                    'message' => 'Data berhasil dihapus'
+                ]);
+            } catch (\Throwable $th) {
+                DB::rollback();
+                abort(404, 'Hapus data gagal, ' . $th->getMessage());
+            }
         } else {
             abort(404, 'Halaman tidak ditemukan');
         }
@@ -144,13 +158,19 @@ class UserController extends Controller
             $data['name'] = clean_post('name');
             $data['email'] = clean_post('email');
 
-            $currData->update($data);
-
-            return response()->json([
-                'status' => true,
-                'message' => 'Update data berhasil.',
-                'data' => ['id' => $id]
-            ]);
+            DB::beginTransaction();
+            try {
+                $currData->update($data);
+                DB::commit();
+                return response()->json([
+                    'status' => true,
+                    'message' => 'Update data berhasil.',
+                    'data' => ['id' => $id]
+                ]);
+            } catch (\Throwable $th) {
+                DB::rollback();
+                abort(404, 'Update data gagal, ' . $th->getMessage());
+            }
         } else {
             abort(404, 'Halaman tidak ditemukan');
         }
