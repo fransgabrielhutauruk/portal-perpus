@@ -28,31 +28,11 @@ class AuthController extends Controller
     {
         try {
             $googleUser = Socialite::driver($provider)->user();
-
-            $allowedEmails = [
-                'delza@pcr.ac.id',
-                'wahyudi@pcr.ac.id',
-                'fajar@pcr.ac.id',
-                'brilian21ti@mahasiswa.pcr.ac.id',
-                'frans22si@mahasiswa.pcr.ac.id',
-                'jessica23ti@mahasiswa.pcr.ac.id'
-            ];  
-            
-            if (!in_array($googleUser->getEmail(), $allowedEmails)) {
+            $user = User::where('email', $googleUser->getEmail())->first();
+            if (!$user) {
                 return redirect()->route('login')->with('error', 'Email tidak diizinkan untuk login.');
             }
-
-            $user = User::where('email', $googleUser->getEmail())->first();
-
-            if (!$user) {
-                $user = User::create([
-                    'name' => $googleUser->getName(),
-                    'email' => $googleUser->getEmail(),
-                    'password' => bcrypt(uniqid()), 
-                ]);
-            }
             Auth::login($user, true);
-
             return redirect()->intended('/app/dashboard');
         } catch (\Exception $e) {
             return redirect()->route('login')->with('error', 'Google login failed!');
