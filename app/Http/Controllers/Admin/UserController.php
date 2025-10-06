@@ -10,6 +10,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
+use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
 {
@@ -25,16 +26,20 @@ class UserController extends Controller
         $this->activeMenu = 'pengguna';
         $this->breadCrump[] = ['title' => 'Pengguna', 'link' => url()->current()];
 
+        $roles = Role::all();
+
         $builder = app('datatables.html');
         $dataTable = $builder->serverSide(true)->ajax(route('app.user.data') . '/list')->columns([
             Column::make(['width' => '5%', 'title' => 'No', 'data' => 'no', 'orderable' => false, 'searchable' => false, 'className' => 'text-center']),
-            Column::make(['width' => '45%', 'title' => 'Nama', 'data' => 'name']),
-            Column::make(['width' => '50%', 'title' => 'Email', 'data' => 'email']),
-            Column::make(['width' => '', 'title' => 'Aksi', 'data' => 'action', 'orderable' => false, 'searchable' => false, 'className' => 'text-nowrap']),
+            Column::make(['title' => 'Nama', 'data' => 'name']),
+            Column::make(['title' => 'Email', 'data' => 'email']),
+            Column::make(['title' => 'Role', 'data' => 'role', 'orderable' => false, 'searchable' => false]),
+            Column::make(['width' => '15%', 'title' => 'Aksi', 'data' => 'action', 'orderable' => false, 'searchable' => false, 'className' => 'text-center']),
         ]);
 
         $this->dataView([
             'dataTable' => $dataTable,
+            'roles' => $roles
         ]);
 
         return $this->view('admin.pengguna.list');
@@ -54,6 +59,9 @@ class UserController extends Controller
                 $dt['no']       = ++$start;
                 $dt['name']     = $value['name'] ?? '-';
                 $dt['email']    = $value['email'] ?? '-';
+
+                $user = User::find($value['id']);
+                $dt['role'] = $user ? $user->roles()->value('name') : 'No Role';
 
                 $id = encid($value['id']);
 
@@ -77,11 +85,14 @@ class UserController extends Controller
                 'id' => ['Paramater data', 'required'],
             ]);
             $currData = User::findOrFail(decid($req->input('id')));
+            
+            $userData = $currData->toArray();
+            $userData['role'] = $currData->roles->value('name') ?? '';
 
             return response()->json([
                 'status' => true,
                 'message' => 'Data loaded',
-                'data' => $currData
+                'data' => $userData
             ]);
         } else {
             abort(404, 'Halaman tidak ditemukan');
@@ -93,7 +104,8 @@ class UserController extends Controller
         if ($param1 == '') {
             validate_and_response([
                 'name' => ['Nama', 'required'],
-                'email' => ['Email', 'required|email'],
+                'email' => ['Email', 'required|email|unique:users,email'],
+                'role' => ['Role', 'required|exists:sys_roles,name'],
             ]);
 
             $data['name'] = clean_post('name');
@@ -103,6 +115,12 @@ class UserController extends Controller
             DB::beginTransaction();
             try {
                 $inserted = User::create($data);
+                
+                $role = clean_post('role');
+                if ($role) {
+                    $inserted->assignRole($role);
+                }
+                
                 DB::commit();
                 return response()->json([
                     'status' => true,
@@ -126,10 +144,11 @@ class UserController extends Controller
             ]);
 
             $currData = User::findOrFail(decid($req->input('id')));
-
+            
             DB::beginTransaction();
             try {
                 $currData->delete();
+
                 DB::commit();
                 return response()->json([
                     'status' => true,
@@ -150,17 +169,21 @@ class UserController extends Controller
             validate_and_response([
                 'name' => ['Nama', 'required'],
                 'email' => ['Email', 'required|email'],
+                'role' => ['Role', 'required|exists:sys_roles,name'],
             ]);
 
             $id = $req->input('id');
             $currData = User::findOrFail($id);
-
+            
             $data['name'] = clean_post('name');
             $data['email'] = clean_post('email');
+            $newRole = clean_post('role');
 
             DB::beginTransaction();
             try {
                 $currData->update($data);
+                
+                $currData->syncRoles([$newRole]);
                 DB::commit();
                 return response()->json([
                     'status' => true,

@@ -28,6 +28,15 @@
         <input type="hidden" name="id" value="">
         <x-form.input type="text" class="mb-2" name="name" label="Nama" required />
         <x-form.input type="email" class="mb-2" name="email" label="Email" required />
+        <div class="mb-4">
+            <x-form.select name="role" label="Role" required>
+                @foreach($pageData->roles as $role)
+                <option value="{{ $role->name }}">
+                    {{ $role->name }}
+                </option>
+                @endforeach
+            </x-form.select>
+        </div>
     </form>
     @slot('action')
     <x-btn.form action="save" class="act-save" jf-save="user" />
