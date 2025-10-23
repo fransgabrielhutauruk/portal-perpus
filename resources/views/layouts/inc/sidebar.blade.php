@@ -7,18 +7,12 @@
 
         @if(auth()->user()->hasAnyRole(['user', 'admin']))
         <x-theme.menu link="{{ route('app.dashboard.index') }}" text="Dashboard" icon="ki-outline ki-graph-up" :active="$pageData->activeMenu == 'dashboard'" />
-        <x-theme.menu text="Konten" icon="ki-outline ki-pin" :active="$pageData->activeRoot == 'konten'">
-            <x-theme.submenu link="{{ route('app.post.index') }}" text="Post" :active="preg_match('/^post-kat-/', $pageData->activeMenu) ||
-                $pageData->activeMenu == 'post-kategori' ||
-                $pageData->activeMenu == 'post-label'" />
-        </x-theme.menu>
+        <x-theme.menu link="{{ route('app.berita.index') }}" text="Berita" icon="ki-outline ki-note-2" :active="$pageData->activeMenu == 'berita'" />
         @endif
 
         @if(auth()->user()->hasAnyRole(['admin']))
         <div class="separator separator-dashed border-gray-10 my-2"></div>
-        <x-theme.menu text="Manajemen Sistem" icon="ki-outline ki-setting-3" :active="$pageData->activeRoot == 'manajemen_sistem'">
-            <x-theme.submenu link="{{ route('app.user.index') }}" text="Pengguna" :active="$pageData->activeMenu == 'pengguna'" />
-        </x-theme.menu>
+        <x-theme.menu link="{{ route('app.user.index') }}" text="Pengguna" icon="ki-outline ki-setting-3" :active="$pageData->activeMenu == 'pengguna'" />
         @endif
 
     </div>

@@ -4,7 +4,7 @@
 ])
 <ul class="breadcrumb breadcrumb-separatorless fw-semibold fs-7 my-0">
     <li class="breadcrumb-item text-muted">
-        <a href="{{ url('/') }}" class="text-muted text-hover-primary">Home</a>
+        <a href="{{ url('/app/dashboard') }}" class="text-muted text-hover-primary">Home</a>
     </li>
     @forelse ($item as $key => $list)
         <li class="breadcrumb-item">

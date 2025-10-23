@@ -14,11 +14,7 @@ use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
 {
-    public function __construct()
-    {
-        $this->activeRoot = 'manajemen_sistem';
-        $this->breadCrump[] = ['title' => 'Manajemen Sistem', 'link' => url('#')];
-    }
+    public function __construct() {}
 
     public function index()
     {
@@ -85,7 +81,7 @@ class UserController extends Controller
                 'id' => ['Paramater data', 'required'],
             ]);
             $currData = User::findOrFail(decid($req->input('id')));
-            
+
             $userData = $currData->toArray();
             $userData['role'] = $currData->roles->value('name') ?? '';
 
@@ -111,16 +107,14 @@ class UserController extends Controller
             $data['name'] = clean_post('name');
             $data['email'] = clean_post('email');
             $data['password'] = bcrypt(uniqid());
+            $role = clean_post('role');
 
             DB::beginTransaction();
             try {
                 $inserted = User::create($data);
-                
-                $role = clean_post('role');
-                if ($role) {
-                    $inserted->assignRole($role);
-                }
-                
+
+                $inserted->assignRole($role);
+
                 DB::commit();
                 return response()->json([
                     'status' => true,
@@ -144,7 +138,7 @@ class UserController extends Controller
             ]);
 
             $currData = User::findOrFail(decid($req->input('id')));
-            
+
             DB::beginTransaction();
             try {
                 $currData->delete();
@@ -174,7 +168,7 @@ class UserController extends Controller
 
             $id = $req->input('id');
             $currData = User::findOrFail($id);
-            
+
             $data['name'] = clean_post('name');
             $data['email'] = clean_post('email');
             $newRole = clean_post('role');
@@ -182,7 +176,7 @@ class UserController extends Controller
             DB::beginTransaction();
             try {
                 $currData->update($data);
-                
+
                 $currData->syncRoles([$newRole]);
                 DB::commit();
                 return response()->json([

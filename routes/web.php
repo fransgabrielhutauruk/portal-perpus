@@ -17,7 +17,7 @@ Route::prefix('app')
     ->middleware(['auth', 'role:user|admin'])
     ->group(function () {
         generalRoute(App\Http\Controllers\Admin\DashboardController::class, 'dashboard', 'app');
-        generalRoute(App\Http\Controllers\Admin\PostController::class, 'post', 'app');
+        generalRoute(App\Http\Controllers\Admin\BeritaController::class, 'berita', 'app');
 
         Route::middleware('role:admin')->group(function () {
             generalRoute(App\Http\Controllers\Admin\UserController::class, 'user', 'app');
