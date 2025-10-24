@@ -6888,6 +6888,19 @@ main .bg-hero {
                     transition: color 0.3s var(--bezier-main);
                 }
 
+                & .newest-grid-excerpt {
+                    margin-top: 8px;
+                    font-size: 14px;
+                    font-weight: 400;
+                    color: var(--gray-600);
+                    line-height: 1.5;
+                    display: -webkit-box;
+                    -webkit-line-clamp: 2;
+                    line-clamp: 2;
+                    -webkit-box-orient: vertical;
+                    overflow: hidden;
+                }
+
                 & .newest-grid-date {
                     margin-top: 8px;
                     font-size: 14px;

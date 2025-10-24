@@ -6,6 +6,7 @@ use App\Http\Controllers\Frontend\Academic\ProdiController;
 use App\Http\Controllers\Frontend\DEV;
 use App\Http\Controllers\Frontend\Academic\MainController as AcademicController;
 use App\Http\Controllers\Frontend\ArticleController;
+use App\Http\Controllers\Frontend\BeritaController;
 use App\Http\Controllers\Frontend\CampusLifeController;
 use App\Http\Controllers\Frontend\InformationController;
 use App\Http\Controllers\Frontend\MainController;
@@ -77,9 +78,9 @@ Route::name('frontend.')->group(function () {
         Route::get('/', 'index')->name('index');
     });
 
-    Route::prefix('/berita')->name('news.')->controller(NewsController::class)->group(function () {
-        Route::get("/", 'index')->name('index');
-        Route::get('/{newsId}', 'show')->name('show');
+    Route::prefix('/berita')->name('berita.')->controller(BeritaController::class)->group(function () {
+        Route::get('/', 'index')->name('index');
+        Route::get('/{beritaSlug}', 'show')->name('show');
     });
 
     Route::prefix('/artikel')->name('articles.')->controller(ArticleController::class)->group(function () {

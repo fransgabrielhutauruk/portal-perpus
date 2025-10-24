@@ -1024,4 +1024,52 @@ class SafeDataService
             ]
         ]);
     }
+
+    /**
+     * Get safe fallback data for berita/news page
+     *
+     * @return object
+     */
+    public static function getBeritaFallbacks(): object
+    {
+        return self::createSafeStructure([
+            'header'       => '',
+            'title'        => '',
+            'subtitle'     => '',
+
+            'newest'  => [
+                [
+                    'title'     => '',
+                    'excerpt'   => '',
+                    'timestamp' => '',
+                    'url'       => '',
+                    'images'    => [
+                        'main' => [
+                            'src' => '',
+                            'alt' => ''
+                        ]
+                    ],
+                ]
+            ],
+        ]);
+    }
+
+    /**
+     * Get safe fallback data for berita show/detail page
+     *
+     * @return object
+     */
+    public static function getBeritaShowFallbacks(): object
+    {
+        return self::createSafeStructure([
+            'header'       => '',
+            'title'        => '',
+            'url'         => '',
+            'content'      => [
+                'body'            => '',
+                'timestamp'        => '',
+                'author'           => '',
+            ],
+        ]);
+    }
 }
