@@ -36,7 +36,7 @@ class HeaderMenuComposer
                     ['name' => 'E-book Langganan', 'route' => route('frontend.home')],
                 ],
             ],
-            ['name' => 'Fasilitas', 'route' => route('frontend.articles.index')],
+            ['name' => 'Fasilitas', 'route' => route('frontend.home')],
             [
                 'name'     => 'Layanan',
                 'children' => [
@@ -49,7 +49,7 @@ class HeaderMenuComposer
             ['name' => 'Panduan', 'route' => route('frontend.home')],
             ['name' => 'Berita', 'route' => route('frontend.berita.index')],
             ['name' => 'FAQ', 'route' => route('frontend.home')],
-        ];
+        ];  
 
         $view->with('menu', $menu);
     }

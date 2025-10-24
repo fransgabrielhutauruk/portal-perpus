@@ -15,7 +15,7 @@
                         </p>
 
                         <div class="service-btn mt-3">
-                            <a href="{{ route('frontend.articles.index') }}" class="btn-default btn-highlighted btn-sm">
+                            <a href="{{ route('frontend.home') }}" class="btn-default btn-highlighted btn-sm">
                                 Cerita lainnya
                             </a>
                         </div>
