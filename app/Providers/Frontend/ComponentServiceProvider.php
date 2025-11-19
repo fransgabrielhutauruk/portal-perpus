@@ -22,18 +22,5 @@ class ComponentServiceProvider extends ServiceProvider
     public function boot(): void
     {
         // Header Data
-        view()->composer('contents.frontend.partials.common.header', function ($view) {
-            // Format jurusan list
-            $jurusanList = \App\Models\Dimension\Jurusan::inRandomOrder()->get()->map(function ($item) {
-                return (object)[
-                    'id' => $item->kontenjurusan_id,
-                    'alias' => Str::lower($item->alias_jurusan),
-                    'name' => $item->nama_jurusan,
-                    'slicedName' => Str::trim(Str::replace('Jurusan', '', $item->nama_jurusan)),
-                ];
-            });
-
-            $view->with('jurusanList', $jurusanList);
-        });
     }
 }

@@ -2,16 +2,15 @@
 
 namespace App\Http\Controllers\Admin;
 
-use Illuminate\Http\Request;
-use Yajra\DataTables\Html\Column;
-use App\Http\Controllers\Controller;
 use App\Models\Berita;
-use App\Models\User;
+use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Blade;
+use Yajra\DataTables\Html\Column;
 use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Blade;
 
 class BeritaController extends Controller
 {
@@ -45,7 +44,7 @@ class BeritaController extends Controller
                 </div>
             `'
             ]),
-            Column::make(['width' => '', 'title' => 'Aksi', 'data' => 'action', 'orderable' => false, 'searchable' => false, 'className' => 'text-center']),
+            Column::make(['width' => '15%', 'title' => 'Aksi', 'data' => 'action', 'orderable' => false, 'searchable' => false, 'className' => 'text-center']),
         ]);
 
         $this->dataView([
@@ -62,7 +61,6 @@ class BeritaController extends Controller
             $this->activeMenu = 'berita';
             $this->breadCrump[] = ['title' => 'Form', 'link' => url()->current()];
 
-            // Check if we have an ID (editing) or creating new
             if ($param2) {
                 $filter['berita_id'] = decid($param2);
                 $get_berita = Berita::getDataDetail($filter, false)->first();
@@ -84,7 +82,6 @@ class BeritaController extends Controller
                     'media_cover' => $get_berita->filename_berita ? asset('uploads/berita/' . $get_berita->filename_berita) : null,
                 ];
             } else {
-                // Creating new berita - set default values
                 $dataBerita = [
                     'id' => '',
                     'judul_berita' => '',
@@ -239,8 +236,6 @@ class BeritaController extends Controller
                 $dt['filename_berita'] = publicMedia($value['filename_berita'], 'berita');
                 $dt['slug_berita'] = $value['slug_berita'] ?? '#';
                 $dt['url_berita'] = $value['slug_berita'] ? url('berita/' . $value['slug_berita']) : '#';
-
-
 
                 $id = encid($value['berita_id']);
 
