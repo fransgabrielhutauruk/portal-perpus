@@ -16,8 +16,8 @@ return new class extends Migration
             $table->unsignedBigInteger('periode_id');
             $table->unsignedBigInteger('prodi_id');
             $table->string('nama_req');
-            $table->integer('nim')->nullable();
-            $table->integer('nip')->nullable();
+            $table->string('nim')->nullable();
+            $table->string('nip')->nullable();
             $table->string('email_req');
             $table->string('judul_buku');
             $table->string('penulis_buku');
