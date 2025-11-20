@@ -150,11 +150,12 @@ return [
         Illuminate\Validation\ValidationServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
         Yajra\DataTables\HtmlServiceProvider::class,
+        Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class,
 
         /*
      * Package Service Providers...
      */
-        Laravel\Socialite\SocialiteServiceProvider::class, 
+        Laravel\Socialite\SocialiteServiceProvider::class,
 
         /*
      * Application Service Providers...

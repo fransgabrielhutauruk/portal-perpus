@@ -1072,4 +1072,26 @@ class SafeDataService
             ],
         ]);
     }
+
+/**
+     * Get safe fallback data for Usulan Buku page
+     *
+     * @return object
+     */
+    public static function getUsulanBukuFallbacks(): object
+    {
+        return self::createSafeStructure([
+            'header'      => 'Usulan Buku',
+            'title'       => 'Form Usulan Pengadaan Buku',
+            'subtitle'    => 'Layanan Perpustakaan',
+            'description' => 'Silahkan isi form berikut untuk mengusulkan pengadaan buku baru.',
+            'prodi_list'  => [], // Fallback is empty list
+            'form'        => [
+                'action_url' => route('frontend.usulan.sendUsulan'),
+            ]
+        ]);
+    }
+
 }
+
+

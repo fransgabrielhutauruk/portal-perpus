@@ -40,7 +40,7 @@ class HeaderMenuComposer
             [
                 'name'     => 'Layanan',
                 'children' => [
-                    ['name' => 'Usulan Koleksi Buku', 'route' => '#'],
+                    ['name' => 'Usulan Koleksi Buku', 'route' =>  route('frontend.usulan.usulan-buku')],
                     ['name' => 'Kebutuhan Modul Semester', 'route' => '#'],
                     ['name' => 'Cek Turnitin', 'route' => '#'],
                     ['name' => 'Surat Bebas Pustaka', 'route' => '#'],
@@ -49,7 +49,7 @@ class HeaderMenuComposer
             ['name' => 'Panduan', 'route' => route('frontend.home')],
             ['name' => 'Berita', 'route' => route('frontend.berita.index')],
             ['name' => 'FAQ', 'route' => route('frontend.home')],
-        ];  
+        ];
 
         $view->with('menu', $menu);
     }

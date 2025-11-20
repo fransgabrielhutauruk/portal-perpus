@@ -15,6 +15,7 @@ use App\Http\Controllers\Frontend\PCRSquadController;
 use App\Http\Controllers\Frontend\ProfileController;
 use App\Http\Controllers\Frontend\ResearchController;
 use App\Http\Controllers\Frontend\ServiceController;
+use App\Http\Controllers\Frontend\UsulanController;
 use Illuminate\Support\Facades\Route;
 
 Route::get(
@@ -44,6 +45,12 @@ Route::name('frontend.')->group(function () {
             Route::get('/', 'shop')->name('index');
             Route::get('/{id}', 'shopDetail')->name('show');
         });
+    });
+
+     Route::name('usulan.')->controller(UsulanController::class)->group(function () {
+        Route::get('/usulan-buku', 'index')->name('usulan-buku');
+        Route::post('/usulan/send', 'submitUsulan')->name('sendUsulan');
+       // Route::get('/faq', 'faq')->name('faq');
     });
 
     // Development Routes
