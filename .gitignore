@@ -29,8 +29,3 @@ yarn-error.log
 # Config ngrok
 .ngrok.arief.yaml
 .enxv.encrypted
-_ide_helper.php
-composer.json
-composer.lock
-config/app.php
-    
