@@ -2,15 +2,15 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
-use Yajra\DataTables\Html\Column;
-use App\Models\User;
-use Illuminate\Support\Facades\Blade;
 use Illuminate\Http\JsonResponse;
+use Yajra\DataTables\Html\Column;
 use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Role;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Blade;
 
 class UserController extends Controller
 {
@@ -45,7 +45,7 @@ class UserController extends Controller
     {
         if ($param1 == 'list') {
             $filter = [];
-            $data = DataTables::of(User::getDataDetail($filter, get: false))->toArray();
+            $data = DataTables::of(User::getDataDetail($filter, get: true))->toArray();
 
             $start = $req->input('start');
             $resp = [];

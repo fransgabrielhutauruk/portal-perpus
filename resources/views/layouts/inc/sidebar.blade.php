@@ -13,6 +13,7 @@
         @if(auth()->user()->hasAnyRole(['admin']))
         <div class="separator separator-dashed border-gray-10 my-2"></div>
         <x-theme.menu link="{{ route('app.user.index') }}" text="Pengguna" icon="ki-outline ki-setting-3" :active="$pageData->activeMenu == 'pengguna'" />
+        <x-theme.menu link="{{ route('app.usulan.index') }}" text="Usulan Buku" icon="ki-outline ki-setting-3" :active="$pageData->activeMenu == 'usulan'" />    
         @endif
 
     </div>

@@ -21,7 +21,11 @@ Route::prefix('app')
 
         Route::middleware('role:admin')->group(function () {
             generalRoute(App\Http\Controllers\Admin\UserController::class, 'user', 'app');
+            generalRoute(App\Http\Controllers\Admin\UsulanManagementController::class, 'usulan', 'app');
+            Route::post('/usulan/approve', [App\Http\Controllers\Admin\UsulanManagementController::class, 'approve'])->name('app.usulan.approve');
+            Route::post('/usulan/reject', [App\Http\Controllers\Admin\UsulanManagementController::class, 'reject'])->name('app.usulan.reject');
         });
+        
 
         Route::get('icons', function () {
             if (!config('app.debug')) {
