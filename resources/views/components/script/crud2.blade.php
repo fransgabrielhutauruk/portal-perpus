@@ -118,14 +118,17 @@
 
             // Tambahkan event handler untuk tombol edit
             $(document).on('click', '[jf-data="' + name + '"] [jf-edit]', function() {
+                
                 var form = $('[jf-form="' + name + '"]').attr('id')
+                console.log("form id", form);
                 $('[jf-form="' + name + '"]').attr('action', url.update)
+                console.log("set action to", url.update);
                 resetForm(form)
                 refreshTinyMCE()
 
                 var editId = $(this).attr('jf-edit');
                 var paramData = {}
-
+                console.log("editId", editId);
                 const attributes = $(this).data();
                 for (const key in attributes) {
                     if (Object.hasOwnProperty.call(attributes, key)) {
@@ -134,7 +137,7 @@
                 }
 
                 paramData['id'] = editId
-
+                console.log("paramData", paramData);
                 ajaxRequest({
                     link: url.edit,
                     data: paramData,

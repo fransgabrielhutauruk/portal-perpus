@@ -111,7 +111,7 @@ class UsulanManagementController extends Controller
         }
     }
 
-        public function ManageApproval(Request $req): JsonResponse
+    public function ManageApproval(Request $req): JsonResponse
     {
         validate_and_response([
             'reqbuku_id' => ['ID Usulan Buku', 'required'],

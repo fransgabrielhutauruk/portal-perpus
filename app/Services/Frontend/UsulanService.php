@@ -53,7 +53,7 @@ public static function getContent()
 public static function getRecentProposals($limit = 5)
 {
     try {
-        // Assuming you have the ReqBuku model imported
+
         return Usulan::select('judul_buku', 'penulis_buku', 'nama_req', 'created_at', 'status_req')
             ->orderBy('created_at', 'desc')
             ->limit($limit)
@@ -85,7 +85,7 @@ public static function getRecentProposals($limit = 5)
     public static function getPageConfig()
     {
         $meta = self::getMetaData();
-        // You can change 'usulan-bg.webp' to any image in your storage
+
         $bg = publicMedia('usulan-bg.webp', 'banners'); 
 
         return [
