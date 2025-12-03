@@ -166,16 +166,17 @@ class PeriodeController extends Controller
     }
 
     public function update(Request $req, $param1 = ''): JsonResponse
-    {
+    {        
         if ($param1 == '') {
             validate_and_response([
-                'nama_periode' => ['Nama', 'required'],
+                'nama_periode' => ['nama_periode', 'required'],
                 'tanggal_mulai' => ['tanggal_mulai', 'required|date'],
                 'tanggal_selesai' => ['tanggal_selesai', 'required|date'],
             ]);            
             $id = $req->input('periode_id');            
             $currData = Periode::findOrFail($id);            
 
+            $data['nama_periode'] = $req->input('nama_periode');
             $data['tanggal_mulai'] = $req->input('tanggal_mulai');
             $data['tanggal_selesai'] = $req->input('tanggal_selesai');
            // $newRole = clean_post('role');
