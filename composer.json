@@ -87,7 +87,7 @@
         }
     },
     "config": {
-        "vendor-dir": "vendor",
+        "vendor-dir": "../vendor",
         "optimize-autoloader": true,
         "preferred-install": "dist",
         "sort-packages": true,

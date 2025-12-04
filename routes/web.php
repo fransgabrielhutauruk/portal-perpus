@@ -23,6 +23,7 @@ Route::prefix('app')
             generalRoute(App\Http\Controllers\Admin\UserController::class, 'user', 'app');
             generalRoute(App\Http\Controllers\Admin\UsulanManagementController::class, 'usulan', 'app');
             generalRoute(App\Http\Controllers\Admin\PeriodeController::class, 'periode', 'app');
+            generalRoute(App\Http\Controllers\Admin\ProdiController::class, 'prodi', 'app');
             Route::post('/usulan/approve', [App\Http\Controllers\Admin\UsulanManagementController::class, 'approve'])->name('app.usulan.approve');
             Route::post('/usulan/reject', [App\Http\Controllers\Admin\UsulanManagementController::class, 'reject'])->name('app.usulan.reject');
         });

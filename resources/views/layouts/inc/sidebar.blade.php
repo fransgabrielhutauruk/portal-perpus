@@ -15,6 +15,7 @@
         <x-theme.menu link="{{ route('app.user.index') }}" text="Pengguna" icon="ki-outline ki-setting-3" :active="$pageData->activeMenu == 'pengguna'" />
         <x-theme.menu link="{{ route('app.usulan.index') }}" text="Usulan Buku" icon="ki-outline ki-setting-3" :active="$pageData->activeMenu == 'usulan'" />    
         <x-theme.menu link="{{ route('app.periode.index') }}" text="Periode" icon="ki-outline ki-setting-3" :active="$pageData->activeMenu == 'periode'" />    
+        <x-theme.menu link="{{ route('app.prodi.index') }}" text="Program Studi" icon="ki-outline ki-setting-3" :active="$pageData->activeMenu == 'prodi'" />    
         @endif
 
     </div>
