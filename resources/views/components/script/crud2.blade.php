@@ -247,6 +247,7 @@
             
                 // set hidden input formApprove
                 $('[jf-form="approve"] [name="reqbuku_id"]').val(approveId);                                                 
+                $('[jf-form="approve"] [name="reqmodul_id"]').val(approveId);                                                 
             });                   
 
             $(document).on('click', '[jf-save="approve"]', function(e) {    
@@ -256,12 +257,15 @@
                 let formEl = form[0];
 
                 let approveId = form.find('[name="reqbuku_id"]').val();
+                let approveIdModul = form.find('[name="reqmodul_id"]').val();
                 console.log("approve save clicked with id", approveId);
+                console.log("approve save clicked with id", approveIdModul);
 
                 let formData = new FormData(formEl);
                 console.log("FormData:", formData);
                 console.log("Action URL =", form.attr("action"));
 
+                if(approveId){
                 ajaxRequest({
                     link: "{{ route('app.usulan.approve') }}",
                     data: {reqbuku_id: approveId},
@@ -270,10 +274,24 @@
                         $('[jf-modal="approve"]').modal('hide');
                         $('table[jf-data="usulan"]').DataTable().ajax.reload(null, false);
                     }
-                });    
+                });
+                }
+                else{
+                ajaxRequest({
+                    link: "{{ route('app.usulan-modul.approve') }}",
+                    data: {reqmodul_id: approveIdModul},
+                    swal_success: true,
+                    callback: function() {
+                        $('[jf-modal="approve"]').modal('hide');
+                        
+                            $('table[jf-data="modul"]').DataTable().ajax.reload(null, false);
+                                            
+                    }
+                });  
+                }  
             });   
 
-            // tambahkan event handler untuk reject
+            
             $(document).on('click', '[jf-data="' + name + '"] [jf-reject]', function(e) {
                 e.preventDefault();
                 var rejectId = $(this).attr('jf-reject');
@@ -292,8 +310,10 @@
                 // tampilkan modal reject
                 $('[jf-modal="reject"]').modal('show');
             
+                
                 // set hidden input formreject
-                $('[jf-form="reject"] [name="reqbuku_id"]').val(rejectId);                                                 
+                $('[jf-form="reject"] [name="reqbuku_id"]').val(rejectId);      
+                $('[jf-form="reject"] [name="reqmodul_id"]').val(rejectId);                                                 
             });                   
 
             $(document).on('click', '[jf-save="reject"]', function(e) {    
@@ -302,13 +322,18 @@
                 let form = $('[jf-form="reject"]');
                 let formEl = form[0];
 
+                
                 let rejectId = form.find('[name="reqbuku_id"]').val();
+                let rejectIdModul = form.find('[name="reqmodul_id"]').val();
                 console.log("reject save clicked with id", rejectId);
+                console.log("reject save clicked with id modul", rejectIdModul);
 
                 let formData = new FormData(formEl);
                 console.log("FormData:", formData);
                 console.log("Action URL =", form.attr("action"));
 
+
+                if(rejectId){
                 ajaxRequest({
                     link: "{{ route('app.usulan.reject') }}",
                     data: {reqbuku_id: rejectId, catatan_admin: form.find('[name="catatan_admin"]').val()},
@@ -318,6 +343,19 @@
                         $('table[jf-data="usulan"]').DataTable().ajax.reload(null, false);
                     }
                 });    
+                }
+                else{
+                    console.log(rejectIdModul);
+                     ajaxRequest({
+                    link: "{{ route('app.usulan-modul.reject') }}",
+                    data: {reqmodul_id: rejectIdModul, catatan_admin: form.find('[name="catatan_admin"]').val()},
+                    swal_success: true,
+                    callback: function() {
+                        $('[jf-modal="reject"]').modal('hide');
+                        $('table[jf-data="modul"]').DataTable().ajax.reload(null, false);
+                    }
+                });    
+                }
             });   
 
 

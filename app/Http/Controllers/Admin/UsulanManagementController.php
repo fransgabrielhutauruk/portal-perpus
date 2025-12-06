@@ -6,6 +6,7 @@ use App\Models\Usulan;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
+use App\Models\UsulanModul;
 use Illuminate\Http\JsonResponse;
 use Yajra\DataTables\Html\Column;
 use Illuminate\Support\Facades\DB;
@@ -172,13 +173,13 @@ class UsulanManagementController extends Controller
     {
         switch ($status) {
             case '0':
-                return 'Pending';
+                return '<span class="badge badge-warning">Pending</span>';
             case '1':
-                return 'Disetujui';
+                return '<span class="badge badge-success">Disetujui</span>';
             case '2':
-                return 'Ditolak';
+                return '<span class="badge badge-danger">Ditolak</span>';
             default:
-                return 'Unknown';
+                return '<span class="badge badge-info">Ditolak</span>';
         }
     }
     public function destroy(Request $req, $param1 = ''): JsonResponse
@@ -208,4 +209,5 @@ class UsulanManagementController extends Controller
             abort(404, 'Halaman tidak ditemukan');
         }
     }    
+
 }
