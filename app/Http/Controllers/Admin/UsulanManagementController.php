@@ -179,7 +179,7 @@ class UsulanManagementController extends Controller
             case '2':
                 return '<span class="badge badge-danger">Ditolak</span>';
             default:
-                return '<span class="badge badge-info">Ditolak</span>';
+                return '<span class="badge badge-info">Unknown</span>';
         }
     }
     public function destroy(Request $req, $param1 = ''): JsonResponse
