@@ -19,7 +19,11 @@
                     param ? '/' + param.toLowerCase() : ''),
                 delete: options.url && options.url.delete ? options.url.delete : base_url + '/destroy' + (
                     param ? '/' + param.toLowerCase() : ''),
-                filemanager: options.url && options.url.filemanager ? options.url.filemanager : ''
+                filemanager: options.url && options.url.filemanager ? options.url.filemanager : '',
+                approve: options.url && options.url.approve ? options.url.approve : base_url + '/approve' + (
+                    param ? '/' + param.toLowerCase() : ''),
+                reject: options.url && options.url.reject ? options.url.reject : base_url + '/reject' + (
+                    param ? '/' + param.toLowerCase() : '')
             };
             // Menyalin properti URL tambahan yang mungkin dikirimkan
             for (var key in options.url) {
@@ -114,14 +118,17 @@
 
             // Tambahkan event handler untuk tombol edit
             $(document).on('click', '[jf-data="' + name + '"] [jf-edit]', function() {
+                
                 var form = $('[jf-form="' + name + '"]').attr('id')
+                console.log("form id", form);
                 $('[jf-form="' + name + '"]').attr('action', url.update)
+                console.log("set action to", url.update);
                 resetForm(form)
                 refreshTinyMCE()
 
                 var editId = $(this).attr('jf-edit');
                 var paramData = {}
-
+                console.log("editId", editId);
                 const attributes = $(this).data();
                 for (const key in attributes) {
                     if (Object.hasOwnProperty.call(attributes, key)) {
@@ -130,7 +137,7 @@
                 }
 
                 paramData['id'] = editId
-
+                console.log("paramData", paramData);
                 ajaxRequest({
                     link: url.edit,
                     data: paramData,
@@ -157,7 +164,7 @@
                 }
 
                 paramData['id'] = deleteId
-
+                console.log("deleteId", deleteId);
                 Swal.fire({
                     title: "Hapus data ?",
                     text: "Data yang sudah dihapus tidak dapat dikembalikan, pastikan data yang akan di hapus sudah sesuai",
@@ -218,6 +225,102 @@
                     }
                 }
             });
+
+            // tambahkan event handler untuk approve
+            $(document).on('click', '[jf-data="' + name + '"] [jf-approve]', function(e) {
+                e.preventDefault();
+                var approveId = $(this).attr('jf-approve');
+                console.log("approveId", approveId);
+                var paramData = {}
+                console.log("approve clicked");
+                const attributes = $(this).data();
+                for (const key in attributes) {
+                    if (Object.hasOwnProperty.call(attributes, key)) {
+                        paramData[key] = attributes[key];
+                    }
+                }
+            
+                paramData['id'] = approveId;
+            
+                // tampilkan modal approve
+                $('[jf-modal="approve"]').modal('show');
+            
+                // set hidden input formApprove
+                $('[jf-form="approve"] [name="reqbuku_id"]').val(approveId);                                                 
+            });                   
+
+            $(document).on('click', '[jf-save="approve"]', function(e) {    
+                e.preventDefault();
+
+                let form = $('[jf-form="approve"]');
+                let formEl = form[0];
+
+                let approveId = form.find('[name="reqbuku_id"]').val();
+                console.log("approve save clicked with id", approveId);
+
+                let formData = new FormData(formEl);
+                console.log("FormData:", formData);
+                console.log("Action URL =", form.attr("action"));
+
+                ajaxRequest({
+                    link: "{{ route('app.usulan.approve') }}",
+                    data: {reqbuku_id: approveId},
+                    swal_success: true,
+                    callback: function() {
+                        $('[jf-modal="approve"]').modal('hide');
+                        $('table[jf-data="usulan"]').DataTable().ajax.reload(null, false);
+                    }
+                });    
+            });   
+
+            // tambahkan event handler untuk reject
+            $(document).on('click', '[jf-data="' + name + '"] [jf-reject]', function(e) {
+                e.preventDefault();
+                var rejectId = $(this).attr('jf-reject');
+                console.log("rejectId", rejectId);
+                var paramData = {}
+                console.log("reject clicked");
+                const attributes = $(this).data();
+                for (const key in attributes) {
+                    if (Object.hasOwnProperty.call(attributes, key)) {
+                        paramData[key] = attributes[key];
+                    }
+                }
+            
+                paramData['id'] = rejectId;
+            
+                // tampilkan modal reject
+                $('[jf-modal="reject"]').modal('show');
+            
+                // set hidden input formreject
+                $('[jf-form="reject"] [name="reqbuku_id"]').val(rejectId);                                                 
+            });                   
+
+            $(document).on('click', '[jf-save="reject"]', function(e) {    
+                e.preventDefault();
+
+                let form = $('[jf-form="reject"]');
+                let formEl = form[0];
+
+                let rejectId = form.find('[name="reqbuku_id"]').val();
+                console.log("reject save clicked with id", rejectId);
+
+                let formData = new FormData(formEl);
+                console.log("FormData:", formData);
+                console.log("Action URL =", form.attr("action"));
+
+                ajaxRequest({
+                    link: "{{ route('app.usulan.reject') }}",
+                    data: {reqbuku_id: rejectId, catatan_admin: form.find('[name="catatan_admin"]').val()},
+                    swal_success: true,
+                    callback: function() {
+                        $('[jf-modal="reject"]').modal('hide');
+                        $('table[jf-data="usulan"]').DataTable().ajax.reload(null, false);
+                    }
+                });    
+            });   
+
+
 
             $(document).on('submit', '[jf-form="' + name + '"]', function(e) {
                 e.preventDefault()

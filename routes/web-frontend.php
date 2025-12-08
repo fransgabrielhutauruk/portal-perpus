@@ -38,7 +38,7 @@ Route::name('frontend.')->group(function () {
 
     Route::prefix('/informasi')->name('information.')->controller(InformationController::class)->group(function () {
         Route::get('/kontak', 'contact')->name('contact');
-        Route::post('/kontak/send', 'submitContactForm')->name('contact.submit');
+        
         Route::get('/faq', 'faq')->name('faq');
 
         Route::prefix('/toko')->name('shop.')->controller(InformationController::class)->group(function () {

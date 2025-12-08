@@ -1,36 +1,37 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers\admin;
 
-use App\Models\User;
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\User;
+use App\Models\Periode;
 use Yajra\DataTables\DataTables;
 use Illuminate\Http\JsonResponse;
 use Yajra\DataTables\Html\Column;
 use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Role;
-use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Blade;
 
-class UserController extends Controller
+class PeriodeController extends Controller
 {
     public function __construct() {}
 
     public function index()
     {
-        $this->title = 'Kelola Pengguna';
-        $this->activeMenu = 'pengguna';
-        $this->breadCrump[] = ['title' => 'Pengguna', 'link' => url()->current()];
+        $this->title = 'Kelola Periode Pengajuan Usulan';
+        $this->activeMenu = 'periode';
+        $this->breadCrump[] = ['title' => 'Periode', 'link' => url()->current()];
 
         $roles = Role::all();
 
         $builder = app('datatables.html');
-        $dataTable = $builder->serverSide(true)->ajax(route('app.user.data') . '/list')->columns([
+        $dataTable = $builder->serverSide(true)->ajax(route('app.periode.data') . '/list')->columns([
             Column::make(['width' => '5%', 'title' => 'No', 'data' => 'no', 'orderable' => false, 'searchable' => false, 'className' => 'text-center']),
-            Column::make(['title' => 'Nama', 'data' => 'name']),
-            Column::make(['title' => 'Email', 'data' => 'email']),
-            Column::make(['title' => 'Role', 'data' => 'role', 'orderable' => false, 'searchable' => false]),
-            Column::make(['width' => '15%', 'title' => 'Aksi', 'data' => 'action', 'orderable' => false, 'searchable' => false, 'className' => 'text-center']),
+            Column::make(['title' => 'Nama', 'data' => 'nama_periode']),
+            Column::make(['title' => 'Tanggal Mulai', 'data' => 'tanggal_mulai']),            
+            Column::make(['title' => 'Tanggal Selesai', 'data' => 'tanggal_selesai']),
+            Column::make(['title' => 'Aksi', 'data' => 'action']),            
         ]);
 
         $this->dataView([
@@ -38,14 +39,14 @@ class UserController extends Controller
             'roles' => $roles
         ]);
 
-        return $this->view('admin.pengguna.list');
+        return $this->view('admin.periode.list');
     }
 
     public function data(Request $req, $param1 = ''): JsonResponse
     {
         if ($param1 == 'list') {
             $filter = [];
-            $data = DataTables::of(User::getDataDetail($filter, get: true))->toArray();
+            $data = DataTables::of(Periode::getDataDetail($filter, get: true))->toArray();
 
             $start = $req->input('start');
             $resp = [];
@@ -53,13 +54,15 @@ class UserController extends Controller
                 $dt = [];
 
                 $dt['no']       = ++$start;
-                $dt['name']     = $value['name'] ?? '-';
-                $dt['email']    = $value['email'] ?? '-';
+                $dt['nama_periode']     = $value['nama_periode'] ?? '-';
+                $dt['tanggal_mulai']    = $value['tanggal_mulai'] ?? '-';
+                $dt['tanggal_selesai']    = $value['tanggal_selesai'] ?? '-';
+                
 
-                $user = User::find($value['id']);
-                $dt['role'] = $user ? $user->roles()->value('name') : 'No Role';
+                $Periode = Periode::find($value['periode_id']);
+               // $dt['role'] = $Periode ? $Periode->roles()->value('name') : 'No Role';
 
-                $id = encid($value['id']);
+                $id = encid($value['periode_id']);
 
                 $dataAction = [
                     'id'  => $id,
@@ -76,19 +79,23 @@ class UserController extends Controller
             $data['data'] = $resp;
 
             return response()->json($data);
-        } else if ($param1 = 'detail') {
+        } else if ($param1 = 'detail') {        
+            $id_periode = decid($req->input('id'));
+            
+            /*
             validate_and_response([
-                'id' => ['Paramater data', 'required'],
+                'periode_id' => [$id_periode, 'required'],
             ]);
-            $currData = User::findOrFail(decid($req->input('id')));
+            */
+            $currData = Periode::findOrFail($id_periode);
 
-            $userData = $currData->toArray();
-            $userData['role'] = $currData->roles->value('name') ?? '';
+            $PeriodeData = $currData->toArray();
+          //  $PeriodeData['role'] = $currData->roles->value('name') ?? '';
 
             return response()->json([
                 'status' => true,
                 'message' => 'Data loaded',
-                'data' => $userData
+                'data' => $PeriodeData
             ]);
         } else {
             abort(404, 'Halaman tidak ditemukan');
@@ -99,27 +106,28 @@ class UserController extends Controller
     {
         if ($param1 == '') {
             validate_and_response([
-                'name' => ['Nama', 'required'],
-                'email' => ['Email', 'required|email|unique:users,email'],
-                'role' => ['Role', 'required|exists:sys_roles,name'],
+                'nama_periode' => ['Nama', 'required'],
+                'tanggal_mulai' => ['tanggal_mulai', 'required|date'],
+                'tanggal_selesai' => ['tanggal_selesai', 'required|date'],
             ]);
-
-            $data['name'] = clean_post('name');
-            $data['email'] = clean_post('email');
+           
+            $data['nama_periode'] = clean_post('nama_periode');
+            $data['tanggal_mulai'] = clean_post('tanggal_mulai');
+            $data['tanggal_selesai'] = clean_post('tanggal_selesai');
             $data['password'] = bcrypt(uniqid());
-            $role = clean_post('role');
+           // $role = clean_post('role');
 
             DB::beginTransaction();
             try {
-                $inserted = User::create($data);
+                $inserted = Periode::create($data);
 
-                $inserted->assignRole($role);
+               // $inserted->assignRole($role);
 
                 DB::commit();
                 return response()->json([
                     'status' => true,
-                    'message' => 'Pengguna berhasil ditambah.',
-                    'data' => ['id' => encid($inserted->id)]
+                    'message' => 'Periode berhasil ditambah.',
+                    'data' => ['periode_id' => encid($inserted->periode_id)]
                 ]);
             } catch (\Throwable $th) {
                 DB::rollback();
@@ -136,8 +144,8 @@ class UserController extends Controller
             validate_and_response([
                 'id' => ['Parameter data', 'required'],
             ]);
-
-            $currData = User::findOrFail(decid($req->input('id')));
+            $id = $req->input('id');
+            $currData = Periode::findOrFail(decid($id));
 
             DB::beginTransaction();
             try {
@@ -158,31 +166,31 @@ class UserController extends Controller
     }
 
     public function update(Request $req, $param1 = ''): JsonResponse
-    {
+    {        
         if ($param1 == '') {
             validate_and_response([
-                'name' => ['Nama', 'required'],
-                'email' => ['Email', 'required|email'],
-                'role' => ['Role', 'required|exists:sys_roles,name'],
-            ]);
+                'nama_periode' => ['nama_periode', 'required'],
+                'tanggal_mulai' => ['tanggal_mulai', 'required|date'],
+                'tanggal_selesai' => ['tanggal_selesai', 'required|date'],
+            ]);            
+            $id = $req->input('periode_id');            
+            $currData = Periode::findOrFail($id);            
 
-            $id = $req->input('id');
-            $currData = User::findOrFail($id);
-
-            $data['name'] = clean_post('name');
-            $data['email'] = clean_post('email');
-            $newRole = clean_post('role');
+            $data['nama_periode'] = $req->input('nama_periode');
+            $data['tanggal_mulai'] = $req->input('tanggal_mulai');
+            $data['tanggal_selesai'] = $req->input('tanggal_selesai');
+           // $newRole = clean_post('role');
 
             DB::beginTransaction();
             try {
                 $currData->update($data);
 
-                $currData->syncRoles([$newRole]);
+               // $currData->syncRoles([$newRole]);
                 DB::commit();
                 return response()->json([
                     'status' => true,
                     'message' => 'Update data berhasil.',
-                    'data' => ['id' => $id]
+                    'data' => ['periode_id' => $id]
                 ]);
             } catch (\Throwable $th) {
                 DB::rollback();

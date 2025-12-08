@@ -73,7 +73,7 @@ public function submitUsulan(Request $request)
 
         // 2. CREATE: Use the ID from the query above ($activePeriode->periode_id)
         $data = Usulan::create([
-            'periode_id' => $activePeriode->periode_id, // <--- CRITICAL FIX
+            'periode_id' => $activePeriode->periode_id,
             'prodi_id'      => $request->prodi_id,
             'nama_req'      => $request->nama_req,
             'email_req'     => $request->email_req,
@@ -94,8 +94,7 @@ public function submitUsulan(Request $request)
         DB::commit();
        return response()->json([
             'message' => 'Usulan buku berhasil dikirim!',
-            'status'  => 'success',
-            // Send the new item back to frontend
+            'status'  => 'success',            
             'new_data' => [
                 'judul_buku'   => $data->judul_buku,
                 'penulis_buku' => $data->penulis_buku,
