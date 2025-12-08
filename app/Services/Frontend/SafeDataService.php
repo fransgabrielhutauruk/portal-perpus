@@ -1092,6 +1092,20 @@ class SafeDataService
         ]);
     }
 
+    public static function getUsulanModulFallbacks(): object
+    {
+        return self::createSafeStructure([
+            'header'      => 'Usulan Modul',
+            'title'       => 'Form Usulan Modul',
+            'subtitle'    => 'Layanan Perpustakaan',
+            'description' => 'Silahkan isi form berikut untuk mengusulkan modul baru.',
+            'prodi_list'  => [], // Fallback is empty list
+            'form'        => [
+                'action_url' => route('frontend.usulan.sendUsulanModul'),
+            ]
+        ]);
+    }
+
 }
 
 

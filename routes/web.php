@@ -22,10 +22,13 @@ Route::prefix('app')
         Route::middleware('role:admin')->group(function () {
             generalRoute(App\Http\Controllers\Admin\UserController::class, 'user', 'app');
             generalRoute(App\Http\Controllers\Admin\UsulanManagementController::class, 'usulan', 'app');
+            generalRoute(App\Http\Controllers\Admin\UsulanModulManagementController::class, 'usulan-modul', 'app');
             generalRoute(App\Http\Controllers\Admin\PeriodeController::class, 'periode', 'app');
             generalRoute(App\Http\Controllers\Admin\ProdiController::class, 'prodi', 'app');
             Route::post('/usulan/approve', [App\Http\Controllers\Admin\UsulanManagementController::class, 'approve'])->name('app.usulan.approve');
             Route::post('/usulan/reject', [App\Http\Controllers\Admin\UsulanManagementController::class, 'reject'])->name('app.usulan.reject');
+            Route::post('/usulan-modul/approve', [App\Http\Controllers\Admin\UsulanModulManagementController::class, 'approve'])->name('app.usulan-modul.approve');
+            Route::post('/usulan-modul/reject', [App\Http\Controllers\Admin\UsulanModulManagementController::class, 'reject'])->name('app.usulan-modul.reject');
         });
         
 

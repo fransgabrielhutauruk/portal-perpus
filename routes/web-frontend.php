@@ -16,6 +16,7 @@ use App\Http\Controllers\Frontend\ProfileController;
 use App\Http\Controllers\Frontend\ResearchController;
 use App\Http\Controllers\Frontend\ServiceController;
 use App\Http\Controllers\Frontend\UsulanController;
+use App\Http\Controllers\Frontend\UsulanModulController;
 use Illuminate\Support\Facades\Route;
 
 Route::get(
@@ -49,9 +50,12 @@ Route::name('frontend.')->group(function () {
 
      Route::name('usulan.')->controller(UsulanController::class)->group(function () {
         Route::get('/usulan-buku', 'index')->name('usulan-buku');
-        Route::post('/usulan/send', 'submitUsulan')->name('sendUsulan');
+        Route::post('/usulan/send', 'submitUsulan')->name('sendUsulan');  
+        Route::get('/usulan-modul', 'index_modul')->name('usulan-modul');
+        Route::post('/usulan/send-modul', 'submitUsulanModul')->name('sendUsulanModul');         
        // Route::get('/faq', 'faq')->name('faq');
     });
+    
 
     // Development Routes
     Route::prefix('/dev')->name('dev.')->controller(DEV\MainController::class)->group(function () {
