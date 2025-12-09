@@ -9,6 +9,7 @@ use App\Http\Controllers\Frontend\ArticleController;
 use App\Http\Controllers\Frontend\BeritaController;
 use App\Http\Controllers\Frontend\CampusLifeController;
 use App\Http\Controllers\Frontend\InformationController;
+use App\Http\Controllers\Frontend\BebasPustakaController;
 use App\Http\Controllers\Frontend\MainController;
 use App\Http\Controllers\Frontend\NewsController;
 use App\Http\Controllers\Frontend\PCRSquadController;
@@ -53,6 +54,12 @@ Route::name('frontend.')->group(function () {
         Route::post('/usulan/send', 'submitUsulan')->name('sendUsulan');  
         Route::get('/usulan-modul', 'index_modul')->name('usulan-modul');
         Route::post('/usulan/send-modul', 'submitUsulanModul')->name('sendUsulanModul');         
+       // Route::get('/faq', 'faq')->name('faq');
+    });
+
+         Route::name('bebas-pustaka.')->controller(BebasPustakaController::class)->group(function () {
+        Route::get('/bebas-pustaka', 'index')->name('index');
+        Route::post('/bebas-pustaka/send', 'submit')->name('submit');          
        // Route::get('/faq', 'faq')->name('faq');
     });
     

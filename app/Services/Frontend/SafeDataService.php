@@ -1106,6 +1106,20 @@ class SafeDataService
         ]);
     }
 
+    public static function getBebasPustakaFallbacks(): object
+    {
+        return self::createSafeStructure([
+            'header'      => 'Bebas Pustaka',
+            'title'       => 'Form Permohonan Bebas Pustaka',
+            'subtitle'    => 'Layanan Perpustakaan',
+            'description' => 'Silahkan isi form berikut untuk request kartu bebas pustaka.',
+            'prodi_list'  => [], // Fallback is empty list
+            'form'        => [
+                'action_url' => route('frontend.bebaspustaka.sendForm'),
+            ]
+        ]);
+    }
+
 }
 
 
