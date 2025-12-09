@@ -43,7 +43,7 @@ class HeaderMenuComposer
                     ['name' => 'Usulan Koleksi Buku', 'route' =>  route('frontend.usulan.usulan-buku')],
                     ['name' => 'Kebutuhan Modul Semester', 'route' => route('frontend.usulan.usulan-modul')],
                     ['name' => 'Cek Turnitin', 'route' => '#'],
-                    ['name' => 'Surat Bebas Pustaka', 'route' => '#'],
+                    ['name' => 'Surat Bebas Pustaka', 'route' => route('frontend.bebas-pustaka.index')],
                 ],
             ],
             ['name' => 'Panduan', 'route' => route('frontend.home')],
