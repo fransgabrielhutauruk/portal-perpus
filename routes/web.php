@@ -1,7 +1,8 @@
 <?php
 
-use App\Http\Controllers\ProfileController;
+use App\Enums\UserRole;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ProfileController;
 
 include_once __DIR__ . "/web-frontend.php";
 
@@ -14,12 +15,12 @@ Route::middleware('auth')->group(function () {
 require __DIR__ . '/auth.php';
 
 Route::prefix('app')
-    ->middleware(['auth', 'role:user|admin'])
+    ->middleware(['auth', 'role:' . implode('|', UserRole::getAllRoles())])
     ->group(function () {
         generalRoute(App\Http\Controllers\Admin\DashboardController::class, 'dashboard', 'app');
         generalRoute(App\Http\Controllers\Admin\BeritaController::class, 'berita', 'app');
 
-        Route::middleware('role:admin')->group(function () {
+        Route::middleware('role:' . UserRole::ADMIN->value)->group(function () {
             generalRoute(App\Http\Controllers\Admin\UserController::class, 'user', 'app');
             generalRoute(App\Http\Controllers\Admin\UsulanManagementController::class, 'usulan', 'app');
             generalRoute(App\Http\Controllers\Admin\UsulanModulManagementController::class, 'usulan-modul', 'app');
@@ -30,7 +31,7 @@ Route::prefix('app')
             Route::post('/usulan-modul/approve', [App\Http\Controllers\Admin\UsulanModulManagementController::class, 'approve'])->name('app.usulan-modul.approve');
             Route::post('/usulan-modul/reject', [App\Http\Controllers\Admin\UsulanModulManagementController::class, 'reject'])->name('app.usulan-modul.reject');
         });
-        
+
 
         Route::get('icons', function () {
             if (!config('app.debug')) {

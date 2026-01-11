@@ -17,7 +17,7 @@ use Spatie\Activitylog\Facades\CauserResolver;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 
-class UsulanModul extends Model
+class ReqBuku extends Model
 {
     use SoftDeletes;
     use LogsActivity;
@@ -26,14 +26,14 @@ class UsulanModul extends Model
      *
      * @var string
      */
-    public $table = 'req_modul';
+    public $table = 'req_buku';
 
     /**
      * set kolom primary key, default primary key kolom adalah id
      *
      * @var string
      */
-    protected $primaryKey = 'reqmodul_id';
+    protected $primaryKey = 'reqbuku_id';
 
 
     /**
@@ -44,19 +44,20 @@ class UsulanModul extends Model
     public $fillable = [
         'periode_id',
         'prodi_id',
-        'nama_dosen',
-        'inisial_dosen',
+        'nama_req',
+        'nim',
         'nip',
-        'email_dosen',
-        'judul_modul',
-        'penulis_modul',
-        'tahun_modul',
-        'nama_mata_kuliah',
-        'praktikum',
-        'jumlah_dibutuhkan',
-        'file',
-        'deskripsi_kebutuhan',
-        'status',
+        'email_req',
+        'judul_buku',
+        'penulis_buku',
+        'tahun_terbit',
+        'penerbit_buku',
+        'jenis_buku',
+        'bahasa_buku',
+        'estimasi_harga',
+        'link_pembelian',
+        'alasan_usulan',
+        'status_req',
         'catatan_admin',
         'created_by',
         'updated_by',
@@ -69,12 +70,12 @@ class UsulanModul extends Model
      * @var array
      */
     protected $casts = [
-        'reqmodul_id'    => 'string',
-        'praktikum'   => 'boolean',
+        '{{tableId}}'    => 'string',
+        
     ];
 
     public static array $exceptEdit = [
-        'reqmodul_id',
+        '{{tableId}}',
         'created_at',
         'updated_at',
         'deleted_at'
@@ -123,7 +124,7 @@ class UsulanModul extends Model
             ->useLogName(env('APP_NAME'))
             ->setDescriptionForEvent(function ($eventName) {
                 $aksi = eventActivityLogBahasa($eventName);
-                return userInisial() . " {$aksi} table :subject.judul_modul";
+                return userInisial() . " {$aksi} table :subject.{{tableSubject}}";
             });
     }
 

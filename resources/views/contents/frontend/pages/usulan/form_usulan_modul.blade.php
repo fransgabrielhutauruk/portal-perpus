@@ -11,6 +11,6 @@
 
     <div class="usulan-page content-page">
         {{-- CHANGE THIS LINE: Point to the new partial we just created --}}
-        @include('contents.frontend.partials.main.usulan.form_modul', ['content' => $content])
+        @include('contents.frontend.partials.main.req.form_modul', ['content' => $content])
     </div>
 @endsection

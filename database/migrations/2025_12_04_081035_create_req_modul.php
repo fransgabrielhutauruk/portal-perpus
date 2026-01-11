@@ -14,7 +14,6 @@ return new class extends Migration
         Schema::create('req_modul', function (Blueprint $table) {
             $table->id('reqmodul_id');
 
-            $table->unsignedBigInteger('periode_id')->nullable();
             $table->unsignedBigInteger('prodi_id')->nullable();
 
             $table->string('nama_dosen')->nullable();
@@ -34,7 +33,7 @@ return new class extends Migration
             $table->string('file')->nullable();
             $table->text('deskripsi_kebutuhan')->nullable();
 
-            $table->string('status')->default('Pending');
+            $table->integer('status_req')->default(0);
             $table->text('catatan_admin')->nullable();
 
             $table->string('created_by')->nullable();

@@ -140,7 +140,6 @@
     --primary-main: rgb(var(--primary-main-rgb));
 
     /* Main Color Palette */
-    --primary-main-rgb: 9, 64, 116 !important;
     --primary-main-gradient-start-rgb: var(--primary-main-rgb);
     --primary-main-gradient-end-rgb: var(--primary-rgb-800) !important;
     --primary-main: rgb(var(--primary-main-rgb)) !important;

@@ -1085,9 +1085,9 @@ class SafeDataService
             'title'       => 'Form Usulan Pengadaan Buku',
             'subtitle'    => 'Layanan Perpustakaan',
             'description' => 'Silahkan isi form berikut untuk mengusulkan pengadaan buku baru.',
-            'prodi_list'  => [], // Fallback is empty list
+            'prodi_list'  => [],
             'form'        => [
-                'action_url' => route('frontend.usulan.sendUsulan'),
+                'action_url' => route('frontend.req.buku.send'),
             ]
         ]);
     }
@@ -1099,9 +1099,9 @@ class SafeDataService
             'title'       => 'Form Usulan Modul',
             'subtitle'    => 'Layanan Perpustakaan',
             'description' => 'Silahkan isi form berikut untuk mengusulkan modul baru.',
-            'prodi_list'  => [], // Fallback is empty list
+            'prodi_list'  => [],
             'form'        => [
-                'action_url' => route('frontend.usulan.sendUsulanModul'),
+                'action_url' => route('frontend.req.modul.send'),
             ]
         ]);
     }
@@ -1113,9 +1113,23 @@ class SafeDataService
             'title'       => 'Form Permohonan Bebas Pustaka',
             'subtitle'    => 'Layanan Perpustakaan',
             'description' => 'Silahkan isi form berikut untuk request kartu bebas pustaka.',
-            'prodi_list'  => [], // Fallback is empty list
+            'prodi_list'  => [],
             'form'        => [
                 'action_url' => route('frontend.bebaspustaka.sendForm'),
+            ]
+        ]);
+    }
+
+    public static function getTurnitinFallbacks(): object
+    {
+        return self::createSafeStructure([
+            'header'      => 'Cek Turnitin',
+            'title'       => 'Form Pengajuan Cek Turnitin',
+            'subtitle'    => 'Layanan Perpustakaan',
+            'description' => 'Silahkan isi form berikut untuk mengajukan dokumen cek turnitin.',
+            'prodi_list'  => [],
+            'form'        => [
+                'action_url' => route('frontend.req.turnitin.send'),
             ]
         ]);
     }

@@ -117,13 +117,23 @@ class BeritaController extends Controller
 
         $data = [
             'judul_berita' => clean_post('judul_berita'),
-            'isi_berita' => 'Isi berita akan diisi nanti...',
-            'tanggal_berita' => clean_post('tanggal_berita') ? date('Y-m-d H:i:s', strtotime(clean_post('tanggal_berita'))) : date('Y-m-d H:i:s'),
-            'user_id_author' => Auth::id(),
-            'status_berita' => clean_post('status_berita'),
             'slug_berita' => $slug_berita,
+            'status_berita' => clean_post('status_berita'),
+            'tanggal_berita' => clean_post('tanggal_berita') ? date('Y-m-d H:i:s', strtotime(clean_post('tanggal_berita'))) : date('Y-m-d H:i:s'),
+            'isi_berita' => clean_post('isi_berita'),
+            'meta_keyword_berita' => clean_post('meta_keyword_berita'),
+            'meta_desc_berita' => clean_post('meta_desc_berita'),
+            'user_id_author' => Auth::id(),
             'created_by' => Auth::id(),
         ];
+
+        if ($req->hasFile('upload_file')) {
+            $do_upload = uploadMedia('upload_file', 'berita');
+            if (!$do_upload['status'])
+                abort(500, 'Update data gagal, ' . $do_upload['message']);
+
+            $data['filename_berita'] = $do_upload['data']['filename'];
+        }
 
         DB::beginTransaction();
         try {

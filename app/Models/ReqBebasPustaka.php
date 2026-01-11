@@ -17,7 +17,7 @@ use Spatie\Activitylog\Facades\CauserResolver;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 
-class BebasPustaka extends Model
+class ReqBebasPustaka extends Model
 {
     use SoftDeletes;
     use LogsActivity;

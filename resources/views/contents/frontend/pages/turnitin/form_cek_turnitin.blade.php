@@ -9,8 +9,7 @@
         {{ data_get($content, 'header') }}
     </x-frontend.page-header>
 
-    <div class="usulan-page content-page">
-        {{-- CHANGE THIS LINE: Point to the new partial we just created --}}
-        @include('contents.frontend.partials.main.req.form_bebas_pustaka', ['content' => $content])
+    <div class="turnitin-page content-page">
+        @include('contents.frontend.partials.main.req.form_turnitin', ['content' => $content])
     </div>
 @endsection

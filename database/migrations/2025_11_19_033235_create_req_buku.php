@@ -13,7 +13,6 @@ return new class extends Migration
     {
         Schema::create('req_buku', function (Blueprint $table) {
             $table->id('reqbuku_id');
-            $table->unsignedBigInteger('periode_id');
             $table->unsignedBigInteger('prodi_id');
             $table->string('nama_req');
             $table->string('nim')->nullable();
@@ -22,11 +21,11 @@ return new class extends Migration
             $table->string('judul_buku');
             $table->string('penulis_buku');
             $table->integer('tahun_terbit');
-            $table->string('penerbit_buku');
+            $table->text('penerbit_buku');
             $table->string('jenis_buku');
             $table->string('bahasa_buku');
-            $table->integer('estimasi_harga');
-            $table->string('link_pembelian')->nullable();
+            $table->integer('estimasi_harga')->nullable();
+            $table->string('link_pembelian');
             $table->text('alasan_usulan');
             $table->integer('status_req')->default(0);
             $table->text('catatan_admin')->nullable();

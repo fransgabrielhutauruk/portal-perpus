@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Yajra\DataTables\DataTables;
-use App\Models\UsulanModul;
+use App\Models\ReqModul;
 use Illuminate\Http\JsonResponse;
 use Yajra\DataTables\Html\Column;
 use Illuminate\Support\Facades\DB;
@@ -49,7 +49,7 @@ class UsulanModulManagementController extends Controller
         if ($param1 == 'list') {
             $filter = [];
             // Ensure UsulanModul model is imported and has getDataDetail method
-            $data = DataTables::of(UsulanModul::getDataDetail($filter, get: true))->toArray();            
+            $data = DataTables::of(ReqModul::getDataDetail($filter, get: true))->toArray();            
             $start = $req->input('start');
             $resp = [];
             foreach ($data['data'] as $key => $value) {
@@ -113,7 +113,7 @@ class UsulanModulManagementController extends Controller
             validate_and_response([
                 'reqmodul_id' => ['Parameter data', 'required'],
             ]);
-            $currData = UsulanModul::findOrFail(decid($req->input('reqmodul_id')));
+            $currData = ReqModul::findOrFail(decid($req->input('reqmodul_id')));
 
             $userData = $currData->toArray();
             // Optional: Add file URL to response if needed for modal
@@ -137,7 +137,7 @@ class UsulanModulManagementController extends Controller
             'reqmodul_id' => ['ID Request Modul', 'required'],
         ]);
         
-        $usulan = UsulanModul::findOrFail($req->input('reqmodul_id'));
+        $usulan = ReqModul::findOrFail($req->input('reqmodul_id'));
         $usulan->status = 'Approved'; 
         $usulan->save();
 
@@ -153,7 +153,7 @@ class UsulanModulManagementController extends Controller
             'reqmodul_id' => ['ID Request Modul', 'required'],
         ]);
 
-        $usulan = UsulanModul::findOrFail($req->input('reqmodul_id'));
+        $usulan = ReqModul::findOrFail($req->input('reqmodul_id'));
         $usulan->status = 'Rejected'; 
         $usulan->catatan_admin = $req->input('catatan_admin') ?? '-';
         $usulan->save();
@@ -173,7 +173,7 @@ class UsulanModulManagementController extends Controller
             $id = $req->input('id');
 
             // Use reqmodul_id for query
-            $currData = UsulanModul::where('reqmodul_id', $id)->firstOrFail();
+            $currData = ReqModul::where('reqmodul_id', $id)->firstOrFail();
 
             DB::beginTransaction();
             try {

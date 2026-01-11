@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Models\Usulan;
+use App\Models\ReqBuku;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
-use App\Models\UsulanModul;
+use App\Models\ReqModul;
 use Illuminate\Http\JsonResponse;
 use Yajra\DataTables\Html\Column;
 use Illuminate\Support\Facades\DB;
@@ -47,7 +47,7 @@ class UsulanManagementController extends Controller
     {
         if ($param1 == 'list') {
             $filter = [];
-            $data = DataTables::of(Usulan::getDataDetail($filter, get: true))->toArray();            
+            $data = DataTables::of(ReqBuku::getDataDetail($filter, get: true))->toArray();            
             $start = $req->input('start');
             $resp = [];
             foreach ($data['data'] as $key => $value) {
@@ -62,7 +62,7 @@ class UsulanManagementController extends Controller
 
               //  $dt['email']    = $value['email'] ?? '-';
 
-                $usulan = Usulan::find($value['reqbuku_id']);                                       
+                $usulan = ReqBuku::find($value['reqbuku_id']);                                       
               // $dt['role'] = $user ? $user->roles()->value('name') : 'No Role';
                               
                // $id = encid($value['reqbuku_id']);
@@ -97,7 +97,7 @@ class UsulanManagementController extends Controller
             validate_and_response([
                 'reqbuku_id' => ['Paramater data', 'required'],
             ]);
-            $currData = Usulan::findOrFail(decid($req->input('reqbuku_id')));
+            $currData = ReqBuku::findOrFail(decid($req->input('reqbuku_id')));
 
             $userData = $currData->toArray();
           //  $userData['role'] = $currData->roles->value('name') ?? '';
@@ -118,7 +118,7 @@ class UsulanManagementController extends Controller
             'reqbuku_id' => ['ID Usulan Buku', 'required'],
         ]);
         
-        $usulan = Usulan::findOrFail($req->input('reqbuku_id'));
+        $usulan = ReqBuku::findOrFail($req->input('reqbuku_id'));
         //dd($usulan);
         if ($req->input('alasan_reject')){
             $usulan->status_req = '2';
@@ -140,7 +140,7 @@ class UsulanManagementController extends Controller
             'reqbuku_id' => ['ID Usulan Buku', 'required'],
         ]);
         
-        $usulan = Usulan::findOrFail($req->input('reqbuku_id'));
+        $usulan = ReqBuku::findOrFail($req->input('reqbuku_id'));
         //dd($usulan);
         $usulan->status_req = '1'; // Disetujui
         $usulan->save();
@@ -157,7 +157,7 @@ class UsulanManagementController extends Controller
             'reqbuku_id' => ['ID Usulan Buku', 'required'],
         ]);
 
-        $usulan = Usulan::findOrFail($req->input('reqbuku_id'));
+        $usulan = ReqBuku::findOrFail($req->input('reqbuku_id'));
         $usulan->status_req = '2'; // Ditolak
         $usulan->catatan_admin = $req->input('catatan_admin') ?? '-';
         
@@ -190,7 +190,7 @@ class UsulanManagementController extends Controller
             ]);            
             $id = $req->input('id');
 
-            $currData = Usulan::where('reqbuku_id', $id)->firstOrFail();
+            $currData = ReqBuku::where('reqbuku_id', $id)->firstOrFail();
 
             DB::beginTransaction();
             try {

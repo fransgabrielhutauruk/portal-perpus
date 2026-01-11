@@ -5,11 +5,11 @@ namespace App\Http\Controllers\Frontend;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Services\Frontend\SafeDataService;
-use App\Services\Frontend\BebasPustakaService;
-use App\Models\BebasPustaka;
+use App\Services\Frontend\ReqBebasPustakaService;
+use App\Models\ReqBebasPustaka;
 use Illuminate\Support\Facades\DB;
 
-class BebasPustakaController extends Controller
+class ReqBebasPustakaController extends Controller
 {
     /**
      * Display the Bebas Pustaka form
@@ -26,12 +26,12 @@ class BebasPustakaController extends Controller
 
         // 2. Get Content (Form data, lists, headers)
         $content = SafeDataService::safeExecute(
-            fn() => BebasPustakaService::getContent(),
+            fn() => ReqBebasPustakaService::getContent(),
             $fallbacks
         );        
         // 3. Get Page Config (SEO, Backgrounds)
         $pageConfig = SafeDataService::safeExecute(
-            fn() => BebasPustakaService::getPageConfig(),
+            fn() => ReqBebasPustakaService::getPageConfig(),
             SafeDataService::getPageConfigFallbacks()
         );
 
@@ -42,60 +42,36 @@ class BebasPustakaController extends Controller
         ));
     }
 
-    /**
-     * Handle the Form Submission
-     */
     public function submit(Request $request)
     {
-        // 1. Validation: Matches form fields for Bebas Pustaka
         $validated = $request->validate([
             'nama_mahasiswa'  => 'required|string|max:255',
             'email_mahasiswa' => 'required|email',
-            'nim'             => 'required|numeric',
+            'nim'             => 'required|string',
             'prodi_id'        => 'required|numeric',
         ]);
 
         try {
-            // Note: Unlike books, Bebas Pustaka usually doesn't have a strict "Period" 
-            // unless tied to graduation. If you need it, uncomment the logic below.
-            
-            /*
-            $activePeriode = DB::table('mst_periode')
-                ->whereDate('tanggal_mulai', '<=', now())
-                ->whereDate('tanggal_selesai', '>=', now())
-                ->first();
-
-            if (!$activePeriode) {
-                return response()->json([
-                    'message' => 'Maaf, layanan bebas pustaka sedang ditutup.',
-                    'status'  => 'error'
-                ], 422);
-            }
-            */
-
             DB::beginTransaction();
 
-            // 2. CREATE: Map request to BebasPustaka model
-            $data = BebasPustaka::create([
+            $data = ReqBebasPustaka::create([
                 'nama_mahasiswa'  => $request->nama_mahasiswa,
                 'email_mahasiswa' => $request->email_mahasiswa,
                 'nim'             => $request->nim,
                 'prodi_id'        => $request->prodi_id,
                 
-                // Defaults
-                'is_syarat_terpenuhi' => false, // Will be checked by Admin
+                'is_syarat_terpenuhi' => false,
                 'status'              => 'Pending',
                 'catatan_admin'       => null,
-                'file_hasil_bebas_pustaka' => null // Admin will upload this later
+                'file_hasil_bebas_pustaka' => null 
             ]);
 
             DB::commit();
 
             return response()->json([
-                'message' => 'Pengajuan Bebas Pustaka berhasil dikirim!',
+                'message' => 'Pengajuan Surat Bebas Pustaka berhasil dikirim!',
                 'status'  => 'success',            
                 'new_data' => [
-                    // Return data needed for the JS History Table
                     'nama_mahasiswa' => $data->nama_mahasiswa,
                     'nim'            => $data->nim,
                     'date_fmt'       => $data->created_at->format('d M Y'),
