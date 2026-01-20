@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Frontend\DEV;
 use App\Http\Controllers\Frontend\BeritaController;
+use App\Http\Controllers\Frontend\FaqController;
 use App\Http\Controllers\Frontend\InformationController;
 use App\Http\Controllers\Frontend\PanduanController;
 use App\Http\Controllers\Frontend\ReqBebasPustakaController;
@@ -24,6 +25,10 @@ Route::name('frontend.')->group(function () {
     Route::prefix('/panduan')->name('panduan.')->controller(PanduanController::class)->group(function () {
         Route::get('/', 'index')->name('index');
         Route::get('/{panduanId}', 'show')->name('show');
+    });
+
+    Route::prefix('/faq')->name('faq.')->controller(FaqController::class)->group(function () {
+        Route::get('/', 'index')->name('index');
     });
 
     Route::prefix('/informasi')->name('information.')->controller(InformationController::class)->group(function () {

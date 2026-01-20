@@ -56,7 +56,7 @@ class HeaderMenuComposer
                 'children' => $panduanMenuItems,
             ],
             ['name' => 'Berita', 'route' => route('frontend.berita.index')],
-            ['name' => 'FAQ', 'route' => route('frontend.home')],
+            ['name' => 'FAQ', 'route' => route('frontend.faq.index')],
         ];
 
         $view->with('menu', $menu);

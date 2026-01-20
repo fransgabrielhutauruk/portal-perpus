@@ -57,7 +57,7 @@ class ReqBebasPustakaController extends Controller
                 $dt['nim'] = $value['nim'] ?? '-';
                 $dt['email_mahasiswa'] = $value['email_mahasiswa'] ?? '-';
                 $dt['prodi_nama'] = $value['nama_prodi'] ?? '-';
-                $dt['status'] = ReqBebasPustaka::getStatusBadge($value['status'] ?? null);
+                $dt['status'] = ReqBebasPustaka::getStatusBadge($value['status_req'] ?? null);
 
                 $bebasPustaka = ReqBebasPustaka::find($value['reqbebaspustaka_id']);
                 $id = $value['reqbebaspustaka_id'];
@@ -67,7 +67,7 @@ class ReqBebasPustakaController extends Controller
                     'btn' => [],
                 ];
 
-                if ($bebasPustaka && $bebasPustaka->status == '0') {
+                if ($bebasPustaka && $bebasPustaka->status_req == StatusRequest::MENUNGGU->value) {
                     $dataAction['btn'] = [
                         ['action' => 'detail', 'attr' => ['jf-detail' => $id]],
                         ['action' => 'approve', 'attr' => ['jf-approve' => $id]],
