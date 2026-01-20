@@ -66,12 +66,6 @@ function ajaxRequest(param = {}) {
                 var errors = xhr.responseJSON.errors;
                 var errorMessages = [];
 
-                var errorMessage = xhr.responseJSON && typeof xhr.responseJSON.message !== 'undefined'
-                    ? xhr.responseJSON.message
-                    : 'Internal Error, Failed processing data!';
-
-                errorMessages.push(errorMessage);
-
                 for (var key in errors) {
                     if (errors.hasOwnProperty(key)) {
                         errorMessages.push(errors[key][0]);

@@ -27,6 +27,12 @@
     <form id="formData" class="needs-validation" jf-form="periode">
         <input type="hidden" name="periode_id" value="">
         <x-form.input type="text" class="mb-2" name="nama_periode" label="Nama Periode" required />
+        <x-form.select class="mb-2" name="jenis_periode" label="Jenis Periode" required>
+            <option value="">Pilih Jenis Periode</option>
+            <option value="req_buku">Request Buku</option>
+            <option value="req_modul">Request Modul</option>
+            <option value="req_bebas_pustaka">Request Bebas Pustaka</option>
+        </x-form.select>
         <x-form.input type="date" class="mb-2" name="tanggal_mulai" label="Tanggal Mulai" required />
         <x-form.input type="date" class="mb-2" name="tanggal_selesai" label="Tanggal Selesai" required />
     </form>

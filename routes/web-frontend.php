@@ -3,6 +3,7 @@
 use App\Http\Controllers\Frontend\DEV;
 use App\Http\Controllers\Frontend\BeritaController;
 use App\Http\Controllers\Frontend\InformationController;
+use App\Http\Controllers\Frontend\PanduanController;
 use App\Http\Controllers\Frontend\ReqBebasPustakaController;
 use App\Http\Controllers\Frontend\MainController;
 use App\Http\Controllers\Frontend\ReqBukuController;
@@ -18,6 +19,11 @@ Route::name('frontend.')->group(function () {
     Route::prefix('/berita')->name('berita.')->controller(BeritaController::class)->group(function () {
         Route::get('/', 'index')->name('index');
         Route::get('/{beritaSlug}', 'show')->name('show');
+    });
+
+    Route::prefix('/panduan')->name('panduan.')->controller(PanduanController::class)->group(function () {
+        Route::get('/', 'index')->name('index');
+        Route::get('/{panduanId}', 'show')->name('show');
     });
 
     Route::prefix('/informasi')->name('information.')->controller(InformationController::class)->group(function () {

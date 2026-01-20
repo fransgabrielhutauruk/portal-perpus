@@ -110,290 +110,280 @@
                 </div>
 
                 <div class="contact-us-form wow fadeInUp rounded px-4 border border-3" data-wow-delay="0.4s">
-                        @include('contents.frontend.partials.components.tab-headers', [
-                            'tabs' => [
-                                ['id' => 'tab-attention', 'label' => '1. Perhatian', 'active' => true],
-                                ['id' => 'tab-user', 'label' => '2. Data Dosen', 'active' => false],
-                                ['id' => 'tab-book', 'label' => '3. Data Modul', 'active' => false],
-                            ],
-                            'tabsId' => 'usulanTabs',
-                        ])
+                    @include('contents.frontend.partials.components.tab-headers', [
+                        'tabs' => [
+                            ['id' => 'tab-attention', 'label' => '1. Perhatian', 'active' => true],
+                            ['id' => 'tab-user', 'label' => '2. Data Dosen', 'active' => false],
+                            ['id' => 'tab-book', 'label' => '3. Data Modul', 'active' => false],
+                        ],
+                        'tabsId' => 'usulanTabs',
+                    ])
 
-                        <form id="formUsulan" action="{{ data_get($content, 'form.action_url') }}" method="POST"
-                            enctype="multipart/form-data" data-toggle="validator">
-                            @csrf
-                            <div class="tab-content mt-5" id="usulanTabsContent">
+                    <form id="formUsulan" action="{{ data_get($content, 'form.action_url') }}" method="POST"
+                        enctype="multipart/form-data" data-toggle="validator">
+                        @csrf
+                        <div class="tab-content mt-5" id="usulanTabsContent">
 
-                                {{-- === TAB 1: ATTENTION === --}}
-                                <div class="tab-pane fade show active text-center" id="tab-attention" role="tabpanel">
-                                    <div class="border-top border-bottom border-2 py-2">
-                                        <h5 class="text-capitalize">Form usulan modul ini diberikan bagi dosen
-                                            Politeknik Caltex Riau</h5>
+                            {{-- === TAB 1: ATTENTION === --}}
+                            <div class="tab-pane fade show active text-center" id="tab-attention" role="tabpanel">
+                                <div class="border-top border-bottom border-2 py-2">
+                                    <h5 class="text-capitalize">Form usulan modul ini diberikan bagi dosen
+                                        Politeknik Caltex Riau</h5>
+                                </div>
+                                @if (data_get($content, 'is_open'))
+                                    <div class="d-inline-block text-center border-0 pt-3 px-4 rounded-3 mt-2">
+                                        <p class="mb-0" style="color: var(--primary-main)">
+                                            <i class="fa-solid fa-triangle-exclamation me-2"></i>Batas Tanggal
+                                            Usulan
+                                            <strong>{{ data_get($content, 'periode_name') }} </strong> Untuk Periode
+                                            Adalah
+                                            <strong>{{ \Carbon\Carbon::parse(data_get($content, 'active_periode.tanggal_selesai'))->isoFormat('D MMMM Y') }}</strong>
+                                        </p>
                                     </div>
-                                    @if (data_get($content, 'is_open'))
-                                        <div class="d-inline-block text-center border-0 pt-3 px-4 rounded-3 mt-2">
-                                            <p class="mb-0" style="color: var(--primary-main)">
-                                                <i class="fa-solid fa-triangle-exclamation me-2"></i>Batas Tanggal
-                                                Usulan
-                                                <strong>{{ data_get($content, 'periode_name') }} </strong> Untuk Periode
-                                                Adalah
-                                                <strong>{{ \Carbon\Carbon::parse(data_get($content, 'active_periode.tanggal_selesai'))->isoFormat('D MMMM Y') }}</strong>
-                                            </p>
-                                        </div>
-                                    @endif
+                                @endif
 
-                                    <div class="contact-form-btn mt-3">
-                                        <button type="button" class="btn-default" onclick="switchTab('tab-user')">
-                                            Selanjutnya
-                                        </button>
-                                    </div>
-
-                                    <div class="d-flex">
-                                        <button type="button" class="btn btn-sm btn-outline-warning rounded-pill"
-                                            onclick="autofillForm()">
-                                            <i class="fa-solid fa-wand-magic-sparkles me-2"></i> Demo Autofill
-                                        </button>
-                                    </div>
+                                <div class="contact-form-btn mt-3">
+                                    <button type="button" class="btn-default" onclick="switchTab('tab-user')">
+                                        Selanjutnya
+                                    </button>
                                 </div>
 
-                                {{-- === TAB 2: DATA DOSEN === --}}
-                                <div class="tab-pane fade" id="tab-user" role="tabpanel">
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label class="fw-bold text-muted small text-uppercase"
-                                                    for="nama_dosen">Nama Dosen <span
-                                                        class="text-danger">*</span></label>
-                                                <input type="text" name="nama_dosen" id="nama_dosen"
-                                                    class="form-control" placeholder="Masukkan nama" required
-                                                    data-error="Wajib diisi">
-                                                <div class="help-block with-errors"></div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label class="fw-bold text-muted small text-uppercase"
-                                                    for="inisial_dosen">
-                                                    Inisial <span class="text-danger">*</span>
-                                                </label>
-                                                <input type="text" name="inisial_dosen" id="inisial_dosen"
-                                                    class="form-control" placeholder="Contoh: AAA" required
-                                                    data-error="Wajib diisi">
-                                                <div class="help-block with-errors"></div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="row mt-md-4">
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label class="fw-bold text-muted small text-uppercase"
-                                                    for="email_dosen">Email <span class="text-danger">*</span></label>
-                                                <input type="email" name="email_dosen" id="email_dosen"
-                                                    class="form-control" placeholder="Masukkan email" required
-                                                    data-error="Email tidak valid">
-                                                <div class="help-block with-errors"></div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label class="fw-bold text-muted small text-uppercase"
-                                                    for="nip">NIP <span class="text-danger">*</span></label>
-                                                <input type="number" name="nip" id="nip" class="form-control"
-                                                    placeholder="Masukkan NIP" required data-error="NIP Wajib diisi">
-                                                <div class="help-block with-errors"></div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="row mt-md-4">
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label class="mb-2 fw-bold text-muted small text-uppercase">Program
-                                                    Studi
-                                                    <span class="text-danger">*</span></label>
-                                                <select name="prodi_id" class="form-select" required
-                                                    data-error="Pilih Program Studi">
-                                                    <option value="">-- Pilih Program Studi --</option>
-                                                    @foreach (data_get($content, 'prodi_list', []) as $prodi)
-                                                        <option value="{{ $prodi->prodi_id }}">{{ $prodi->nama_prodi }}
-                                                        </option>
-                                                    @endforeach
-                                                </select>
-                                                <div class="help-block with-errors"></div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="d-flex justify-content-between mt-4">
-                                        <button type="button" class="btn btn-outline-secondary rounded-pill px-4"
-                                            data-bs-dismiss="modal"
-                                            onclick="switchTab('tab-attention')">Sebelumnya</button>
-                                        <button type="button" class="btn-default"
-                                            onclick="validateAndNext('tab-user', 'tab-book')">Selanjutnya</button>
-                                    </div>
-                                </div>
-
-                                {{-- === TAB 3: DATA MODUL === --}}
-                                <div class="tab-pane fade mt-3" id="tab-book" role="tabpanel">
-                                    <div class="row mt-md-4">
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label class="fw-bold text-muted small text-uppercase"
-                                                    for="nama_mata_kuliah">
-                                                    Nama Mata Kuliah <span class="text-danger">*</span>
-                                                </label>
-                                                <input type="text" name="nama_mata_kuliah" id="nama_mata_kuliah"
-                                                    class="form-control" placeholder="Masukkan nama mata kuliah"
-                                                    required data-error="Wajib diisi">
-                                                <div class="help-block with-errors"></div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label class="fw-bold text-muted small text-uppercase"
-                                                    for="judul_modul">
-                                                    Judul Modul <span class="text-danger">*</span>
-                                                </label>
-                                                <input type="text" name="judul_modul" id="judul_modul"
-                                                    class="form-control" placeholder="Masukkan judul modul" required
-                                                    data-error="Wajib diisi">
-                                                <div class="help-block with-errors"></div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="row mt-md-4">
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label class="fw-bold text-muted small text-uppercase"
-                                                    for="penulis_modul">
-                                                    Penulis Modul <span class="text-danger">*</span>
-                                                </label>
-                                                <input type="text" name="penulis_modul" id="penulis_modul"
-                                                    class="form-control" placeholder="Masukkan nama penulis" required
-                                                    data-error="Wajib diisi">
-                                                <div class="help-block with-errors"></div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label class="fw-bold text-muted small text-uppercase"
-                                                    for="tahun_modul">
-                                                    Tahun Modul <span class="text-danger">*</span>
-                                                </label>
-                                                <input type="number" name="tahun_modul" id="tahun_modul"
-                                                    class="form-control" placeholder="YYYY" required
-                                                    data-error="Wajib diisi">
-                                                <div class="help-block with-errors"></div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="row mt-md-4">
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label
-                                                    class="fw-bold text-muted small text-uppercase d-block mb-3">Jenis
-                                                    Modul <span class="text-danger">*</span></label>
-                                                <div class="form-check form-check-inline">
-                                                    <input type="radio" class="form-check-input" name="praktikum"
-                                                        id="typeTeori" value="0" checked>
-                                                    <label class="form-check-label" for="typeTeori">Teori</label>
-                                                </div>
-                                                <div class="form-check form-check-inline">
-                                                    <input type="radio" class="form-check-input" name="praktikum"
-                                                        id="typePraktikum" value="1">
-                                                    <label class="form-check-label"
-                                                        for="typePraktikum">Praktikum</label>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label class="fw-bold text-muted small text-uppercase"
-                                                    for="jumlah_dibutuhkan">
-                                                    Jumlah Dibutuhkan
-                                                </label>
-                                                <input type="number" name="jumlah_dibutuhkan" id="jumlah_dibutuhkan"
-                                                    class="form-control" placeholder="Masukkan jumlah yang dibutuhkan"
-                                                    value="0" min="0">
-                                                <div class="help-block with-errors"></div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="row mt-md-4">
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label
-                                                    class="fw-bold text-muted small text-uppercase d-block mb-3">Apakah
-                                                    Ada Revisi atau Cetak Baru? <span
-                                                        class="text-danger">*</span></label>
-                                                <div class="form-check form-check-inline">
-                                                    <input type="radio" class="form-check-input" name="ada_revisi"
-                                                        id="revisiTidak" value="0" checked
-                                                        onchange="toggleFileUpload()">
-                                                    <label class="form-check-label" for="revisiTidak">Tidak</label>
-                                                </div>
-                                                <div class="form-check form-check-inline">
-                                                    <input type="radio" class="form-check-input" name="ada_revisi"
-                                                        id="revisiYa" value="1" onchange="toggleFileUpload()">
-                                                    <label class="form-check-label" for="revisiYa">Ya</label>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="form-group mt-md-4" id="fileUploadSection" style="display: none;">
-                                        <label class="fw-bold text-muted small text-uppercase" for="file_modul">
-                                            Upload File Modul <span class="text-danger">*</span>
-                                        </label>
-                                        <input type="file" name="file" id="file_modul" class="form-control"
-                                            accept=".pdf,.docx">
-                                        <small class="text-muted">Format: PDF/DOCX. Upload file modul yang perlu
-                                            direvisi atau dicetak ulang.</small>
-                                        <div class="help-block with-errors"></div>
-                                    </div>
-
-                                    <div class="form-group my-4">
-                                        <label class="fw-bold text-muted small text-uppercase"
-                                            for="deskripsi_kebutuhan">
-                                            Deskripsi Kebutuhan
-                                        </label>
-                                        <textarea name="deskripsi_kebutuhan" id="deskripsi_kebutuhan" class="form-control" rows="3"
-                                            placeholder="Jelaskan detail kebutuhan atau revisi..."></textarea>
-                                        <div class="help-block with-errors"></div>
-                                    </div>
-
-                                    {{-- ACTION BUTTONS --}}
-                                    <div class="col-lg-12 mt-4">
-                                        <div class="d-flex justify-content-between">
-                                            <button type="button" class="btn btn-outline-secondary rounded-pill px-4"
-                                                data-bs-dismiss="modal"
-                                                onclick="switchTab('tab-user')">Sebelumnya</button>
-                                            <button type="button" id="btnOpenModal" class="btn-default"
-                                                onclick="openConfirmation()">
-                                                Kirim Permintaan
-                                            </button>
-                                        </div>
-
-                                        <div class="mt-3 text-center">
-                                            <span id="loadingIndicator" class="text-primary d-none fw-bold">
-                                                <i class="fa-solid fa-spinner fa-spin me-2"></i> Mengirim data...
-                                            </span>
-                                        </div>
-                                    </div>
-
+                                <div class="d-flex">
+                                    <button type="button" class="btn btn-sm btn-outline-warning rounded-pill"
+                                        onclick="autofillForm()">
+                                        <i class="fa-solid fa-wand-magic-sparkles me-2"></i> Demo Autofill
+                                    </button>
                                 </div>
                             </div>
-                        </form>
+
+                            {{-- === TAB 2: DATA DOSEN === --}}
+                            <div class="tab-pane fade" id="tab-user" role="tabpanel">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="fw-bold text-muted small text-uppercase" for="nama_dosen">Nama
+                                                Dosen <span class="text-danger">*</span></label>
+                                            <input type="text" name="nama_dosen" id="nama_dosen" class="form-control"
+                                                placeholder="Masukkan nama" required data-error="Wajib diisi">
+                                            <div class="help-block with-errors"></div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="fw-bold text-muted small text-uppercase" for="inisial_dosen">
+                                                Inisial <span class="text-danger">*</span>
+                                            </label>
+                                            <input type="text" name="inisial_dosen" id="inisial_dosen"
+                                                class="form-control" placeholder="Contoh: AAA" required
+                                                data-error="Wajib diisi">
+                                            <div class="help-block with-errors"></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row mt-md-4">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="fw-bold text-muted small text-uppercase"
+                                                for="email_dosen">Email <span class="text-danger">*</span></label>
+                                            <input type="email" name="email_dosen" id="email_dosen"
+                                                class="form-control" placeholder="Masukkan email" required
+                                                data-error="Email tidak valid">
+                                            <div class="help-block with-errors"></div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="fw-bold text-muted small text-uppercase" for="nip">NIP
+                                                <span class="text-danger">*</span></label>
+                                            <input type="number" name="nip" id="nip" class="form-control"
+                                                placeholder="Masukkan NIP" required data-error="NIP Wajib diisi">
+                                            <div class="help-block with-errors"></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row mt-md-4">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="mb-2 fw-bold text-muted small text-uppercase">Program
+                                                Studi
+                                                <span class="text-danger">*</span></label>
+                                            <select name="prodi_id" class="form-select" required
+                                                data-error="Pilih Program Studi">
+                                                <option value="">-- Pilih Program Studi --</option>
+                                                @foreach (data_get($content, 'prodi_list', []) as $prodi)
+                                                    <option value="{{ $prodi->prodi_id }}">{{ $prodi->nama_prodi }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                            <div class="help-block with-errors"></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="d-flex justify-content-between mt-4">
+                                    <button type="button" class="btn btn-outline-secondary rounded-pill px-4"
+                                        data-bs-dismiss="modal"
+                                        onclick="switchTab('tab-attention')">Sebelumnya</button>
+                                    <button type="button" class="btn-default"
+                                        onclick="validateAndNext('tab-user', 'tab-book')">Selanjutnya</button>
+                                </div>
+                            </div>
+
+                            {{-- === TAB 3: DATA MODUL === --}}
+                            <div class="tab-pane fade mt-3" id="tab-book" role="tabpanel">
+                                <div class="row mt-md-4">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="fw-bold text-muted small text-uppercase"
+                                                for="nama_mata_kuliah">
+                                                Nama Mata Kuliah <span class="text-danger">*</span>
+                                            </label>
+                                            <input type="text" name="nama_mata_kuliah" id="nama_mata_kuliah"
+                                                class="form-control" placeholder="Masukkan nama mata kuliah" required
+                                                data-error="Wajib diisi">
+                                            <div class="help-block with-errors"></div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="fw-bold text-muted small text-uppercase" for="judul_modul">
+                                                Judul Modul <span class="text-danger">*</span>
+                                            </label>
+                                            <input type="text" name="judul_modul" id="judul_modul"
+                                                class="form-control" placeholder="Masukkan judul modul" required
+                                                data-error="Wajib diisi">
+                                            <div class="help-block with-errors"></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row mt-md-4">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="fw-bold text-muted small text-uppercase"
+                                                for="penulis_modul">
+                                                Penulis Modul <span class="text-danger">*</span>
+                                            </label>
+                                            <input type="text" name="penulis_modul" id="penulis_modul"
+                                                class="form-control" placeholder="Masukkan nama penulis" required
+                                                data-error="Wajib diisi">
+                                            <div class="help-block with-errors"></div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="fw-bold text-muted small text-uppercase" for="tahun_modul">
+                                                Tahun Modul <span class="text-danger">*</span>
+                                            </label>
+                                            <input type="number" name="tahun_modul" id="tahun_modul"
+                                                class="form-control" placeholder="YYYY" required
+                                                data-error="Wajib diisi">
+                                            <div class="help-block with-errors"></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row mt-md-4">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="fw-bold text-muted small text-uppercase d-block mb-3">Jenis
+                                                Modul <span class="text-danger">*</span></label>
+                                            <div class="form-check form-check-inline">
+                                                <input type="radio" class="form-check-input" name="praktikum"
+                                                    id="typeTeori" value="0" checked>
+                                                <label class="form-check-label" for="typeTeori">Teori</label>
+                                            </div>
+                                            <div class="form-check form-check-inline">
+                                                <input type="radio" class="form-check-input" name="praktikum"
+                                                    id="typePraktikum" value="1">
+                                                <label class="form-check-label" for="typePraktikum">Praktikum</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="fw-bold text-muted small text-uppercase"
+                                                for="jumlah_dibutuhkan">
+                                                Jumlah Dibutuhkan
+                                            </label>
+                                            <input type="number" name="jumlah_dibutuhkan" id="jumlah_dibutuhkan"
+                                                class="form-control" placeholder="Masukkan jumlah yang dibutuhkan"
+                                                value="0" min="0">
+                                            <div class="help-block with-errors"></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row mt-md-4">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="fw-bold text-muted small text-uppercase d-block mb-3">Apakah
+                                                Ada Revisi atau Cetak Baru? <span class="text-danger">*</span></label>
+                                            <div class="form-check form-check-inline">
+                                                <input type="radio" class="form-check-input" name="ada_revisi"
+                                                    id="revisiTidak" value="0" checked
+                                                    onchange="toggleFileUpload()">
+                                                <label class="form-check-label" for="revisiTidak">Tidak</label>
+                                            </div>
+                                            <div class="form-check form-check-inline">
+                                                <input type="radio" class="form-check-input" name="ada_revisi"
+                                                    id="revisiYa" value="1" onchange="toggleFileUpload()">
+                                                <label class="form-check-label" for="revisiYa">Ya</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group mt-md-4" id="fileUploadSection" style="display: none;">
+                                    <label class="fw-bold text-muted small text-uppercase" for="file_modul">
+                                        Upload File Modul <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="file" name="file" id="file_modul" class="form-control"
+                                        accept=".pdf,.docx">
+                                    <small class="text-muted">Format: PDF/DOCX. Upload file modul yang perlu
+                                        direvisi atau dicetak ulang.</small>
+                                    <div class="help-block with-errors"></div>
+                                </div>
+
+                                <div class="form-group my-4">
+                                    <label class="fw-bold text-muted small text-uppercase" for="deskripsi_kebutuhan">
+                                        Deskripsi Kebutuhan
+                                    </label>
+                                    <textarea name="deskripsi_kebutuhan" id="deskripsi_kebutuhan" class="form-control" rows="3"
+                                        placeholder="Jelaskan detail kebutuhan atau revisi..."></textarea>
+                                    <div class="help-block with-errors"></div>
+                                </div>
+
+                                {{-- ACTION BUTTONS --}}
+                                <div class="col-lg-12 mt-4">
+                                    <div class="d-flex justify-content-between">
+                                        <button type="button" class="btn btn-outline-secondary rounded-pill px-4"
+                                            data-bs-dismiss="modal"
+                                            onclick="switchTab('tab-user')">Sebelumnya</button>
+                                        <button type="button" id="btnOpenModal" class="btn-default"
+                                            onclick="openConfirmation()">
+                                            Kirim Permintaan
+                                        </button>
+                                    </div>
+
+                                    <div class="mt-3 text-center">
+                                        <span id="loadingIndicator" class="text-primary d-none fw-bold">
+                                            <i class="fa-solid fa-spinner fa-spin me-2"></i> Mengirim data...
+                                        </span>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </form>
                 </div>
 
                 {{-- --- HISTORY TABLE --- --}}
                 <div class="mt-5 wow fadeInUp" data-wow-delay="0.6s">
                     <div class="section-title m-0">
-                        <h3 class="wow fadeInUp fs-5">Riwayat Request Modul</h3>
+                        <h3 class="wow fadeInUp fs-5">Riwayat Pengajuan Kebutuhan Modul Terbaru</h3>
                     </div>
                     <div class="table-responsive rounded p-4 border border-3">
                         <div class="table-responsive">
@@ -427,8 +417,16 @@
                                                 @endif
                                             </td>
                                             <td class="text-center">
-                                                <span
-                                                    class="badge bg-secondary rounded-pill">{{ $item->status ?? 'Pending' }}</span>
+                                                @if ($item->status_req == 2)
+                                                    {!! $item->status_badge !!}
+                                                    @if ($item->catatan_admin)
+                                                        <small class="d-block text-muted mt-1"
+                                                            style="font-size: 0.75rem;">[Alasan:
+                                                            {{ $item->catatan_admin }}]</small>
+                                                    @endif
+                                                @else
+                                                    {!! $item->status_badge !!}
+                                                @endif
                                             </td>
                                         </tr>
                                     @empty

@@ -53,8 +53,8 @@ class ReqModulController extends Controller
         try {
             DB::beginTransaction();
 
-            $filePath = $request->hasFile('file') 
-                ? $request->file('file')->store('uploads/modul', 'public') 
+            $filePath = $request->hasFile('file')
+                ? $request->file('file')->store('uploads/modul', 'public')
                 : null;
 
             $usulanModul = ReqModul::create([
@@ -71,7 +71,6 @@ class ReqModulController extends Controller
                 'jumlah_dibutuhkan' => $request->jumlah_dibutuhkan ?? 0,
                 'deskripsi_kebutuhan' => $request->deskripsi_kebutuhan,
                 'file' => $filePath,
-                'status' => 'Pending',
             ]);
 
             DB::commit();

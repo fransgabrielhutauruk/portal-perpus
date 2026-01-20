@@ -120,7 +120,7 @@ class BeritaController extends Controller
             'slug_berita' => $slug_berita,
             'status_berita' => clean_post('status_berita'),
             'tanggal_berita' => clean_post('tanggal_berita') ? date('Y-m-d H:i:s', strtotime(clean_post('tanggal_berita'))) : date('Y-m-d H:i:s'),
-            'isi_berita' => clean_post('isi_berita'),
+            'isi_berita' => $req->isi_berita,
             'meta_keyword_berita' => clean_post('meta_keyword_berita'),
             'meta_desc_berita' => clean_post('meta_desc_berita'),
             'user_id_author' => Auth::id(),
@@ -240,7 +240,7 @@ class BeritaController extends Controller
 
                 $dt['no'] = ++$start;
                 $dt['judul_berita'] = $value['judul_berita'] ?? '-';
-                $dt['tanggal_berita'] = $value['tanggal_berita'] ? tanggal($value['tanggal_berita']) : '-';
+                $dt['tanggal_berita'] = $value['tanggal_berita'] ? tanggal($value['tanggal_berita'], ' ') : '-';
                 $dt['status_berita'] = $value['status_berita'] ?? '-';
                 $dt['author_name'] = $value['author_name'] ?? '-';
                 $dt['filename_berita'] = publicMedia($value['filename_berita'], 'berita');

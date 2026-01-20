@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers\Frontend;
 
-use App\Http\Controllers\Controller;
 use App\Models\ReqTurnitin;
-use App\Services\Frontend\SafeDataService;
-use App\Services\Frontend\ReqTurnitinService;
+use App\Enums\StatusRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Storage;
+use App\Services\Frontend\SafeDataService;
+use App\Services\Frontend\ReqTurnitinService;
 
 class ReqTurnitinController extends Controller
 {
@@ -61,7 +62,7 @@ class ReqTurnitinController extends Controller
                 'judul_dokumen' => $request->judul_dokumen,
                 'file_dokumen' => $filePath,
                 'keterangan' => $request->keterangan,
-                'status' => 'Pending',
+                'status_req' => StatusRequest::MENUNGGU->value,
             ]);
 
             DB::commit();

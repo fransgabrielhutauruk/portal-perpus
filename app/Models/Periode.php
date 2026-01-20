@@ -44,6 +44,7 @@ class Periode extends Model
     public $fillable = [
         'periode_id',
         'nama_periode',
+        'jenis_periode',
         'tanggal_mulai',
         'tanggal_selesai',
         'created_by',

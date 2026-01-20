@@ -14,8 +14,6 @@ use Illuminate\Support\Facades\Blade;
 
 class ProdiController extends Controller
 {
-        public function __construct() {}
-
     public function index()
     {
         $this->title = 'Kelola Program Studi';
@@ -28,9 +26,9 @@ class ProdiController extends Controller
         $dataTable = $builder->serverSide(true)->ajax(route('app.prodi.data') . '/list')->columns([
             Column::make(['width' => '5%', 'title' => 'No', 'data' => 'no', 'orderable' => false, 'searchable' => false, 'className' => 'text-center']),
             Column::make(['title' => 'Nama Program Studi', 'data' => 'nama_prodi']),
-            Column::make(['title' => 'Alias Program Studi', 'data' => 'alias_prodi']),            
+            Column::make(['title' => 'Alias Program Studi', 'data' => 'alias_prodi']),
             Column::make(['title' => 'Alias Jurusan', 'data' => 'alias_jurusan']),
-            Column::make(['title' => 'Aksi', 'data' => 'action']),            
+            Column::make(['title' => 'Aksi', 'data' => 'action']),
         ]);
 
         $this->dataView([
@@ -56,10 +54,9 @@ class ProdiController extends Controller
                 $dt['nama_prodi']     = $value['nama_prodi'] ?? '-';
                 $dt['alias_prodi']    = $value['alias_prodi'] ?? '-';
                 $dt['alias_jurusan']    = $value['alias_jurusan'] ?? '-';
-                
+
 
                 $Periode = Prodi::find($value['prodi_id']);
-               // $dt['role'] = $Periode ? $Periode->roles()->value('name') : 'No Role';
 
                 $id = encid($value['prodi_id']);
 
@@ -78,24 +75,6 @@ class ProdiController extends Controller
             $data['data'] = $resp;
 
             return response()->json($data);
-        } else if ($param1 = 'detail') {        
-            $id_periode = decid($req->input('id'));
-            
-            /*
-            validate_and_response([
-                'prodi_id' => [$id_periode, 'required'],
-            ]);
-            */
-            $currData = Prodi::findOrFail($id_periode);
-
-            $PeriodeData = $currData->toArray();
-          //  $PeriodeData['role'] = $currData->roles->value('name') ?? '';
-
-            return response()->json([
-                'status' => true,
-                'message' => 'Data loaded',
-                'data' => $PeriodeData
-            ]);
         } else {
             abort(404, 'Halaman tidak ditemukan');
         }
@@ -109,18 +88,14 @@ class ProdiController extends Controller
                 'alias_prodi' => ['alias_prodi', 'required'],
                 'alias_jurusan' => ['alias_jurusan', 'required'],
             ]);
-           
+
             $data['nama_prodi'] = clean_post('nama_prodi');
             $data['alias_prodi'] = clean_post('alias_prodi');
             $data['alias_jurusan'] = clean_post('alias_jurusan');
-            $data['password'] = bcrypt(uniqid());
-           // $role = clean_post('role');
 
             DB::beginTransaction();
             try {
                 $inserted = Prodi::create($data);
-
-               // $inserted->assignRole($role);
 
                 DB::commit();
                 return response()->json([
@@ -165,26 +140,24 @@ class ProdiController extends Controller
     }
 
     public function update(Request $req, $param1 = ''): JsonResponse
-    {        
+    {
         if ($param1 == '') {
             validate_and_response([
                 'nama_prodi' => ['nama_prodi', 'required'],
                 'alias_prodi' => ['alias_prodi', 'required'],
                 'alias_jurusan' => ['alias_jurusan', 'required'],
-            ]);            
-            $id = $req->input('prodi_id');            
-            $currData = Prodi::findOrFail($id);            
+            ]);
+            $id = $req->input('prodi_id');
+            $currData = Prodi::findOrFail($id);
 
             $data['nama_prodi'] = $req->input('nama_prodi');
             $data['alias_prodi'] = $req->input('alias_prodi');
             $data['alias_jurusan'] = $req->input('alias_jurusan');
-           // $newRole = clean_post('role');
 
             DB::beginTransaction();
             try {
                 $currData->update($data);
 
-               // $currData->syncRoles([$newRole]);
                 DB::commit();
                 return response()->json([
                     'status' => true,

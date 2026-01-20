@@ -42,7 +42,7 @@ class ReqTurnitinService
     public static function getMetaData()
     {
         return [
-            'title'         => 'Cek Turnitin - Perpustakaan Politeknik Caltex Riau',
+            'title'         => 'Cek Turnitin',
             'description'   => 'Halaman pengajuan cek turnitin perpustakaan Politeknik Caltex Riau.',
             'keywords'      => 'turnitin, cek plagiarisme, perpustakaan pcr, plagiarism check'
         ];

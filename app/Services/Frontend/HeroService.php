@@ -57,7 +57,7 @@ class HeroService
 
         return (object) [
             'content'         => (object) [
-                'subtitle'               => 'Selamat Datang di <br class="d-md-none"> Politeknik Caltex Riau',
+                'subtitle'               => 'Selamat Datang di <br class="d-md-none"> Perpustakaan Politeknik Caltex Riau',
                 'default_title_duration' => 5 // seconds per title if image
             ],
             'slides'          => $processedSlides,
@@ -70,15 +70,15 @@ class HeroService
     {
         return [
             [
-                'text'   => 'Profil PCR',
-                'url'    => 'https://youtu.be/D4HdqnHSQ0o?si=_Aw2ZtYIXAxTV_Ua',
-                'class'  => 'btn-default btn-highlighted btn-play',
+                'text'   => 'Telusuri OPAC',
+                'url'    => 'https://opac.lib.pcr.ac.id',
+                'class'  => 'btn-default btn-highlighted',
                 'target' => '_blank',
-                'type'   => 'video'
+                'type'   => 'cta'
             ],
             [
-                'text'   => 'Daftar Sekarang',
-                'url'    => 'https://pmb.pcr.ac.id',
+                'text'   => 'Repository',
+                'url'    => 'https://repository.lib.pcr.ac.id',
                 'class'  => 'btn-default btn-highlighted',
                 'target' => '_blank',
                 'type'   => 'cta'
@@ -90,15 +90,14 @@ class HeroService
     {
         return [
             [
-                'subtitle'     => 'Selamat Datang di Politeknik Caltex Riau',
+                'subtitle'     => 'Selamat Datang di Perpustakaan Politeknik Caltex Riau',
                 'titles'       => [
-                    'Kampus <b>IDEAL</b> untuk Masa Depan Gemilang',
-                    'Kampus bebas Asap Rokok, Ramah Lingkungan dan Tertib Lalu Lintas'
+                    'Membangun Literasi, <b>Mencerdaskan Generasi</b>'
                 ],
                 'media'        => [
-                    'type'     => 'video',
-                    'src'      => publicMedia('profil-pcr.webm'),
-                    'duration' => 120
+                    'type'     => 'image',
+                    'src'      => publicMedia('perpus-1.jpg', 'perpus'),
+                    'duration' => 12
                 ],
                 'cta'          => self::getDefaultCTA(),
                 'social_media' => true
@@ -116,31 +115,46 @@ class HeroService
     {
         return [
             [
-                'subtitle'     => 'Politeknik Swasta Terbaik',
+                'subtitle'     => 'Layanan Perpustakaan',
                 'titles'       => [
-                    'Pendidikan Vokasi Berkualitas',
-                    'Siap Kerja, Siap Bersaing Global'
+                    'Usulan Buku, Kebutuhan Modul Semester',
+                    'Bebas Pustaka, Cek Turnitin'
                 ],
                 'media'        => [
                     'type'     => 'image',
-                    'src'      => publicMedia('welcome-smile.webp'),
-                    'duration' => 12 // 12 seconds total, 6 seconds per title
+                    'src'      => publicMedia('perpus-2.jpg', 'perpus'),
+                    'duration' => 12
                 ],
-                'cta'          => self::getDefaultCTA(),
-                'social_media' => true
-            ],
-            [
-                'subtitle'     => 'Bersinergi menjadi Kampus Berdampak',
-                'titles'       => [
-                    'Inovasi dan Teknologi Unggul',
-                    'Riset Terapan untuk Masa Depan Berdampak'
+                'cta'          => [
+                    [
+                        'text'   => 'Usulan Buku',
+                        'url'    => route('frontend.req.buku'),
+                        'class'  => 'btn-default btn-highlighted',
+                        'target' => '_self',
+                        'type'   => 'cta'
+                    ],
+                    [
+                        'text'   => 'Kebutuhan Modul Semester',
+                        'url'    => route('frontend.req.modul'),
+                        'class'  => 'btn-default btn-highlighted',
+                        'target' => '_self',
+                        'type'   => 'cta'
+                    ],
+                    [
+                        'text'   => 'Bebas Pustaka',
+                        'url'    => route('frontend.req.bebas-pustaka'),
+                        'class'  => 'btn-default btn-highlighted',
+                        'target' => '_self',
+                        'type'   => 'cta'
+                    ],
+                    [
+                        'text'   => 'Cek Turnitin',
+                        'url'    => route('frontend.req.turnitin'),
+                        'class'  => 'btn-default btn-highlighted',
+                        'target' => '_self',
+                        'type'   => 'cta'
+                    ]
                 ],
-                'media'        => [
-                    'type'     => 'image',
-                    'src'      => publicMedia('welcome-riset.webp'),
-                    'duration' => 24 // 24 seconds video, 8 seconds per title
-                ],
-                'cta'          => [],
                 'social_media' => true
             ]
         ];

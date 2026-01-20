@@ -29,7 +29,7 @@ return new class extends Migration
             $table->boolean('is_syarat_terpenuhi')->default(false);
             
             // Default status 'Pending' (atau sesuaikan dengan kebutuhan bisnis)
-            $table->integer('status')->default(0); 
+            $table->integer('status_req')->default(0); 
 
             // 4. Admin & File
             $table->text('catatan_admin')->nullable();

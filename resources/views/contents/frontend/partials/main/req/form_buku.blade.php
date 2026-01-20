@@ -152,7 +152,7 @@
                                 <div class="mt-4 mb-2 d-flex justify-content-center">
                                     <div class="d-inline-block border border-2 py-2 px-5 rounded text-start">
                                         <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" id="agreementCheck"
+                                            <input class="form-check-input border-dark" type="checkbox" id="agreementCheck"
                                                 onchange="toggleNextButton()">
                                             <label class="form-check-label" for="agreementCheck">
                                                 Saya sudah memeriksa OPAC dan buku belum tersedia.
@@ -187,16 +187,17 @@
                                         <div class="form-group">
                                             <label class="fw-bold text-muted small text-uppercase" for="nama_req">Nama
                                                 Lengkap <span class="text-danger">*</span></label>
-                                            <input type="text" name="nama_req" id="nama_req" class="form-control" placeholder="Masukkan nama lengkap" required
-                                                data-error="Wajib diisi">
+                                            <input type="text" name="nama_req" id="nama_req" class="form-control"
+                                                placeholder="Masukkan nama lengkap" required data-error="Wajib diisi">
                                             <div class="help-block with-errors"></div>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label class="fw-bold text-muted small text-uppercase" for="email_req">Email PCR <span
-                                                    class="text-danger">*</span></label>
-                                            <input type="email" name="email_req" id="email_req" class="form-control" placeholder="Masukkan Email PCR" required
+                                            <label class="fw-bold text-muted small text-uppercase" for="email_req">Email
+                                                PCR <span class="text-danger">*</span></label>
+                                            <input type="email" name="email_req" id="email_req" class="form-control"
+                                                placeholder="Masukkan Email PCR" required
                                                 data-error="Email tidak valid">
                                             <div class="help-block with-errors"></div>
                                         </div>
@@ -222,7 +223,8 @@
                                             <input type="number" name="nim" id="input_nim" class="form-control"
                                                 placeholder="Masukkan NIM" required data-error="NIM Wajib diisi">
                                             <input type="number" name="nip" id="input_nip" class="form-control"
-                                                placeholder="Masukkan NIP" style="display:none;" data-error="NIP Wajib diisi">
+                                                placeholder="Masukkan NIP" style="display:none;"
+                                                data-error="NIP Wajib diisi">
                                             <div class="help-block with-errors"></div>
                                         </div>
                                     </div>
@@ -260,18 +262,21 @@
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label class="fw-bold text-muted small text-uppercase" for="judul_buku">Judul
+                                            <label class="fw-bold text-muted small text-uppercase"
+                                                for="judul_buku">Judul
                                                 Buku <span class="text-danger">*</span></label>
-                                            <input type="text" name="judul_buku" id="judul_buku" class="form-control" placeholder="Masukkan judul buku" required
+                                            <input type="text" name="judul_buku" id="judul_buku"
+                                                class="form-control" placeholder="Masukkan judul buku" required
                                                 data-error="Wajib diisi">
                                             <div class="help-block with-errors"></div>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label class="fw-bold text-muted small text-uppercase" for="penulis_buku">Penulis <span
-                                                    class="text-danger">*</span></label>
-                                            <input type="text" name="penulis_buku" id="penulis_buku" class="form-control" placeholder="Masukkan penulis" required
+                                            <label class="fw-bold text-muted small text-uppercase"
+                                                for="penulis_buku">Penulis <span class="text-danger">*</span></label>
+                                            <input type="text" name="penulis_buku" id="penulis_buku"
+                                                class="form-control" placeholder="Masukkan penulis" required
                                                 data-error="Wajib diisi">
                                             <div class="help-block with-errors"></div>
                                         </div>
@@ -281,10 +286,12 @@
                                 <div class="row mt-md-4">
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label class="fw-bold text-muted small text-uppercase" for="tahun_terbit">Tahun
+                                            <label class="fw-bold text-muted small text-uppercase"
+                                                for="tahun_terbit">Tahun
                                                 Terbit (Wajib 5 Tahun Terakhir) <span
                                                     class="text-danger">*</span></label>
-                                            <input type="number" name="tahun_terbit" id="tahun_terbit" class="form-control" placeholder="Masukkan tahun terbit" required
+                                            <input type="number" name="tahun_terbit" id="tahun_terbit"
+                                                class="form-control" placeholder="Masukkan tahun terbit" required
                                                 data-error="Wajib diisi">
                                             <div class="help-block with-errors"></div>
                                         </div>
@@ -395,18 +402,22 @@
                                 <div class="row mt-md-4">
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label class="fw-bold text-muted small text-uppercase" for="estimasi_harga">Estimasi
+                                            <label class="fw-bold text-muted small text-uppercase"
+                                                for="estimasi_harga">Estimasi
                                                 Harga (Jika Ada)</label>
-                                            <input type="number" name="estimasi_harga" id="estimasi_harga" placeholder="Masukkan estimasi harga" class="form-control"
+                                            <input type="number" name="estimasi_harga" id="estimasi_harga"
+                                                placeholder="Masukkan estimasi harga" class="form-control"
                                                 data-error="Wajib diisi">
                                             <div class="help-block with-errors"></div>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
-                                        <label class="fw-bold text-muted small text-uppercase" for="link_pembelian">Link
+                                        <label class="fw-bold text-muted small text-uppercase"
+                                            for="link_pembelian">Link
                                             Pembelian <span class="text-danger">*</span></label>
-                                        <input type="text" name="link_pembelian" id="link_pembelian" class="form-control"
-                                            placeholder="https://..." required data-error="Wajib diisi">
+                                        <input type="text" name="link_pembelian" id="link_pembelian"
+                                            class="form-control" placeholder="https://..." required
+                                            data-error="Wajib diisi">
                                         <div class="help-block with-errors"></div>
                                     </div>
                                 </div>
@@ -414,7 +425,8 @@
                                 <div class="form-group my-4">
                                     <label class="fw-bold text-muted small text-uppercase" for="alasan_usulan">Alasan
                                         Usulan <span class="text-danger">*</span></label>
-                                    <textarea name="alasan_usulan" id="alasan_usulan" class="form-control" rows="1" placeholder="Masukkan alasan usulan" required data-error="Wajib diisi"></textarea>
+                                    <textarea name="alasan_usulan" id="alasan_usulan" class="form-control" rows="1"
+                                        placeholder="Masukkan alasan usulan" required data-error="Wajib diisi"></textarea>
                                     <div class="help-block with-errors"></div>
                                 </div>
 
@@ -468,12 +480,15 @@
                                         <td>{{ $item->nama_req }}</td>
                                         <td>{{ \Carbon\Carbon::parse($item->created_at)->format('d M Y') }}</td>
                                         <td class="text-center">
-                                            @if ($item->status_req == 0)
-                                                <span class="badge bg-warning text-dark rounded-pill">Menunggu</span>
-                                            @elseif($item->status_req == 1)
-                                                <span class="badge bg-success rounded-pill">Disetujui</span>
+                                            @if ($item->status_req == 2)
+                                                {!! $item->status_badge !!}
+                                                @if ($item->catatan_admin)
+                                                    <small class="d-block text-muted mt-1"
+                                                        style="font-size: 0.75rem;">[Alasan:
+                                                        {{ $item->catatan_admin }}]</small>
+                                                @endif
                                             @else
-                                                <span class="badge bg-danger rounded-pill">Ditolak</span>
+                                                {!! $item->status_badge !!}
                                             @endif
                                         </td>
                                     </tr>
@@ -578,64 +593,70 @@
         }
 
         fetch(form.action, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                'Accept': 'application/json'
-            },
-            body: JSON.stringify(jsonData)
-        })
-        .then(res => {
-            const contentType = res.headers.get('content-type');
-            if (!contentType || !contentType.includes('application/json')) {
-                throw new Error('Server mengembalikan response tidak valid');
-            }
-            return res.json().then(data => ({ status: res.status, body: data }));
-        })
-        .then(({ status, body }) => {
-            loading.classList.add('d-none');
-            submitBtn.disabled = false;
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify(jsonData)
+            })
+            .then(res => {
+                const contentType = res.headers.get('content-type');
+                if (!contentType || !contentType.includes('application/json')) {
+                    throw new Error('Server mengembalikan response tidak valid');
+                }
+                return res.json().then(data => ({
+                    status: res.status,
+                    body: data
+                }));
+            })
+            .then(({
+                status,
+                body
+            }) => {
+                loading.classList.add('d-none');
+                submitBtn.disabled = false;
 
-            if (status === 200 || status === 201) {
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Berhasil!',
-                    text: body.message,
-                    confirmButtonText: 'OK',
-                    confirmButtonColor: '#28a745',
-                    allowOutsideClick: false
-                }).then(() => {
-                    form.reset();
-                    if (body.new_data) addHistoryRow(body.new_data);
-                    switchTab('tab-attention');
-                });
-            } else {
-                const errorMsg = body.errors 
-                    ? Object.values(body.errors).flat().join('\n') 
-                    : body.message || 'Terjadi kesalahan.';
-                
+                if (status === 200 || status === 201) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Berhasil!',
+                        text: body.message,
+                        confirmButtonText: 'OK',
+                        confirmButtonColor: '#28a745',
+                        allowOutsideClick: false
+                    }).then(() => {
+                        form.reset();
+                        if (body.new_data) addHistoryRow(body.new_data);
+                        switchTab('tab-attention');
+                    });
+                } else {
+                    const errorMsg = body.errors ?
+                        Object.values(body.errors).flat().join('\n') :
+                        body.message || 'Terjadi kesalahan.';
+
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Gagal!',
+                        text: errorMsg,
+                        confirmButtonText: 'OK',
+                        confirmButtonColor: '#dc3545'
+                    });
+                }
+            })
+            .catch(error => {
+                loading.classList.add('d-none');
+                submitBtn.disabled = false;
+
                 Swal.fire({
                     icon: 'error',
-                    title: 'Gagal!',
-                    text: errorMsg,
+                    title: 'Error!',
+                    text: error.message || 'Terjadi kesalahan jaringan.',
                     confirmButtonText: 'OK',
                     confirmButtonColor: '#dc3545'
                 });
-            }
-        })
-        .catch(error => {
-            loading.classList.add('d-none');
-            submitBtn.disabled = false;
-            
-            Swal.fire({
-                icon: 'error',
-                title: 'Error!',
-                text: error.message || 'Terjadi kesalahan jaringan.',
-                confirmButtonText: 'OK',
-                confirmButtonColor: '#dc3545'
             });
-        });
     }
 
     function addHistoryRow(data) {
@@ -680,7 +701,7 @@
             $('#jenis-buku-error').toggleClass('d-none', hasJenisBuku);
             if (!hasJenisBuku) isValid = false;
 
-            const hasPenerbit = $tab.find('.penerbit-checkbox:checked').length > 0 || 
+            const hasPenerbit = $tab.find('.penerbit-checkbox:checked').length > 0 ||
                 $('#penerbit_other_text').val().trim();
             $('#penerbit-error').toggleClass('d-none', hasPenerbit);
             if (!hasPenerbit) isValid = false;
@@ -689,7 +710,9 @@
         if (!isValid) {
             const $firstError = $tab.find('.has-error').first();
             if ($firstError.length) {
-                $('html, body').animate({ scrollTop: $firstError.offset().top - 100 }, 500);
+                $('html, body').animate({
+                    scrollTop: $firstError.offset().top - 100
+                }, 500);
             }
         }
         return isValid;

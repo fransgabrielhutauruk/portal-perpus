@@ -11,7 +11,7 @@
 
     <style>
         body {
-            background: linear-gradient(135deg, #436c75, #328191);
+            background: linear-gradient(135deg, #e3f2fd, #bbdefb);
             min-height: 100vh;
         }
     </style>
@@ -29,14 +29,12 @@
                     </div>
                 @endif
 
-                <h5 class="card-title text-center fs-3 mb-4 fw-bold text-white text-uppercase">Portal Perpustakaan</h5>
+                <img src="{{ asset('theme') }}/frontend/images/logo-portal.webp" alt="Logo Politeknik Caltex Riau"
+                    class="wow fadeInOut img-fluid mb-4 text-center d-flex mx-auto" data-wow-delay="0.7s"
+                    style="height: 50px">
 
-                <div class="card shadow-lg border-0 mx-auto py-3">
-                    <div class="card-body p-4">
-                        <img src="{{ asset('theme') }}/frontend/images/logo-pcr.png" alt="Logo Politeknik Caltex Riau"
-                            class="wow fadeInOut img-fluid mb-4 text-center d-flex mx-auto" data-wow-delay="0.7s"
-                            style="height: 35px">
-
+                <div class="card shadow border-0 mx-auto px-5 py-4">
+                    <div class="card-body">
                         <a href="{{ route('login.google', ['provider' => 'google']) }}"
                             class="btn-default w-100 d-flex align-items-center justify-content-center gap-2">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="20" height="20">

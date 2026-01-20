@@ -20,8 +20,10 @@ class ReqModulService
         $history = self::getRecentProposals();
 
         $activePeriode = DB::table('mst_periode')
+            ->where('jenis_periode', 'req_modul')
             ->whereDate('tanggal_mulai', '<=', now())
             ->whereDate('tanggal_selesai', '>=', now())
+            ->whereNull('deleted_at')
             ->first(); // Gets the row object or null
 
         // 1. Check what the DB actually contains
@@ -66,7 +68,7 @@ class ReqModulService
                 'inisial_dosen',
                 'praktikum',
                 'created_at',
-                'status'
+                'status_req'
             )
                 ->orderBy('created_at', 'desc')
                 ->limit($limit)
@@ -84,7 +86,7 @@ class ReqModulService
     public static function getMetaData()
     {
         return [
-            'title'         => 'Kebutuhan Modul Semester - Perpustakaan PCR',
+            'title'         => 'Kebutuhan Modul Semester',
             'description'   => 'Halaman pengajuan request modul/buku perpustakaan Politeknik Caltex Riau.',
             'keywords'      => 'request modul, usulan modul, perpustakaan pcr, pengadaan modul'
         ];

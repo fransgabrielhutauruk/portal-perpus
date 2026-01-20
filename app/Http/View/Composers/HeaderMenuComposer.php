@@ -5,11 +5,15 @@ namespace App\Http\View\Composers;
 use Illuminate\View\View;
 use Illuminate\Support\Str;
 use App\Models\Dimension\Jurusan;
+use App\Services\Frontend\PanduanService;
 
 class HeaderMenuComposer
 {
     public function compose(View $view)
     {
+        // Get panduan list for menu
+        $panduanMenuItems = PanduanService::getPanduanForMenu();
+        
         $menu = [
             [
                 'name'  => 'Beranda',
@@ -28,12 +32,12 @@ class HeaderMenuComposer
             [
                 'name'     => 'Akses dan Koleksi',
                 'children' => [
-                    ['name' => 'OPAC', 'route' => 'https://lib.pcr.ac.id/'],
-                    ['name' => 'Repository', 'route' => 'https://baak.pcr.ac.id/kalender-akademik/'],
-                    ['name' => 'ISBN Penerbit PCR', 'route' => route('frontend.home')],
-                    ['name' => 'E-Journal PCR', 'route' => route('frontend.home')],
-                    ['name' => 'Jurnal Tercetak', 'route' => route('frontend.home')],
-                    ['name' => 'E-book Langganan', 'route' => route('frontend.home')],
+                    ['name' => 'OPAC', 'route' => 'https://opac.lib.pcr.ac.id/', 'target' => '_blank'],
+                    ['name' => 'Repository', 'route' => 'https://repository.lib.pcr.ac.id/', 'target' => '_blank'],
+                    ['name' => 'ISBN Penerbit PCR', 'route' => 'https://isbn.lib.pcr.ac.id', 'target' => '_blank'],
+                    ['name' => 'E-Journal PCR', 'route' => 'https://jurnal.pcr.ac.id', 'target' => '_blank'],
+                    ['name' => 'Jurnal Tercetak', 'route' => 'https://opac.lib.pcr.ac.id/index.php?keywords=jurnal&search=search', 'target' => '_blank'],
+                    ['name' => 'E-book Langganan', 'route' => 'https://www.emerald.com/insight/', 'target' => '_blank'],
                 ],
             ],
             ['name' => 'Fasilitas', 'route' => route('frontend.home')],
@@ -46,7 +50,11 @@ class HeaderMenuComposer
                     ['name' => 'Surat Bebas Pustaka', 'route' => route('frontend.req.bebas-pustaka')],
                 ],
             ],
-            ['name' => 'Panduan', 'route' => route('frontend.home')],
+            [
+                'name'     => 'Panduan',
+                'route'    => route('frontend.panduan.index'),
+                'children' => $panduanMenuItems,
+            ],
             ['name' => 'Berita', 'route' => route('frontend.berita.index')],
             ['name' => 'FAQ', 'route' => route('frontend.home')],
         ];

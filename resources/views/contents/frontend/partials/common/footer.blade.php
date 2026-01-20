@@ -20,7 +20,8 @@
                         @endforeach
                     </ul>
                 </div>
-                <a href="{{ data_get($siteIdentity, 'contact.address.maps_url', '#') }}" target="_blank" class="footer-location-text">
+                <a href="{{ data_get($siteIdentity, 'contact.address.maps_url', '#') }}" target="_blank"
+                    class="footer-location-text">
                     <i class="fa-solid fa-location-dot"></i>
                     <span>{{ data_get($siteIdentity, 'contact.address.full', 'Alamat tidak tersedia') }}</span>
                 </a>
@@ -36,6 +37,13 @@
                         <span>{{ data_get($siteIdentity, 'contact.phone.mobile', '-') }}</span>
                     </div>
                 </div>
+
+                <div class="footer-contact">
+                    <div class="footer-contact-info">
+                        <i class="fa-solid fa-envelope"></i>
+                        <span>{{ data_get($siteIdentity, 'contact.email', 'pustaka@pcr.ac.id') }}</span>
+                    </div>
+                </div>
             </div>
 
             <div class="col-md-3 mt-4 mt-md-0">
@@ -44,7 +52,8 @@
                     <ul>
                         @foreach (data_get($siteIdentity, 'menus.services', []) as $service)
                             <li>
-                                <a href="{{ $service['url'] }}" @if($service['external']) target="_blank" @endif>
+                                <a href="{{ $service['url'] }}"
+                                    @if ($service['external']) target="_blank" @endif>
                                     {{ $service['title'] }}
                                 </a>
                             </li>
@@ -55,12 +64,12 @@
 
             <div class="col-md-3 mt-4 mt-md-0">
                 <div class="footer-menu">
-                    <h3>Akademik</h3>
+                    <h3>Form</h3>
                     <ul>
-                        @foreach (data_get($siteIdentity, 'menus.academic', []) as $academic)
+                        @foreach (data_get($siteIdentity, 'menus.forms', []) as $form)
                             <li>
-                                <a href="{{ $academic['url'] }}" @if($academic['external']) target="_blank" @endif>
-                                    {{ $academic['title'] }}
+                                <a href="{{ $form['url'] }}" @if ($form['external']) target="_blank" @endif>
+                                    {{ $form['title'] }}
                                 </a>
                             </li>
                         @endforeach

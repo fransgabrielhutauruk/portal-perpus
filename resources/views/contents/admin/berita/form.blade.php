@@ -21,7 +21,7 @@
                         <x-form.textarea class="mb-2" type="text" label="Judul Berita" name="judul_berita" required>
                             {{ $pageData->dataBerita['judul_berita'] }}
                         </x-form.textarea>
-                        <x-form.textarea class="mb-2" data-tinymce="advance" rows="25" label="Isi Berita"
+                        <x-form.textarea class="mb-2" data-tinymce="advance" rows="5" label="Isi Berita"
                             name="isi_berita" value="">{{ $pageData->dataBerita['isi_berita'] }}</x-form.textarea>
                     </x-card>
                 </div>
@@ -144,6 +144,8 @@
                     cropBoxResizable: true,
                     cropBoxMovable: true,
                     dragMode: 'move',
+                    viewMode: 1,
+                    autoCropArea: 1,
                 });
             };
 
@@ -165,18 +167,12 @@
 
         $(document).on('click', '.act-save', function() {
             if (cropper) {
-                dataURL = cropper.getCroppedCanvas({
-                    width: 930,
-                    height: 520
-                }).toDataURL('image/jpeg');
+                dataURL = cropper.getCroppedCanvas().toDataURL('image/jpeg');
 
                 $('#coverContent > img').remove()
                 $('#coverContent').append(`<img src="${dataURL}" class="w-100 h-auto rounded">`)
 
-                cropper.getCroppedCanvas({
-                    width: 930,
-                    height: 520
-                }).toBlob(function(blob) {
+                cropper.getCroppedCanvas().toBlob(function(blob) {
                     var file = new File([blob], 'cover.jpg', {
                         type: 'image/jpeg'
                     });

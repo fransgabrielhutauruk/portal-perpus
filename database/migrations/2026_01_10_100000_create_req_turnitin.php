@@ -26,7 +26,7 @@ return new class extends Migration
             $table->string('file_dokumen');
             $table->text('keterangan');
 
-            $table->string('status')->default('Pending');
+            $table->string('status_req')->default(0);
             $table->text('catatan_admin')->nullable();
 
             $table->string('created_by')->nullable();

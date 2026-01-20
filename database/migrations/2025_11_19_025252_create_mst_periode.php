@@ -15,9 +15,10 @@ return new class extends Migration
             $table->id('periode_id');
             $table->timestamps();
             $table->string("nama_periode");
+            $table->enum("jenis_periode", ['req_buku', 'req_modul', 'req_bebas_pustaka']);
             $table->date("tanggal_mulai");
             $table->date("tanggal_selesai");
-             $table->string('created_by', 10)->nullable();
+            $table->string('created_by', 10)->nullable();
             $table->string('updated_by', 10)->nullable();
             $table->string('deleted_by', 10)->nullable();
             $table->softDeletes();

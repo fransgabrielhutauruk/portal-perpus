@@ -15,7 +15,7 @@ class PageHeader extends Component
      */
     public function __construct(
         public array $breadcrumbs = [],
-        public string $image = '',
+        public ?string $image = '',
     ) {
         // Initialize
         $this->breadcrumb_items = [

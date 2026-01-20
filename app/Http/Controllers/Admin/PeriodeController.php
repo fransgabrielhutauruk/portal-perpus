@@ -29,6 +29,7 @@ class PeriodeController extends Controller
         $dataTable = $builder->serverSide(true)->ajax(route('app.periode.data') . '/list')->columns([
             Column::make(['width' => '5%', 'title' => 'No', 'data' => 'no', 'orderable' => false, 'searchable' => false, 'className' => 'text-center']),
             Column::make(['title' => 'Nama', 'data' => 'nama_periode']),
+            Column::make(['title' => 'Jenis Periode', 'data' => 'jenis_periode']),
             Column::make(['title' => 'Tanggal Mulai', 'data' => 'tanggal_mulai']),            
             Column::make(['title' => 'Tanggal Selesai', 'data' => 'tanggal_selesai']),
             Column::make(['title' => 'Aksi', 'data' => 'action']),            
@@ -55,12 +56,12 @@ class PeriodeController extends Controller
 
                 $dt['no']       = ++$start;
                 $dt['nama_periode']     = $value['nama_periode'] ?? '-';
-                $dt['tanggal_mulai']    = $value['tanggal_mulai'] ?? '-';
-                $dt['tanggal_selesai']    = $value['tanggal_selesai'] ?? '-';
+                $dt['jenis_periode']    = ucwords(str_replace('_', ' ', $value['jenis_periode'] ?? '-'));
+                $dt['tanggal_mulai']    = tanggal($value['tanggal_mulai'], ' ') ?? '-';
+                $dt['tanggal_selesai']    = tanggal($value['tanggal_selesai'], ' ') ?? '-';
                 
 
                 $Periode = Periode::find($value['periode_id']);
-               // $dt['role'] = $Periode ? $Periode->roles()->value('name') : 'No Role';
 
                 $id = encid($value['periode_id']);
 
@@ -107,11 +108,13 @@ class PeriodeController extends Controller
         if ($param1 == '') {
             validate_and_response([
                 'nama_periode' => ['Nama', 'required'],
+                'jenis_periode' => ['Jenis Periode', 'required|in:req_buku,req_modul,req_bebas_pustaka'],
                 'tanggal_mulai' => ['tanggal_mulai', 'required|date'],
                 'tanggal_selesai' => ['tanggal_selesai', 'required|date'],
             ]);
            
             $data['nama_periode'] = clean_post('nama_periode');
+            $data['jenis_periode'] = clean_post('jenis_periode');
             $data['tanggal_mulai'] = clean_post('tanggal_mulai');
             $data['tanggal_selesai'] = clean_post('tanggal_selesai');
             $data['password'] = bcrypt(uniqid());
@@ -170,6 +173,7 @@ class PeriodeController extends Controller
         if ($param1 == '') {
             validate_and_response([
                 'nama_periode' => ['nama_periode', 'required'],
+                'jenis_periode' => ['Jenis Periode', 'required|in:req_buku,req_modul,req_bebas_pustaka'],
                 'tanggal_mulai' => ['tanggal_mulai', 'required|date'],
                 'tanggal_selesai' => ['tanggal_selesai', 'required|date'],
             ]);            
@@ -177,6 +181,7 @@ class PeriodeController extends Controller
             $currData = Periode::findOrFail($id);            
 
             $data['nama_periode'] = $req->input('nama_periode');
+            $data['jenis_periode'] = $req->input('jenis_periode');
             $data['tanggal_mulai'] = $req->input('tanggal_mulai');
             $data['tanggal_selesai'] = $req->input('tanggal_selesai');
            // $newRole = clean_post('role');

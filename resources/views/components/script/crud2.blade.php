@@ -247,7 +247,9 @@
             
                 // set hidden input formApprove
                 $('[jf-form="approve"] [name="reqbuku_id"]').val(approveId);                                                 
-                $('[jf-form="approve"] [name="reqmodul_id"]').val(approveId);                                                 
+                $('[jf-form="approve"] [name="reqmodul_id"]').val(approveId);
+                $('[jf-form="approve"] [name="reqbebaspustaka_id"]').val(approveId);
+                $('[jf-form="approve"] [name="reqturnitin_id"]').val(approveId);                                                 
             });                   
 
             $(document).on('click', '[jf-save="approve"]', function(e) {    
@@ -256,39 +258,23 @@
                 let form = $('[jf-form="approve"]');
                 let formEl = form[0];
 
-                let approveId = form.find('[name="reqbuku_id"]').val();
-                let approveIdModul = form.find('[name="reqmodul_id"]').val();
-                console.log("approve save clicked with id", approveId);
-                console.log("approve save clicked with id", approveIdModul);
+                // Serialize all form data
+                let formData = {};
+                $(formEl).serializeArray().forEach(function(field) {
+                    formData[field.name] = field.value;
+                });
 
-                let formData = new FormData(formEl);
-                console.log("FormData:", formData);
-                console.log("Action URL =", form.attr("action"));
+                console.log("approve save clicked with data", formData);
 
-                if(approveId){
                 ajaxRequest({
-                    link: "{{ route('app.usulan.approve') }}",
-                    data: {reqbuku_id: approveId},
+                    link: base_url + '/approve',
+                    data: formData,
                     swal_success: true,
                     callback: function() {
                         $('[jf-modal="approve"]').modal('hide');
-                        $('table[jf-data="usulan"]').DataTable().ajax.reload(null, false);
+                        $('table[jf-data="' + name + '"]').DataTable().ajax.reload(null, false);
                     }
                 });
-                }
-                else{
-                ajaxRequest({
-                    link: "{{ route('app.usulan-modul.approve') }}",
-                    data: {reqmodul_id: approveIdModul},
-                    swal_success: true,
-                    callback: function() {
-                        $('[jf-modal="approve"]').modal('hide');
-                        
-                            $('table[jf-data="modul"]').DataTable().ajax.reload(null, false);
-                                            
-                    }
-                });  
-                }  
             });   
 
             
@@ -313,7 +299,9 @@
                 
                 // set hidden input formreject
                 $('[jf-form="reject"] [name="reqbuku_id"]').val(rejectId);      
-                $('[jf-form="reject"] [name="reqmodul_id"]').val(rejectId);                                                 
+                $('[jf-form="reject"] [name="reqmodul_id"]').val(rejectId);
+                $('[jf-form="reject"] [name="reqbebaspustaka_id"]').val(rejectId);
+                $('[jf-form="reject"] [name="reqturnitin_id"]').val(rejectId);                                                 
             });                   
 
             $(document).on('click', '[jf-save="reject"]', function(e) {    
@@ -322,40 +310,23 @@
                 let form = $('[jf-form="reject"]');
                 let formEl = form[0];
 
-                
-                let rejectId = form.find('[name="reqbuku_id"]').val();
-                let rejectIdModul = form.find('[name="reqmodul_id"]').val();
-                console.log("reject save clicked with id", rejectId);
-                console.log("reject save clicked with id modul", rejectIdModul);
+                // Serialize all form data
+                let formData = {};
+                $(formEl).serializeArray().forEach(function(field) {
+                    formData[field.name] = field.value;
+                });
 
-                let formData = new FormData(formEl);
-                console.log("FormData:", formData);
-                console.log("Action URL =", form.attr("action"));
+                console.log("reject save clicked with data", formData);
 
-
-                if(rejectId){
                 ajaxRequest({
-                    link: "{{ route('app.usulan.reject') }}",
-                    data: {reqbuku_id: rejectId, catatan_admin: form.find('[name="catatan_admin"]').val()},
+                    link: base_url + '/reject',
+                    data: formData,
                     swal_success: true,
                     callback: function() {
                         $('[jf-modal="reject"]').modal('hide');
-                        $('table[jf-data="usulan"]').DataTable().ajax.reload(null, false);
+                        $('table[jf-data="' + name + '"]').DataTable().ajax.reload(null, false);
                     }
-                });    
-                }
-                else{
-                    console.log(rejectIdModul);
-                     ajaxRequest({
-                    link: "{{ route('app.usulan-modul.reject') }}",
-                    data: {reqmodul_id: rejectIdModul, catatan_admin: form.find('[name="catatan_admin"]').val()},
-                    swal_success: true,
-                    callback: function() {
-                        $('[jf-modal="reject"]').modal('hide');
-                        $('table[jf-data="modul"]').DataTable().ajax.reload(null, false);
-                    }
-                });    
-                }
+                });
             });   
 
 
@@ -553,7 +524,7 @@
                             selector: tinyMCESelector,
                             menubar: false,
                             width: '100%',
-                            height: '340',
+                            height: '500',
                             toolbar: [
                                 "undo redo | formatselect fontselect fontsizeselect | bold italic forecolor backcolor | bullist numlist | outdent indent | alignleft aligncenter alignright alignjustify | table link image media | code removeformat"
                             ],

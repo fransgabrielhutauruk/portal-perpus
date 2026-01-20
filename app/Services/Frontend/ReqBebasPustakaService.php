@@ -19,24 +19,17 @@ class ReqBebasPustakaService
         // 1. Fetch Recent Requests (History)
         $history = self::getRecentRequests();
 
-        // Note: Bebas Pustaka might not depend on a specific "Period" like book proposals.
-        // If it's always open, we can just set is_open to true.
-        // However, if you want it tied to a graduation period, keep this logic.
-        // For now, I will assume it is always open or tied to a generic period logic if needed.
-
-        // OPTION A: Always Open (Common for Bebas Pustaka)
-        $isOpen = true;
-        $periodeName = 'Periode Wisuda Aktif';
-
-        // OPTION B: Use mst_periode (Uncomment if needed)
-        /*
+        // Fetch the active periode for Bebas Pustaka
         $activePeriode = DB::table('mst_periode')
+            ->where('jenis_periode', 'req_bebas_pustaka')
             ->whereDate('tanggal_mulai', '<=', now())
             ->whereDate('tanggal_selesai', '>=', now())
+            ->whereNull('deleted_at')
             ->first();
+        
         $isOpen = $activePeriode ? true : false;
         $periodeName = $activePeriode ? $activePeriode->nama_periode : '-';
-        */
+
 
         // 2. Fetch Prodi List
         $prodiList = DB::table('dm_prodi')
@@ -91,7 +84,7 @@ class ReqBebasPustakaService
     public static function getMetaData()
     {
         return [
-            'title'         => 'Bebas Pustaka - Perpustakaan Politeknik Caltex Riau',
+            'title'         => 'Bebas Pustaka',
             'description'   => 'Halaman pengajuan surat bebas pustaka perpustakaan Politeknik Caltex Riau.',
             'keywords'      => 'bebas pustaka, surat keterangan bebas pustaka, perpustakaan pcr, wisuda'
         ];

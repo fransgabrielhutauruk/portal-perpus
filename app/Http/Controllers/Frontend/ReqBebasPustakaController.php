@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers\Frontend;
 
-use App\Http\Controllers\Controller;
+use App\Enums\StatusRequest;
 use Illuminate\Http\Request;
-use App\Services\Frontend\SafeDataService;
-use App\Services\Frontend\ReqBebasPustakaService;
 use App\Models\ReqBebasPustaka;
 use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\Controller;
+use App\Services\Frontend\SafeDataService;
+use App\Services\Frontend\ReqBebasPustakaService;
 
 class ReqBebasPustakaController extends Controller
 {
@@ -28,7 +29,7 @@ class ReqBebasPustakaController extends Controller
         $content = SafeDataService::safeExecute(
             fn() => ReqBebasPustakaService::getContent(),
             $fallbacks
-        );        
+        );
         // 3. Get Page Config (SEO, Backgrounds)
         $pageConfig = SafeDataService::safeExecute(
             fn() => ReqBebasPustakaService::getPageConfig(),
@@ -59,18 +60,18 @@ class ReqBebasPustakaController extends Controller
                 'email_mahasiswa' => $request->email_mahasiswa,
                 'nim'             => $request->nim,
                 'prodi_id'        => $request->prodi_id,
-                
-                'is_syarat_terpenuhi' => false,
-                'status'              => 'Pending',
-                'catatan_admin'       => null,
-                'file_hasil_bebas_pustaka' => null 
+
+                'is_syarat_terpenuhi'      => false,
+                'status_req'               => StatusRequest::MENUNGGU->value,
+                'catatan_admin'            => null,
+                'file_hasil_bebas_pustaka' => null
             ]);
 
             DB::commit();
 
             return response()->json([
                 'message' => 'Pengajuan Surat Bebas Pustaka berhasil dikirim!',
-                'status'  => 'success',            
+                'status'  => 'success',
                 'new_data' => [
                     'nama_mahasiswa' => $data->nama_mahasiswa,
                     'nim'            => $data->nim,
@@ -78,7 +79,6 @@ class ReqBebasPustakaController extends Controller
                     'status'         => $data->status
                 ]
             ], 200);
-
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json([

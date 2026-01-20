@@ -21,11 +21,11 @@ class SiteIdentityService
         return (object) [
             'name'             => 'Politeknik Caltex Riau',
             'short_name'       => 'PCR',
-            'tagline'          => 'Empowers You to <br><span>Global Competition</span>',
+            'tagline'          => 'Membangun Literasi <br><span>Mencerdaskan Generasi</span>',
             'description'      => 'Politeknik Caltex Riau adalah institusi pendidikan vokasi terkemuka yang menghasilkan lulusan berkualitas dan siap bersaing di tingkat global.',
             'established_year' => 2001, // Tahun berdiri
             'current_year'     => date('Y'),
-            'logo_path'        => asset('theme/frontend/images/logo-pcr-unggul.webp'),
+            'logo_path'        => asset('theme/frontend/images/logo-portal.webp'),
             'hero_settings'    => [
                 'show_default_slide' => true, // Control default slide visibility
             ]
@@ -58,11 +58,7 @@ class SiteIdentityService
                 'academic_phone'    => '0761 53939',
                 'cooperation_phone' => '0811 757 4101'
             ],
-            'email'   => [
-                'main'      => 'pcr@pcr.ac.id',
-                'admission' => 'pmb@pcr.ac.id',
-                'academic'  => 'baak@pcr.ac.id'
-            ]
+            'email'   => 'pustaka@pcr.ac.id',
         ];
     }
 
@@ -77,30 +73,16 @@ class SiteIdentityService
             [
                 'platform' => 'instagram',
                 'name'     => 'Instagram',
-                'url'      => 'https://www.instagram.com/politeknikcaltexriau',
+                'url'      => 'https://www.instagram.com/perpustakaan.pcr/',
                 'icon'     => 'fa-brands fa-instagram',
                 'username' => '@politeknikcaltexriau'
             ],
             [
-                'platform' => 'linkedin',
-                'name'     => 'LinkedIn',
-                'url'      => 'https://www.linkedin.com/school/policaltex-riau/',
-                'icon'     => 'fa-brands fa-linkedin-in',
-                'username' => 'policaltex-riau'
-            ],
-            [
                 'platform' => 'facebook',
                 'name'     => 'Facebook',
-                'url'      => 'https://www.facebook.com/Politeknik.Caltex.Riau',
+                'url'      => 'https://www.facebook.com/profile.php?id=61582700355202',
                 'icon'     => 'fa-brands fa-facebook-f',
                 'username' => 'Politeknik.Caltex.Riau'
-            ],
-            [
-                'platform' => 'youtube',
-                'name'     => 'YouTube',
-                'url'      => 'https://www.youtube.com/@PoliteknikCaltexRiauOfficial',
-                'icon'     => 'fa-brands fa-youtube',
-                'username' => '@PoliteknikCaltexRiauOfficial'
             ]
         ];
     }
@@ -114,70 +96,50 @@ class SiteIdentityService
     {
         return [
             [
-                'title'    => 'Sistem dan Teknologi Informasi',
-                'url'      => 'https://bsti.pcr.ac.id',
+                'title'    => 'OPAC',
+                'url'      => 'https://opac.lib.pcr.ac.id',
                 'external' => true
             ],
-            // [
-            //     'title'    => 'Informasi Publik dan Pengaduan',
-            //     'url'      => route('frontend.service.information-and-complaints'),
-            //     'external' => false
-            // ],
             [
-                'title'    => 'Alumni',
-                'url'      => 'https://tracer.pcr.ac.id',
-                'external' => false
+                'title'    => 'Repository',
+                'url'      => 'https://repository.lib.pcr.ac.id',
+                'external' => true
             ],
             [
-                'title'    => 'Pusat Karir',
-                'url'      => 'https://scc.pcr.ac.id',
-                'external' => false
-            ],
-            [
-                'title'    => 'Kemitraan',
-                'url'      => 'https://kbp.pcr.ac.id',
-                'external' => false
-            ],
-            [
-                'title'    => 'Portal PCR',
-                'url'      => 'https://portal.pcr.ac.id',
+                'title'    => 'ISBN',
+                'url'      => 'https://isbn.lib.pcr.ac.id',
                 'external' => true
             ]
         ];
     }
 
     /**
-     * Get academic menu links
+     * Get form menu links
      * 
      * @return array
      */
-    public static function getAcademicMenu(): array
+    public static function getFormMenu(): array
     {
         return [
             [
-                'title'    => 'BAAK',
-                'url'      => 'https://baak.pcr.ac.id',
-                'external' => true
+                'title'    => 'Usulan Koleksi Buku',
+                'url'      => '/layanan/req-buku',
+                'external' => false
             ],
             [
-                'title'    => 'Mahasiswa',
-                'url'      => 'https://mahasiswa.pcr.ac.id',
-                'external' => true
+                'title'    => 'Kebutuhan Modul Semester',
+                'url'      => '/layanan/req-modul',
+                'external' => false
             ],
             [
-                'title'    => 'Orangtua',
-                'url'      => 'https://orangtua.pcr.ac.id',
-                'external' => true
+                'title'    => 'Cek Turnitin',
+                'url'      => '/layanan/req-turnitin',
+                'external' => false
             ],
             [
-                'title'    => 'Kalender Akademik',
-                'url'      => 'https://baak.pcr.ac.id/kalender-akademik',
-                'external' => true
-            ],
-            [
-                'title'    => 'Perpustakaan',
-                'url'      => 'https://lib.pcr.ac.id',
-                'external' => true
+                'title'    => 'Surat Bebas Pustaka',
+                'url'      => '/layanan/req-bebas-pustaka',
+                'external' => false
             ]
         ];
     }
@@ -212,7 +174,7 @@ class SiteIdentityService
             'social_media' => self::getSocialMedia(),
             'menus'        => (object) [
                 'services' => self::getServiceMenu(),
-                'academic' => self::getAcademicMenu()
+                'forms'    => self::getFormMenu()
             ],
             'copyright'    => self::getCopyright()
         ];

@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
-use App\Services\Frontend\ArticleService;
+use App\Services\Frontend\BeritaService;
 use App\Services\Frontend\LandingService;
 use App\Services\Academic\JurusanService;
 use App\Services\Frontend\PMBService;
@@ -27,8 +27,6 @@ class MainController extends Controller
             fn() => LandingService::getContent(),
             $fallbacks->konten ?? null
         );
-
-
 
         $heroData = SafeDataService::safeExecute(
             fn() => HeroService::getHeroData(),
@@ -60,9 +58,9 @@ class MainController extends Controller
             $fallbacks->sdg
         );
 
-        $articlesData = SafeDataService::safeExecute(
-            fn() => ArticleService::getArticlesForHero(),
-            $fallbacks->articles
+        $beritaData = SafeDataService::safeExecute(
+            fn() => BeritaService::getBeritaForLanding(),
+            $fallbacks->berita ?? []
         );
 
         $partnershipData = SafeDataService::safeExecute(
@@ -70,17 +68,28 @@ class MainController extends Controller
             $fallbacks->partnership
         );
 
+        $aksesKoleksiData = SafeDataService::safeExecute(
+            fn() => LandingService::getAksesKoleksiData(),
+            $fallbacks->akses_koleksi ?? []
+        );
+
+        $fasilitasData = SafeDataService::safeExecute(
+            fn() => LandingService::getFasilitasData(),
+            $fallbacks->fasilitas ?? []
+        );
 
         return view('contents.frontend.pages.index', compact(
             'pageConfig',
             'content',
             'heroData',
             'statisticsData',
+            'aksesKoleksiData',
+            'fasilitasData',
             'jurusanData',
             'pmbData',
             'virtualTourData',
             'sdgData',
-            'articlesData',
+            'beritaData',
             'partnershipData',
         ));
     }

@@ -8,12 +8,12 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use Yajra\DataTables\DataTables;
-use Illuminate\Http\JsonResponse;
-use Yajra\DataTables\Html\Column;
-use Illuminate\Support\Facades\Blade;
-use App\Models\Master\KaryaJenis;
+use App\Models\ReqBuku;
+use App\Models\ReqModul;
+use App\Models\ReqBebasPustaka;
+use App\Models\ReqTurnitin;
+use App\Enums\StatusRequest;
+use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
 {
@@ -32,18 +32,17 @@ class DashboardController extends Controller
         $this->activeMenu   = 'dashboard';
         $this->breadCrump[] = ['title' => 'Dashboard', 'link' => url()->current()];
 
-        // $builder   = app('datatables.html');
-        // $dataTable = $builder->serverSide(true)->ajax(route('app.karya-jenis.data') . '/list')->columns([
-        //     Column::make(['width' => '', 'title' => '', 'data' => 'action', 'orderable' => false, 'className' => 'text-nowrap text-end']),
-        //     Column::make(['width' => '5%', 'title' => 'No', 'data' => 'no', 'orderable' => false, 'className' => 'text-center']),
-        //     Column::make(['width' => '', 'title' => 'Kode Karya', 'data' => 'alias', 'orderable' => true]),
-        //     Column::make(['width' => '', 'title' => 'Jenis Karya', 'data' => 'jenis_karya', 'orderable' => true]),
-        //     Column::make(['width' => '', 'title' => 'Jenjang Pendidikan', 'data' => 'jenjang_pendidikan', 'orderable' => true]),
-
-        // ]);
+        // Statistik Cards
+        $stats = [
+            'totalRequests' => ReqBuku::count() + ReqModul::count() + ReqBebasPustaka::count() + ReqTurnitin::count(),
+            'reqBuku' => ReqBuku::count(),
+            'reqModul' => ReqModul::count(),
+            'reqBebasPustaka' => ReqBebasPustaka::count(),
+            'reqTurnitin' => ReqTurnitin::count(),
+        ];
 
         $this->dataView([
-            // 'dataTable' => $dataTable
+            'stats' => $stats,
         ]);
 
         return $this->view('admin.dashboard');

@@ -19,8 +19,10 @@ class ReqBukuService
         // 1. Fetch the Active Period based on today's date
         $history = self::getRecentProposals();
         $activePeriode = DB::table('mst_periode')
+            ->where('jenis_periode', 'req_buku')
             ->whereDate('tanggal_mulai', '<=', now())
             ->whereDate('tanggal_selesai', '>=', now())
+            ->whereNull('deleted_at')
             ->first(); // Gets the row object or null
 
         // 2. Fetch Prodi List
@@ -52,7 +54,7 @@ class ReqBukuService
     {
         try {
 
-            return ReqBuku::select('judul_buku', 'penulis_buku', 'nama_req', 'created_at', 'status_req')
+            return ReqBuku::select('judul_buku', 'penulis_buku', 'nama_req', 'created_at', 'status_req', 'catatan_admin')
                 ->orderBy('created_at', 'desc')
                 ->limit($limit)
                 ->get();
@@ -69,7 +71,7 @@ class ReqBukuService
     public static function getMetaData()
     {
         return [
-            'title'       => 'Usulan Buku - Perpustakaan Politeknik Caltex Riau',
+            'title'       => 'Usulan Buku',
             'description' => 'Halaman pengajuan usulan pengadaan buku perpustakaan Politeknik Caltex Riau.',
             'keywords'    => 'usulan buku, request buku, perpustakaan pcr, pengadaan'
         ];

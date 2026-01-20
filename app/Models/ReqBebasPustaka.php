@@ -7,15 +7,17 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Casts\Attribute;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Query\JoinClause;
+use App\Models\Prodi;
+use App\Enums\StatusRequest;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
-use Spatie\Activitylog\Facades\CauserResolver;
 use Spatie\Activitylog\LogOptions;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Query\JoinClause;
 use Spatie\Activitylog\Traits\LogsActivity;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\Activitylog\Facades\CauserResolver;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 
 class ReqBebasPustaka extends Model
 {
@@ -47,9 +49,9 @@ class ReqBebasPustaka extends Model
         'nim',
         'email_mahasiswa',
         'is_syarat_terpenuhi',
-        'status',
+        'status_req',
         'catatan_admin',
-        'file_hasil_bebas_pustaka', 
+        'file_hasil_bebas_pustaka',
         'created_by',
         'updated_by',
         'deleted_by',
@@ -62,7 +64,7 @@ class ReqBebasPustaka extends Model
      */
     protected $casts = [
         'reqbebaspustaka_id'    => 'string',
-        
+
     ];
 
     public static array $exceptEdit = [
@@ -115,8 +117,32 @@ class ReqBebasPustaka extends Model
             ->useLogName(env('APP_NAME'))
             ->setDescriptionForEvent(function ($eventName) {
                 $aksi = eventActivityLogBahasa($eventName);
-                return userInisial() . " {$aksi} table :subject.{{tableSubject}}";
+                return userInisial() . " {$aksi} table :subject.nama_mahasiswa";
             });
+    }
+
+    /**
+     * Relasi ke tabel prodi
+     */
+    public function prodi()
+    {
+        return $this->belongsTo(Prodi::class, 'prodi_id', 'prodi_id');
+    }
+
+    public function getStatusBadgeAttribute(): string
+    {
+        return self::getStatusBadge($this->status_req);
+    }
+
+    public static function getStatusBadge($statusReq): string
+    {
+        $badges = [
+            StatusRequest::MENUNGGU->value => '<span class="badge badge-warning bg-warning text-dark rounded-pill">Menunggu</span>',
+            StatusRequest::DISETUJUI->value => '<span class="badge badge-success bg-success rounded-pill">Disetujui</span>',
+            StatusRequest::DITOLAK->value => '<span class="badge badge-danger bg-danger rounded-pill">Ditolak</span>',
+        ];
+
+        return $badges[$statusReq] ?? '<span class="badge badge-secondary rounded-pill">Unknown</span>';
     }
 
     // mutator (setter and getter)
@@ -186,8 +212,9 @@ class ReqBebasPustaka extends Model
     public static function getDataDetail($where = [], $whereBinding = [], $get = true)
     {
         $query = DB::table('')
-            ->selectRaw('*')
-            ->from((new self)->table.' as a')
+            ->selectRaw('a.*, p.nama_prodi')
+            ->from((new self)->table . ' as a')
+            ->leftJoin('dm_prodi as p', 'a.prodi_id', '=', 'p.prodi_id')
             ->where(notRaw($where))
             ->whereRaw(withRaw($where), $whereBinding)
             ->whereNull('a.deleted_at');

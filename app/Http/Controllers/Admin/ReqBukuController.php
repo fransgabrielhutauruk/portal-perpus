@@ -3,10 +3,9 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Models\ReqBuku;
-use App\Models\User;
+use App\Enums\StatusRequest;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
-use App\Models\ReqModul;
 use Illuminate\Http\JsonResponse;
 use Yajra\DataTables\Html\Column;
 use Illuminate\Support\Facades\DB;
@@ -14,8 +13,8 @@ use Spatie\Permission\Models\Role;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Blade;
 
-class UsulanManagementController extends Controller
-{    
+class ReqBukuController extends Controller
+{
     public function index()
     {
         $this->title = 'Kelola Usulan Buku';
@@ -30,9 +29,9 @@ class UsulanManagementController extends Controller
             Column::make(['title' => 'Judul Buku', 'data' => 'judul_buku']),
             Column::make(['title' => 'Tahun Terbit', 'data' => 'tahun_terbit']),
             Column::make(['title' => 'Nama', 'data' => 'nama_req']),
-            Column::make(['title' => 'Email', 'data' => 'email_req']),         
-            Column::make(['title' => 'Status', 'data' => 'status_req']),       
-            Column::make(['title' => 'Aksi', 'data' => 'action']),
+            Column::make(['title' => 'Email', 'data' => 'email_req']),
+            Column::make(['title' => 'Status', 'data' => 'status_req']),
+            Column::make(['title' => 'Aksi', 'data' => 'action', 'class' => 'text-center']),
         ]);
 
         $this->dataView([
@@ -47,7 +46,7 @@ class UsulanManagementController extends Controller
     {
         if ($param1 == 'list') {
             $filter = [];
-            $data = DataTables::of(ReqBuku::getDataDetail($filter, get: true))->toArray();            
+            $data = DataTables::of(ReqBuku::getDataDetail($filter, get: true))->toArray();
             $start = $req->input('start');
             $resp = [];
             foreach ($data['data'] as $key => $value) {
@@ -58,34 +57,29 @@ class UsulanManagementController extends Controller
                 $dt['email_req']    = $value['email_req']    ?? '-';
                 $dt['judul_buku']   = $value['judul_buku']   ?? '-';
                 $dt['tahun_terbit'] = $value['tahun_terbit'] ?? '-';
-                $dt['status_req'] = UsulanManagementController::translateStatus($value['status_req']) ?? '-';
+                $dt['status_req'] = ReqBuku::getStatusBadge($value['status_req'] ?? null);
 
-              //  $dt['email']    = $value['email'] ?? '-';
-
-                $usulan = ReqBuku::find($value['reqbuku_id']);                                       
-              // $dt['role'] = $user ? $user->roles()->value('name') : 'No Role';
-                              
-               // $id = encid($value['reqbuku_id']);
+                $usulan = ReqBuku::find($value['reqbuku_id']);
                 $id = $value['reqbuku_id'];
-                
+
                 $dataAction = [
                     'id'  => encid($id),
                     'btn' => [],
                 ];
-                if  ($usulan && $usulan->status_req == '0'){
+                if ($usulan && $usulan->status_req == StatusRequest::MENUNGGU->value) {
                     $dataAction['btn'] = [
-                        
+                        ['action' => 'detail', 'attr' => ['jf-detail' => $id]],
                         ['action' => 'approve', 'attr' => ['jf-approve' => $id]],
-                        ['action' => 'reject', 'attr' => ['jf-reject' => $id]], 
-                        ['action' => 'delete', 'attr' => ['jf-delete' => $id]],                                             
+                        ['action' => 'reject', 'attr' => ['jf-reject' => $id]],
+                        ['action' => 'delete', 'attr' => ['jf-delete' => $id]],
                     ];
-                    }
-                else{
+                } else {
                     $dataAction['btn'] = [
+                        ['action' => 'detail', 'attr' => ['jf-detail' => $id]],
                         ['action' => 'delete', 'attr' => ['jf-delete' => $id]],
                     ];
                 }
-                             
+
                 $dt['action'] = Blade::render('<x-btn.actiontable :id="$id" :btn="$btn"/>', $dataAction);
                 $resp[] = $dt;
             }
@@ -97,10 +91,10 @@ class UsulanManagementController extends Controller
             validate_and_response([
                 'reqbuku_id' => ['Paramater data', 'required'],
             ]);
-            $currData = ReqBuku::findOrFail(decid($req->input('reqbuku_id')));
+            $currData = ReqBuku::with('prodi')->findOrFail($req->input('reqbuku_id'));
 
             $userData = $currData->toArray();
-          //  $userData['role'] = $currData->roles->value('name') ?? '';
+            $userData['prodi_nama'] = $currData->prodi->nama_prodi ?? '-';
 
             return response()->json([
                 'status' => true,
@@ -112,37 +106,14 @@ class UsulanManagementController extends Controller
         }
     }
 
-    public function ManageApproval(Request $req): JsonResponse
-    {
-        validate_and_response([
-            'reqbuku_id' => ['ID Usulan Buku', 'required'],
-        ]);
-        
-        $usulan = ReqBuku::findOrFail($req->input('reqbuku_id'));
-        //dd($usulan);
-        if ($req->input('alasan_reject')){
-            $usulan->status_req = '2';
-            $usulan->alasan_reject = $req->input('catatan_admin') ?? '-';
-        } else {
-            $usulan->status_req = '1'; 
-        }
-        $usulan->save();
-
-        return response()->json([
-            'status' => true,
-            'message' => 'Usulan buku telah disetujui.'
-        ]);
-    }
-
     public function approve(Request $req): JsonResponse
     {
         validate_and_response([
             'reqbuku_id' => ['ID Usulan Buku', 'required'],
         ]);
-        
+
         $usulan = ReqBuku::findOrFail($req->input('reqbuku_id'));
-        //dd($usulan);
-        $usulan->status_req = '1'; // Disetujui
+        $usulan->status_req = StatusRequest::DISETUJUI->value;
         $usulan->save();
 
         return response()->json([
@@ -155,12 +126,13 @@ class UsulanManagementController extends Controller
     {
         validate_and_response([
             'reqbuku_id' => ['ID Usulan Buku', 'required'],
+            'catatan_admin' => ['Alasan Penolakan', 'required'],
         ]);
 
         $usulan = ReqBuku::findOrFail($req->input('reqbuku_id'));
-        $usulan->status_req = '2'; // Ditolak
+        $usulan->status_req = StatusRequest::DITOLAK->value;
         $usulan->catatan_admin = $req->input('catatan_admin') ?? '-';
-        
+
         $usulan->save();
 
         return response()->json([
@@ -169,25 +141,12 @@ class UsulanManagementController extends Controller
         ]);
     }
 
-    public function translateStatus($status)
-    {
-        switch ($status) {
-            case '0':
-                return '<span class="badge badge-warning">Pending</span>';
-            case '1':
-                return '<span class="badge badge-success">Disetujui</span>';
-            case '2':
-                return '<span class="badge badge-danger">Ditolak</span>';
-            default:
-                return '<span class="badge badge-info">Unknown</span>';
-        }
-    }
     public function destroy(Request $req, $param1 = ''): JsonResponse
     {
         if ($param1 == '') {
             validate_and_response([
                 'id' => ['Parameter data', 'required'],
-            ]);            
+            ]);
             $id = $req->input('id');
 
             $currData = ReqBuku::where('reqbuku_id', $id)->firstOrFail();
@@ -195,7 +154,7 @@ class UsulanManagementController extends Controller
             DB::beginTransaction();
             try {
                 $currData->delete();
-                
+
                 DB::commit();
                 return response()->json([
                     'status' => true,
@@ -208,6 +167,5 @@ class UsulanManagementController extends Controller
         } else {
             abort(404, 'Halaman tidak ditemukan');
         }
-    }    
-
+    }
 }
