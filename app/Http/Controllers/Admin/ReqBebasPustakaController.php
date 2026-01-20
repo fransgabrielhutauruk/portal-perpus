@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Role;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Blade;
+use PhpOffice\PhpWord\TemplateProcessor;
 
 class ReqBebasPustakaController extends Controller
 {
@@ -57,7 +58,7 @@ class ReqBebasPustakaController extends Controller
                 $dt['nim'] = $value['nim'] ?? '-';
                 $dt['email_mahasiswa'] = $value['email_mahasiswa'] ?? '-';
                 $dt['prodi_nama'] = $value['nama_prodi'] ?? '-';
-                $dt['status'] = ReqBebasPustaka::getStatusBadge($value['status_req'] ?? null);
+                $dt['status'] = ReqBebasPustaka::getStatusBadge($value['status'] ?? null);
 
                 $bebasPustaka = ReqBebasPustaka::find($value['reqbebaspustaka_id']);
                 $id = $value['reqbebaspustaka_id'];
@@ -118,8 +119,35 @@ class ReqBebasPustakaController extends Controller
         ]);
 
         $bebasPustaka = ReqBebasPustaka::findOrFail($req->input('reqbebaspustaka_id'));
-        $bebasPustaka->status = StatusRequest::DISETUJUI->value;
+
+
+    /* ===============================
+       1. LOAD TEMPLATE DOCX
+    =============================== */
+    $templatePath = storage_path('app/private/surat.docx');
+    $templateProcessor = new TemplateProcessor($templatePath);
+
+    /* ===============================
+       2. REPLACE PLACEHOLDER
+    =============================== */
+    $templateProcessor->setValue('nama', $bebasPustaka->nama_mahasiswa);
+    $templateProcessor->setValue('nim', $bebasPustaka->nim ?? '-');
+    $templateProcessor->setValue('prodi', $bebasPustaka->prodi->nama_prodi ?? '-');
+    $templateProcessor->setValue('datetime', tanggal($bebasPustaka->created_at, ' ', false) ?? '-');
+    $templateProcessor->setValue('kaperpus', "Nina Fadilah Najwa, S.Kom, M.Kom." ?? '-');
+
+
+    /* ===============================
+       3. SAVE DOCX RESULT
+    =============================== */
+    $docxName = 'bebas_pustaka_' . $bebasPustaka->nama_mahasiswa . '.docx';
+    $docxPath = storage_path('app/private/' . $docxName);
+    $templateProcessor->saveAs($docxPath);
+
+        $bebasPustaka->file_hasil_bebas_pustaka = 'storage/private/' . $docxName;        
+        $bebasPustaka->status_req = StatusRequest::DISETUJUI->value;
         $bebasPustaka->is_syarat_terpenuhi = true;
+
         $bebasPustaka->save();
 
         return response()->json([
