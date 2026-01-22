@@ -40,6 +40,12 @@ Route::name('frontend.')->group(function () {
         });
     });
 
+    Route::prefix('/tentang-kami')->name('about.')->controller(InformationController::class)->group(function () {
+        Route::get('/profil-perpustakaan', 'profilPerpustakaan')->name('profil');
+        Route::get('/pustakawan', 'pustakawan')->name('pustakawan');
+        Route::get('/jam-buka', 'jamBuka')->name('jam-buka');
+    });
+
     Route::prefix('/layanan')->name('req.')->group(function () {
         Route::controller(ReqBukuController::class)->group(function () {
             Route::get('/req-buku', 'index')->name('buku');

@@ -11,7 +11,6 @@ class HeaderMenuComposer
 {
     public function compose(View $view)
     {
-        // Get panduan list for menu
         $panduanMenuItems = PanduanService::getPanduanForMenu();
         
         $menu = [
@@ -22,11 +21,9 @@ class HeaderMenuComposer
             [
                 'name'     => 'Tentang Kami',
                 'children' => [
-                    ['name' => 'Sejarah Perpustakaan', 'route' => route('frontend.home')],
-                    ['name' => 'Visi dan Misi', 'route' => route('frontend.home')],
-                    ['name' => 'Struktur Organisasi', 'route' => route('frontend.home')],
-                    ['name' => 'Pustakawan', 'route' => route('frontend.home')],
-                    ['name' => 'Jam Buka Layanan', 'route' => route('frontend.home')],
+                    ['name' => 'Profil Perpustakaan', 'route' => route('frontend.about.profil')],
+                    ['name' => 'Pustakawan', 'route' => route('frontend.about.pustakawan')],
+                    ['name' => 'Jam Buka Layanan', 'route' => route('frontend.about.jam-buka')],
                 ],
             ],
             [
@@ -40,7 +37,6 @@ class HeaderMenuComposer
                     ['name' => 'E-book Langganan', 'route' => 'https://www.emerald.com/insight/', 'target' => '_blank'],
                 ],
             ],
-            ['name' => 'Fasilitas', 'route' => route('frontend.home')],
             [
                 'name'     => 'Layanan',
                 'children' => [

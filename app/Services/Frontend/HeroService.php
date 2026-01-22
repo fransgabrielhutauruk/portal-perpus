@@ -125,36 +125,6 @@ class HeroService
                     'src'      => publicMedia('perpus-2.jpg', 'perpus'),
                     'duration' => 12
                 ],
-                'cta'          => [
-                    [
-                        'text'   => 'Usulan Buku',
-                        'url'    => route('frontend.req.buku'),
-                        'class'  => 'btn-default btn-highlighted',
-                        'target' => '_self',
-                        'type'   => 'cta'
-                    ],
-                    [
-                        'text'   => 'Kebutuhan Modul Semester',
-                        'url'    => route('frontend.req.modul'),
-                        'class'  => 'btn-default btn-highlighted',
-                        'target' => '_self',
-                        'type'   => 'cta'
-                    ],
-                    [
-                        'text'   => 'Bebas Pustaka',
-                        'url'    => route('frontend.req.bebas-pustaka'),
-                        'class'  => 'btn-default btn-highlighted',
-                        'target' => '_self',
-                        'type'   => 'cta'
-                    ],
-                    [
-                        'text'   => 'Cek Turnitin',
-                        'url'    => route('frontend.req.turnitin'),
-                        'class'  => 'btn-default btn-highlighted',
-                        'target' => '_self',
-                        'type'   => 'cta'
-                    ]
-                ],
                 'social_media' => true
             ]
         ];

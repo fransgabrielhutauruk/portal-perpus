@@ -48,10 +48,9 @@ class LandingService
                 'alt' => 'Perpustakaan Politeknik Caltex Riau'
             ],
             'data'        => [
-                // Row 1 - Koleksi & Digital Resources
                 [
                     'icon'      => 'fa-solid fa-book',
-                    'value'     => '15000',
+                    'value'     => '18000',
                     'label'     => 'Koleksi Buku',
                     'important' => true,
                     'delay'     => '0.1s',
@@ -59,140 +58,67 @@ class LandingService
                     'suffix'    => '+'
                 ],
                 [
-                    'icon'      => 'fa-solid fa-tablet-screen-button',
-                    'value'     => '5000',
-                    'label'     => 'E-Book & E-Journal',
-                    'important' => false,
-                    'delay'     => '0.2s',
-                    'counter'   => true,
-                    'suffix'    => '+'
-                ],
-                [
-                    'icon'      => 'fa-solid fa-graduation-cap',
-                    'value'     => '3500',
-                    'label'     => 'Anggota Aktif',
-                    'important' => false,
-                    'delay'     => '0.9s',
-                    'counter'   => true,
-                    'suffix'    => '+'
-                ],
-                [
                     'icon'      => 'fa-solid fa-clock',
-                    'value'     => '12',
+                    'value'     => '8',
                     'label'     => 'Jam Operasional',
                     'important' => false,
                     'delay'     => '1.3s',
                     'counter'   => true,
                     'suffix'    => ' Jam/Hari'
                 ],
-
-                // Row 2 - Layanan & Aktivitas
-                [
-                    'icon'      => 'fa-solid fa-handshake',
-                    'value'     => '8',
-                    'label'     => 'Layanan Unggulan',
-                    'important' => true,
-                    'delay'     => '0.8s'
-                ],
                 [
                     'icon'      => 'fa-solid fa-book-open-reader',
-                    'value'     => '25000',
+                    'value'     => '900',
                     'label'     => 'Peminjaman per Tahun',
-                    'important' => false,
+                    'important' => true,
                     'delay'     => '1.1s',
                     'counter'   => true,
                     'suffix'    => '+'
                 ],
                 [
-                    'icon'      => 'fa-solid fa-users',
-                    'value'     => '500',
-                    'label'     => 'Pengunjung per Bulan',
+                    'icon'      => 'fa-solid fa-door-open',
+                    'value'     => '5',
+                    'label'     => 'Hari Buka per Minggu',
                     'important' => false,
-                    'delay'     => '1.2s',
-                    'counter'   => true,
-                    'suffix'    => '+'
-                ],
-                [
-                    'icon'      => 'fa-solid fa-wifi',
-                    'value'     => '100',
-                    'label'     => 'Area Berkoneksi WiFi',
-                    'important' => false,
-                    'delay'     => '1.6s',
-                    'counter'   => true,
-                    'suffix'    => '%'
-                ],
-
-                // Row 3 - Repository & Digital Access
-                [
-                    'icon'      => 'fa-solid fa-file-lines',
-                    'value'     => '2000',
-                    'label'     => 'Karya Ilmiah di Repository',
-                    'important' => true,
-                    'delay'     => '0.3s',
-                    'counter'   => true,
-                    'suffix'    => '+'
-                ],
-                [
-                    'icon'      => 'fa-solid fa-database',
-                    'value'     => '24/7',
-                    'label'     => 'Akses OPAC Online',
-                    'important' => false,
-                    'delay'     => '0.5s'
+                    'delay'     => '1.5s',
+                    'counter'   => true
                 ],
                 [
                     'icon'      => 'fa-solid fa-laptop',
                     'value'     => '10',
                     'label'     => 'Komputer Akses Publik',
-                    'important' => false,
+                    'important' => true,
                     'delay'     => '0.4s',
                     'counter'   => true
                 ],
                 [
-                    'icon'      => 'fa-solid fa-chair',
-                    'value'     => '50',
-                    'label'     => 'Kapasitas Tempat Duduk',
+                    'icon'      => 'fa-solid fa-video',
+                    'value'     => '24',
+                    'label'     => 'Terpantau CCTV',
                     'important' => false,
+                    'delay'     => '0.6s',
+                    'counter'   => false,
+                    'suffix'    => '/7'
+                ],
+                [
+                    'icon'      => 'fa-solid fa-chair',
+                    'value'     => '70',
+                    'label'     => 'Kapasitas Tempat Duduk',
+                    'important' => true,
                     'delay'     => '1.0s',
                     'counter'   => true,
                     'suffix'    => '+'
                 ],
-
-                // Row 4 - Facilities & Services
                 [
-                    'icon'      => 'fa-solid fa-shield-halved',
-                    'value'     => '100',
-                    'label'     => 'Bebas Pustaka',
-                    'important' => true,
-                    'delay'     => '0.7s',
-                    'counter'   => true,
-                    'suffix'    => '%'
-                ],
-                [
-                    'icon'      => 'fa-solid fa-spell-check',
-                    'value'     => '500',
-                    'label'     => 'Cek Turnitin per Tahun',
+                    'icon'      => 'fa-solid fa-users',
+                    'value'     => '10000',
+                    'label'     => 'Pengunjung per Tahun',
                     'important' => false,
-                    'delay'     => '0.6s',
+                    'delay'     => '1.2s',
                     'counter'   => true,
                     'suffix'    => '+'
                 ],
-                [
-                    'icon'      => 'fa-solid fa-building-columns',
-                    'value'     => '300',
-                    'label'     => 'Luas Perpustakaan',
-                    'important' => false,
-                    'delay'     => '1.4s',
-                    'counter'   => true,
-                    'suffix'    => ' m²'
-                ],
-                [
-                    'icon'      => 'fa-solid fa-door-open',
-                    'value'     => '6',
-                    'label'     => 'Hari Buka per Minggu',
-                    'important' => false,
-                    'delay'     => '1.5s',
-                    'counter'   => true
-                ]
+
             ]
         ];
     }
@@ -218,7 +144,7 @@ class LandingService
                 ],
                 [
                     'name'   => 'Repository',
-                    'description' => 'Repositori institusi untuk mengakses karya ilmiah mahasiswa dan dosen PCR.',
+                    'description' => 'Repositori institusi untuk mengakses karya ilmiah mahasiswa PCR.',
                     'url'    => 'https://repository.lib.pcr.ac.id/',
                     'icon'   => 'fa-solid fa-book-open',
                     'target' => '_blank'
@@ -279,12 +205,118 @@ class LandingService
                 'Area Diskusi/Kolaborasi - Ruang untuk diskusi kelompok dan kerja tim',
                 'Pojok Baca Tenang - Area khusus untuk membaca dengan suasana tenang'
             ],
-            'actions' => [
-                'primary' => [
-                    'text' => 'Lihat Galeri Fasilitas',
-                    'url' => route('frontend.home'),
-                    'class' => 'btn-default'
+            'actions' => []
+        ];
+    }
+
+    /**
+     * Get Layanan data for landing page
+     *
+     * @return array
+     */
+    public static function getLayananData(): array
+    {
+        return [
+            'content' => [
+                'subtitle' => 'Layanan Perpustakaan',
+                'title' => '<b>Layanan</b> untuk Sivitas Akademika',
+                'description' => 'Perpustakaan PCR menyediakan berbagai layanan untuk memudahkan kebutuhan akademik Anda.'
+            ],
+            'services' => [
+                [
+                    'title' => 'Usulan Buku',
+                    'description' => 'Ajukan usulan pengadaan buku baru yang dibutuhkan untuk mendukung kegiatan pembelajaran dan penelitian Anda.',
+                    'icon' => 'fa-solid fa-book',
+                    'url' => route('frontend.req.buku'),
+                ],
+                [
+                    'title' => 'Pengajuan Modul',
+                    'description' => 'Lakukan permintaan modul semester yang tersedia di perpustakaan untuk mendukung pembelajaran.',
+                    'icon' => 'fa-solid fa-file-lines',
+                    'url' => route('frontend.req.modul'),
+                ],
+                [
+                    'title' => 'Bebas Pustaka',
+                    'description' => 'Proses pengajuan bebas pustaka secara online untuk mahasiswa yang akan yudisium atau keperluan administrasi lainnya.',
+                    'icon' => 'fa-solid fa-graduation-cap',
+                    'url' => route('frontend.req.bebas-pustaka'),
+                ],
+                [
+                    'title' => 'Turnitin',
+                    'description' => 'Ajukan permohonan pengecekan plagiarisme untuk karya tulis ilmiah menggunakan Turnitin untuk memastikan keaslian karya Anda.',
+                    'icon' => 'fa-solid fa-magnifying-glass',
+                    'url' => route('frontend.req.turnitin'),
                 ]
+            ]
+        ];
+    }
+
+    /**
+     * Get Panduan data for landing page
+     *
+     * @return array
+     */
+    public static function getPanduanData(): array
+    {
+        $panduanList = \App\Models\Panduan::select(['panduan_id', 'judul', 'deskripsi', 'file'])
+            ->whereNull('deleted_at')
+            ->orderBy('created_at', 'DESC')
+            ->limit(4)
+            ->get();
+
+        $guides = [];
+        foreach ($panduanList as $panduan) {
+            $guides[] = [
+                'id' => $panduan->panduan_id,
+                'title' => $panduan->judul,
+                'description' => $panduan->deskripsi ?? 'Panduan lengkap untuk membantu Anda.',
+                'file' => $panduan->file,
+                'url' => route('frontend.panduan.show', ['panduanId' => $panduan->panduan_id]),
+            ];
+        }
+
+        return [
+            'content' => [
+                'subtitle' => 'Panduan Perpustakaan',
+                'title' => '<b>Panduan</b> Terkait Perpustakaan',
+                'description' => 'Unduh panduan praktis untuk membantu Anda memaksimalkan penggunaan layanan dan fasilitas perpustakaan PCR.'
+            ],
+            'guides' => $guides
+        ];
+    }
+
+    /**
+     * Get FAQ data for landing page
+     *
+     * @return array
+     */
+    public static function getFaqData(): array
+    {
+        $faqList = \App\Models\Faq::select(['faq_id', 'pertanyaan', 'jawaban'])
+            ->whereNull('deleted_at')
+            ->orderBy('created_at', 'ASC')
+            ->limit(6)
+            ->get();
+
+        $faqs = [];
+        foreach ($faqList as $faq) {
+            $faqs[] = [
+                'id' => $faq->faq_id,
+                'question' => $faq->pertanyaan,
+                'answer' => $faq->jawaban,
+            ];
+        }
+
+        return [
+            'content' => [
+                'subtitle' => 'FAQ',
+                'title' => '<b>Pertanyaan</b> yang Sering Diajukan',
+                'description' => 'Temukan jawaban untuk pertanyaan umum seputar layanan dan fasilitas perpustakaan PCR.'
+            ],
+            'faqs' => $faqs,
+            'action' => [
+                'text' => 'Lihat Semua FAQ',
+                'url' => route('frontend.faq.index')
             ]
         ];
     }

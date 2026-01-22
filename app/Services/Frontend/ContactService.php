@@ -92,10 +92,10 @@ class ContactService
     public static function getPageConfig(): array
     {
         $meta = self::getMetaData();
-        $bg   = publicMedia('kontak-bg.webp');
+        $bg = publicMedia('perpus-1.jpg', 'perpus');
 
         return [
-            'background_image' => $bg, // Or a specific image for contact page
+            'background_image' => $bg,
             'seo'              => [
                 'title'                      => data_get($meta, 'title'),
                 'description'                => data_get($meta, 'description'),

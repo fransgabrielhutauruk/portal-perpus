@@ -5,184 +5,196 @@
 <x-frontend.seo :pageConfig="$pageConfig" />
 
 @section('content')
-<x-frontend.page-header :breadcrumbs="$breadcrumbs" :image="null">
-    FAQ
-</x-frontend.page-header>
+    <x-frontend.page-header :breadcrumbs="$breadcrumbs" :image="publicMedia('perpus-2.jpg', 'perpus')">
+        FAQ
+    </x-frontend.page-header>
 
-<div class="faq-page content-page">
-    <div class="container">
-        <div class="row">
-            <div class="col-12">
-                <div class="section-title text-center mb-5">
-                    <h2 class="wow fadeInUp">{{ data_get($content, 'page_title') }}</h2>
-                    <p class="wow fadeInUp" data-wow-delay="0.25s">{{ data_get($content, 'page_description') }}</p>
+    <div class="faq-page content-page">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <div class="section-title text-center mb-5">
+                        <h2 class="wow fadeInUp">{{ data_get($content, 'page_title') }}</h2>
+                        <p class="wow fadeInUp mt-3" data-wow-delay="0.25s">{{ data_get($content, 'page_description') }}</p>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <div class="row justify-content-center">
-            <div class="col-lg-10 col-xl-9">
-                @if(data_get($content, 'total_faq', 0) > 0)
-                    <div class="accordion faq-accordion" id="faqAccordion">
-                        @foreach(data_get($content, 'faq_list', []) as $faq)
-                            <div class="accordion-item wow fadeInUp" data-wow-delay="{{ 0.1 + ($loop->index * 0.05) }}s">
-                                <h2 class="accordion-header" id="heading{{ $faq->faq_id }}">
-                                    <button class="accordion-button {{ $loop->first ? '' : 'collapsed' }}" 
-                                            type="button" 
-                                            data-bs-toggle="collapse" 
-                                            data-bs-target="#collapse{{ $faq->faq_id }}" 
-                                            aria-expanded="{{ $loop->first ? 'true' : 'false' }}" 
-                                            aria-controls="collapse{{ $faq->faq_id }}">
-                                        {{ $faq->pertanyaan }}
-                                    </button>
-                                </h2>
-                                <div id="collapse{{ $faq->faq_id }}" 
-                                     class="accordion-collapse collapse {{ $loop->first ? 'show' : '' }}" 
-                                     aria-labelledby="heading{{ $faq->faq_id }}" 
-                                     data-bs-parent="#faqAccordion">
-                                    <div class="accordion-body">
-                                        <div class="faq-answer">
-                                            {!! nl2br(e($faq->jawaban)) !!}
-                                        </div>
+            <div class="row justify-content-center">
+                <div class="col-lg-10">
+                    @if (data_get($content, 'total_faq', 0) > 0)
+                        @foreach (data_get($content, 'faq_list', []) as $faq)
+                            <div class="faq-item wow fadeInUp" data-wow-delay="{{ 0.1 + $loop->index * 0.05 }}s">
+                                <div class="faq-question" data-bs-toggle="collapse"
+                                    data-bs-target="#faq-{{ $faq->faq_id }}"
+                                    aria-expanded="{{ $loop->first ? 'true' : 'false' }}">
+                                    <div class="faq-question-icon">
+                                        <i class="fa-solid fa-circle-question"></i>
+                                    </div>
+                                    <div class="faq-question-text">
+                                        <h5>{{ $faq->pertanyaan }}</h5>
+                                    </div>
+                                    <div class="faq-toggle-icon">
+                                        <i class="fa-solid fa-chevron-down"></i>
+                                    </div>
+                                </div>
+                                <div id="faq-{{ $faq->faq_id }}" class="collapse {{ $loop->first ? 'show' : '' }}"
+                                    data-bs-parent="#faqAccordion">
+                                    <div class="faq-answer">
+                                        <p>{!! nl2br(e($faq->jawaban)) !!}</p>
                                     </div>
                                 </div>
                             </div>
                         @endforeach
-                    </div>
-
-                    <div class="faq-footer text-center mt-5 wow fadeInUp">
-                        <div class="alert alert-info d-inline-block">
-                            <i class="fa-solid fa-circle-info me-2"></i>
-                            <strong>Masih ada pertanyaan?</strong> Silakan hubungi kami untuk informasi lebih lanjut.
+                    @else
+                        <div class="text-center py-5">
+                            <i class="fa-solid fa-comments fa-3x text-muted mb-3"></i>
+                            <p class="text-muted">Belum ada FAQ tersedia saat ini.</p>
                         </div>
-                    </div>
-                @else
-                    <div class="alert alert-info text-center">
-                        <i class="fa-solid fa-info-circle me-2"></i>
-                        Belum ada FAQ tersedia saat ini.
-                    </div>
-                @endif
+                    @endif
+                </div>
             </div>
         </div>
     </div>
-</div>
 @endsection
 
-@push('styles')
 <style>
+    html {
+        scroll-behavior: auto !important;
+    }
+
     .faq-page {
         padding: 80px 0;
     }
-    
-    .faq-accordion .accordion-item {
-        border: 1px solid rgba(0, 0, 0, 0.1);
-        border-radius: 10px;
+
+    .faq-item {
+        background: #fff;
+        border: 1px solid #e8e8e8;
+        border-radius: 12px;
         margin-bottom: 15px;
         overflow: hidden;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
         transition: all 0.3s ease;
     }
-    
-    .faq-accordion .accordion-item:hover {
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        transform: translateY(-2px);
+
+    .faq-item:hover {
+        border-color: var(--primary-color, #0066cc);
+        box-shadow: 0 5px 20px rgba(0, 102, 204, 0.1);
     }
-    
-    .faq-accordion .accordion-button {
-        padding: 1.5rem;
-        font-weight: 600;
-        font-size: 1rem;
-        background-color: #fff;
-        color: #333;
-        border: none;
-        box-shadow: none;
+
+    .faq-question {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        padding: 20px 25px;
+        cursor: pointer;
         transition: all 0.3s ease;
+        background: #fff;
     }
-    
-    .faq-accordion .accordion-button:not(.collapsed) {
-        background-color: rgba(var(--primary-rgb-0), var(--primary-rgb-1), var(--primary-rgb-2), 0.05);
-        color: var(--primary-main);
+
+    .faq-question:hover {
+        background: #f8f9fa;
     }
-    
-    .faq-accordion .accordion-button:focus {
-        box-shadow: none;
-        outline: none;
+
+    .faq-question[aria-expanded="true"] {
+        background: linear-gradient(135deg, var(--primary-color, #0066cc) 0%, var(--secondary-color, #004999) 100%);
     }
-    
-    .faq-accordion .accordion-button::after {
-        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23333'%3e%3cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e");
-        transition: transform 0.3s ease;
-        width: 1.5rem;
-        height: 1.5rem;
+
+    .faq-question[aria-expanded="true"] .faq-question-icon,
+    .faq-question[aria-expanded="true"] .faq-question-text h5,
+    .faq-question[aria-expanded="true"] .faq-toggle-icon {
+        color: white;
+    }
+
+    .faq-question[aria-expanded="true"] .faq-toggle-icon i {
+        transform: rotate(180deg);
+    }
+
+    .faq-question-icon {
         flex-shrink: 0;
-        margin-left: auto;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--primary-color, #0066cc);
+        font-size: 1.5rem;
+        transition: all 0.3s ease;
     }
-    
-    .faq-accordion .accordion-button:not(.collapsed)::after {
-        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23007bff'%3e%3cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e");
-        transform: rotate(-180deg);
+
+    .faq-question-text {
+        flex: 1;
     }
-    
-    .faq-accordion .accordion-body {
-        padding: 1.5rem;
-        background-color: #fafafa;
-        border-top: 1px solid rgba(0, 0, 0, 0.05);
+
+    .faq-question-text h5 {
+        margin: 0;
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #333;
+        line-height: 1.5;
+        transition: all 0.3s ease;
     }
-    
+
+    .faq-toggle-icon {
+        flex-shrink: 0;
+        color: var(--primary-color, #0066cc);
+        font-size: 1.2rem;
+        transition: all 0.3s ease;
+    }
+
+    .faq-toggle-icon i {
+        transition: transform 0.3s ease;
+    }
+
     .faq-answer {
+        padding: 20px 25px 25px 80px;
+        background: #fff;
+    }
+
+    .faq-answer p {
+        margin: 0;
         color: #555;
         line-height: 1.8;
         font-size: 0.95rem;
     }
-    
-    .faq-accordion .badge {
-        border-radius: 8px;
-        padding: 0.5rem 0.75rem;
-        font-size: 0.875rem;
-        font-weight: 600;
-    }
-    
-    .faq-footer .alert {
-        border-radius: 10px;
-        padding: 1rem 2rem;
-        border: none;
-        max-width: 500px;
+
+    @media (max-width: 991px) {
+        .faq-page {
+            padding: 60px 0;
+        }
     }
 
-    /* Responsive */
-    @media (max-width: 768px) {
-        .faq-accordion .accordion-button {
-            padding: 1rem;
+    @media (max-width: 767px) {
+        .faq-question {
+            padding: 15px 20px;
+            gap: 12px;
+        }
+
+        .faq-question-icon {
+            width: 35px;
+            height: 35px;
+            font-size: 1.3rem;
+        }
+
+        .faq-question-text h5 {
+            font-size: 1rem;
+        }
+
+        .faq-toggle-icon {
+            font-size: 1rem;
+        }
+
+        .faq-answer {
+            padding: 15px 20px 20px 67px;
+        }
+
+        .faq-answer p {
             font-size: 0.9rem;
         }
-        
-        .faq-accordion .accordion-body {
-            padding: 1rem;
-        }
-        
-        .faq-accordion .badge {
-            padding: 0.4rem 0.6rem;
-            font-size: 0.75rem;
+    }
+
+    @media (max-width: 576px) {
+        .faq-answer {
+            padding: 15px 20px 20px 20px;
         }
     }
 </style>
-@endpush
-
-@push('scripts')
-<script>
-    // Optional: Add smooth scroll behavior for accordion
-    document.addEventListener('DOMContentLoaded', function() {
-        const accordionButtons = document.querySelectorAll('.accordion-button');
-        
-        accordionButtons.forEach(button => {
-            button.addEventListener('click', function() {
-                setTimeout(() => {
-                    if (!this.classList.contains('collapsed')) {
-                        this.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-                    }
-                }, 350);
-            });
-        });
-    });
-</script>
-@endpush

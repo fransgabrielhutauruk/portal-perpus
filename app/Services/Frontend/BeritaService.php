@@ -245,14 +245,13 @@ class BeritaService
      */
     public static function getBeritaForLanding(): array
     {
-        $latestBerita = self::getLatestBerita(6);
+        $latestBerita = self::getLatestBerita(3);
         
         $highlighted = [];
-        $newest = null;
         
         if ($latestBerita->count() > 0) {
-            // Take first 3 for highlighted carousel
-            foreach ($latestBerita->take(3) as $berita) {
+            // Take 3 latest berita for carousel
+            foreach ($latestBerita as $berita) {
                 $highlighted[] = [
                     'title'     => $berita->judul_berita,
                     'timestamp' => $berita->tanggal_berita ? \Carbon\Carbon::parse($berita->tanggal_berita)->diffForHumans() : '',
@@ -263,20 +262,6 @@ class BeritaService
                     ]
                 ];
             }
-            
-            // Take 4th item for "newest" featured if available
-            if ($latestBerita->count() > 3) {
-                $newestBerita = $latestBerita->get(3);
-                $newest = [
-                    'title'     => $newestBerita->judul_berita,
-                    'timestamp' => $newestBerita->tanggal_berita ? \Carbon\Carbon::parse($newestBerita->tanggal_berita)->diffForHumans() : '',
-                    'url'       => route('frontend.berita.show', ['beritaSlug' => $newestBerita->slug_berita]),
-                    'images'    => [
-                        'src' => publicMedia($newestBerita->filename_berita, 'berita'),
-                        'alt' => 'Cover ' . $newestBerita->judul_berita,
-                    ]
-                ];
-            }
         }
         
         return [
@@ -284,12 +269,8 @@ class BeritaService
                 'subtitle' => 'Berita & Informasi',
                 'title' => '<b>Berita</b> Perpustakaan',
                 'description' => 'Informasi terbaru seputar kegiatan, layanan, dan perkembangan perpustakaan PCR',
-                'sections' => [
-                    'newest_title' => 'Terbaru'
-                ]
             ],
-            'highlighted' => $highlighted,
-            'newest' => $newest
+            'highlighted' => $highlighted
         ];
     }
 

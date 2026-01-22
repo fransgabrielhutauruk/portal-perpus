@@ -23,11 +23,6 @@
                             </ul>
                         </div>
                     </div>
-                    <div class="our-potential-btn wow fadeInUp" data-wow-delay="0.75s">
-                        <a class="{{ data_get($fasilitasData, 'actions.primary.class') }}" href="{{ data_get($fasilitasData, 'actions.primary.url') }}">
-                            {{ data_get($fasilitasData, 'actions.primary.text') }}
-                        </a>
-                    </div>
                 </div>
             </div>
 

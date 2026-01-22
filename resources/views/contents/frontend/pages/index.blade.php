@@ -7,11 +7,8 @@
     @include('contents.frontend.partials.main.landing.fakta-statistik', ['statisticsData' => $statisticsData])
     @include('contents.frontend.partials.main.landing.akses-koleksi', ['aksesKoleksiData' => $aksesKoleksiData])
     @include('contents.frontend.partials.main.landing.fasilitas', ['fasilitasData' => $fasilitasData])
-    @include('contents.frontend.partials.main.landing.cta-virtual-tour', ['virtualTourData' => $virtualTourData])
-    @include('contents.frontend.partials.main.landing.sdg', ['sdgData' => $sdgData])
+    @include('contents.frontend.partials.main.landing.layanan', ['layananData' => $layananData])
+    @include('contents.frontend.partials.main.landing.panduan', ['panduanData' => $panduanData])
     @include('contents.frontend.partials.main.landing.berita', ['beritaData' => $beritaData])
-    @include('contents.frontend.partials.common.rekan-kerjasama', [
-        'renderTitle' => false,
-        'partnershipData' => $partnershipData,
-    ])
+    @include('contents.frontend.partials.main.landing.faq', ['faqData' => $faqData])
 @endsection

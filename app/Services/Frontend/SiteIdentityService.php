@@ -54,6 +54,7 @@ class SiteIdentityService
             ],
             'phone'   => [
                 'main'              => '(0761) - 53939',
+                'second'            => '(0761) - 554224',
                 'mobile'            => '0811 758 0101',
                 'academic_phone'    => '0761 53939',
                 'cooperation_phone' => '0811 757 4101'

@@ -136,7 +136,7 @@ class ReqBebasPustakaController extends Controller
         ]);
 
         $bebasPustaka = ReqBebasPustaka::findOrFail($req->input('reqbebaspustaka_id'));
-        $bebasPustaka->status = StatusRequest::DITOLAK->value;
+        $bebasPustaka->status_req = StatusRequest::DITOLAK->value;
         $bebasPustaka->catatan_admin = $req->input('catatan_admin') ?? '-';
         $bebasPustaka->save();
 

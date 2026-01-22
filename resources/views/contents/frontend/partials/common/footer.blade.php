@@ -34,7 +34,7 @@
                     <span>atau</span>
                     <div class="footer-contact-info">
                         <i class="fa-solid fa-mobile"></i>
-                        <span>{{ data_get($siteIdentity, 'contact.phone.mobile', '-') }}</span>
+                        <span>{{ data_get($siteIdentity, 'contact.phone.second', '-') }}</span>
                     </div>
                 </div>
 

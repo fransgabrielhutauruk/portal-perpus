@@ -35,7 +35,7 @@
         <div class="row fact-statistics-items wow fadeInUp" data-wow-delay="0.25s">
             @if (is_array($data) && count($data) > 0)
                 @php
-                    $chunks = array_chunk($data, 4);
+                    $chunks = array_chunk($data, 2);
                 @endphp
 
                 @foreach ($chunks as $chunk)

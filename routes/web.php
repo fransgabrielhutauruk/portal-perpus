@@ -30,6 +30,7 @@ Route::prefix('app')
         generalRoute(App\Http\Controllers\Admin\BeritaController::class, 'berita', 'app');
         generalRoute(App\Http\Controllers\Admin\PanduanController::class, 'panduan', 'app');
         generalRoute(App\Http\Controllers\Admin\FaqController::class, 'faq', 'app');
+        generalRoute(App\Http\Controllers\Admin\PustakawanController::class, 'pustakawan', 'app');
 
         Route::middleware('role:' . UserRole::ADMIN->value)->group(function () {
             generalRoute(App\Http\Controllers\Admin\UserController::class, 'user', 'app');
