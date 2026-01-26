@@ -1,4 +1,4 @@
-<section class="our-service bg-section berita-section">
+<section class="our-service bg-section bg-section berita-section">
     <div class="container z-2 position-relative">
         <div class="row">
             <div class="col-lg-4">

@@ -1,4 +1,4 @@
-<section class="faq-section">
+<section class="our-service bg-section faq-section">
     <div class="container">
         <div class="row">
             <div class="col-12">

@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('nip');
             $table->string('email_dosen');
 
-            $table->enum('jenis_dokumen', ['skripsi', 'artikel']);
+            $table->string('jenis_dokumen');
             $table->string('judul_dokumen');
             $table->string('file_dokumen');
             $table->text('keterangan');

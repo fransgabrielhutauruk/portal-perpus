@@ -41,7 +41,7 @@ class ReqTurnitinController extends Controller
             'email_dosen' => 'required|email',
             'nip' => 'required|string',
             'prodi_id' => 'required|numeric',
-            'jenis_dokumen' => 'required|in:skripsi,artikel',
+            'jenis_dokumen' => 'required|in:Karya Ilmiah,Proyek Akhir',
             'judul_dokumen' => 'required|string|max:255',
             'file_dokumen' => 'required|file|mimes:pdf,doc,docx|max:10240',
             'keterangan' => 'required|string',

@@ -305,7 +305,52 @@
                         </div>
                     </form>
                 </div>
-            </div>
+                {{-- --- HISTORY TABLE --- --}}
+                <div class="mt-5 wow fadeInUp" data-wow-delay="0.6s">
+                    <div class="section-title m-0">
+                        <h3 class="wow fadeInUp fs-5">Riwayat Pengajuan Bebas Pustaka</h3>
+                    </div>
+                    <div class="table-responsive rounded p-4 border border-3">
+                        <table class="table table-hover history-table">
+                            <thead>
+                                <tr>
+                                    <th>Nama Mahasiswa</th>
+                                    <th>NIM</th>
+                                    <th>Program Studi</th>
+                                    <th>Tanggal Pengajuan</th>
+                                    <th class="text-center">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse(data_get($content, 'history', []) as $item)
+                                    <tr>
+                                        <td>{{ $item->nama_mahasiswa }}</td>
+                                        <td>{{ $item->nim }}</td>
+                                        <td>{{ data_get($item->prodi, 'nama_prodi', '-') }}</td>
+                                        <td>{{ \Carbon\Carbon::parse($item->created_at)->format('d M Y') }}</td>
+                                        <td class="text-center">
+                                            @if ($item->status_req == 2)
+                                                {!! $item->status_badge !!}
+                                                @if ($item->catatan_admin)
+                                                    <small class="d-block text-muted mt-1"
+                                                        style="font-size: 0.75rem;">[Catatan:
+                                                        {{ $item->catatan_admin }}]</small>
+                                                @endif
+                                            @else
+                                                {!! $item->status_badge !!}
+                                            @endif
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="5" class="text-center py-4 text-muted">Belum ada data.
+                                        </td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+                </div>            </div>
         </div>
 </section>
 
@@ -717,6 +762,28 @@
     }
 
     // --- NEW FUNCTION: Add Row to Table (Updated for Bebas Pustaka) ---
+    function addHistoryRow(data) {
+        const tbody = document.querySelector('.history-table tbody');
+        tbody.querySelector('td[colspan="5"]')?.closest('tr').remove();
+
+        const statusBadges = {
+            0: '<span class="badge bg-warning text-dark rounded-pill">Menunggu</span>',
+            1: '<span class="badge bg-success rounded-pill">Disetujui</span>',
+            default: '<span class="badge bg-danger rounded-pill">Ditolak</span>'
+        };
+
+        tbody.insertAdjacentHTML('afterbegin', `
+            <tr class="table-success">
+                <td>${data.nama_mahasiswa}</td>
+                <td>${data.nim}</td>
+                <td>${data.prodi_nama}</td>
+                <td>${data.date_fmt}</td>
+                <td class="text-center">${statusBadges[data.status_req] || statusBadges.default}</td>
+            </tr>`);
+
+        setTimeout(() => tbody.querySelector('tr.table-success')?.classList.remove('table-success'), 2000);
+    }
+
     // --- 3. Validation Helpers ---
     function validateTab(tabId) {
         var $currentTab = $('#' + tabId);

@@ -80,19 +80,32 @@
                                 </li>
                             @endforeach
                             <li class="nav-item d-md-none">
-                                <a class="nav-link" href="{{ route('login.google', ['provider' => 'google']) }}">
-                                    Login
-                                </a>
+                                @auth
+                                    <a class="nav-link" href="{{ route('app.dashboard.index') }}">
+                                        Dashboard
+                                    </a>
+                                @else
+                                    <a class="nav-link" href="{{ route('login.google', ['provider' => 'google']) }}">
+                                        Login
+                                    </a>
+                                @endauth
                             </li>
                         </ul>
                     </div>
                 </div>
 
                 <div class="header-btn-- d-inline-flex d-none d-md-block mt-md-2">
-                    <a href="{{ route('login.google', ['provider' => 'google']) }}"
-                        class="btn-default btn-highlighted text-nowrap contact-button-">
-                        Login
-                    </a>
+                    @auth
+                        <a href="{{ route('app.dashboard.index') }}"
+                            class="btn-default btn-highlighted text-nowrap contact-button-">
+                            Dashboard
+                        </a>
+                    @else
+                        <a href="{{ route('login.google', ['provider' => 'google']) }}"
+                            class="btn-default btn-highlighted text-nowrap contact-button-">
+                            Login
+                        </a>
+                    @endauth
                 </div>
                 <div class="navbar-toggle"></div>
             </div>

@@ -24,27 +24,6 @@ class PanduanService
     }
 
     /**
-     * Get panduan for menu composer
-     *
-     * @return array
-     */
-    public static function getPanduanForMenu(): array
-    {
-        $panduanList = self::getAllPanduan();
-        
-        $menuItems = [];
-        foreach ($panduanList as $panduan) {
-            $menuItems[] = [
-                'name' => $panduan->judul,
-                'route' => route('frontend.panduan.show', ['panduanId' => $panduan->panduan_id]),
-                'target' => '_blank'
-            ];
-        }
-        
-        return $menuItems;
-    }
-
-    /**
      * Get content data for panduan index page
      *
      * @return array

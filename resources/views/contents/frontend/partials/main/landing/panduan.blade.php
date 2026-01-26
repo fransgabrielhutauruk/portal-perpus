@@ -1,4 +1,4 @@
-<section class="panduan-section">
+<section class="company-growth fact-statistics-section layanan-section">
     <div class="container">
         <div class="row">
             <div class="col-12">

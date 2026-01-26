@@ -69,14 +69,17 @@ class ReqBebasPustakaController extends Controller
 
             DB::commit();
 
+            $data->load('prodi');
+
             return response()->json([
                 'message' => 'Pengajuan Surat Bebas Pustaka berhasil dikirim!',
                 'status'  => 'success',
                 'new_data' => [
                     'nama_mahasiswa' => $data->nama_mahasiswa,
                     'nim'            => $data->nim,
+                    'prodi_nama'     => $data->prodi->nama_prodi ?? '-',
                     'date_fmt'       => $data->created_at->format('d M Y'),
-                    'status'         => $data->status
+                    'status_req'     => $data->status_req
                 ]
             ], 200);
         } catch (\Exception $e) {

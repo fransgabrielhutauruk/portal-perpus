@@ -1,6 +1,6 @@
 <!--begin::Header main-->
 <div class="d-flex flex-stack flex-grow-1">
-    <div class="app-header-logo d-flex align-items-center ps-lg-9" id="kt_app_header_logo">
+    <div class="app-header-logo d-flex align-items-center ps-lg-9 ms-2" id="kt_app_header_logo">
         <!--begin::Sidebar toggle-->
         <div id="kt_app_sidebar_toggle"
             class="app-sidebar-toggle btn btn-sm btn-icon bg-body btn-color-gray-500 btn-active-color-primary w-30px h-30px ms-n2 me-4 d-none d-lg-flex"
@@ -21,8 +21,9 @@
             </i>
         </div>
         <!--end::Sidebar mobile toggle-->
+
         <!--begin::Logo-->
-        <a href="{{ url('/') }}" class="app-sidebar-logo">
+        <a href="{{ url('/') }}" class="app-sidebar-logo ms-2">
             <img alt="Logo" src="{{ asset('theme') }}/media/logos/logo-portal.webp"
                 class="h-25px h-md-30px theme-light-show" />
             <img alt="Logo" src="{{ asset('theme') }}/media/logos/logo-portal.webp"
@@ -31,14 +32,7 @@
         <!--end::Logo-->
     </div>
     <!--begin::Navbar-->
-    <div class="app-navbar flex-grow-1 justify-content-end" id="kt_app_header_navbar">
-        <div class="app-navbar-item d-flex align-items-stretch flex-lg-grow-1">
-            @include('layouts.inc.header_app')
-        </div>
-
-
-
-        @include('layouts.inc.header_notif')
+    <div class="app-navbar flex-grow-1 justify-content-end" id="kt_app_header_navbar" style="padding-right: 2.5rem;">
 
         <!--begin::User menu-->
         <div class="app-navbar-item" id="kt_header_user_menu_toggle">
@@ -49,7 +43,7 @@
                 <img src="{{ asset('theme') }}/media/svg/avatars/001-boy.svg" alt="user" />
             </div>
             <!--begin::User account menu-->
-            <div class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-800 menu-state-bg menu-state-color fw-semibold py-4 fs-6 w-275px"
+            <div class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-800 menu-state-bg menu-state-color fw-semibold py-4 fs-6 w-325px"
                 data-kt-menu="true">
                 <!--begin::Menu item-->
                 <div class="menu-item px-3">
@@ -60,11 +54,18 @@
                         </div>
                         <!--end::Avatar-->
                         <!--begin::Username-->
-                        <div class="d-flex flex-column">
-                            <div class="fw-bold d-flex align-items-center fs-5">
-                                {{ Auth::user()->name }}
+                        <div class="d-flex flex-column flex-grow-1 min-w-0">
+                            <div class="fw-bold d-flex align-items-center fs-5 flex-wrap">
+                                <span class="text-truncate me-2">{{ Auth::user()->name }}</span>
+                                @php
+                                    $activeRole = session(
+                                        'active_role',
+                                        Auth::user()->roles->first()?->name ?? 'Guest',
+                                    );
+                                @endphp
+                                <span class="badge badge-light-primary fs-7 flex-shrink-0">{{ $activeRole }}</span>
                             </div>
-                            <span class="fw-semibold text-muted fs-7">{{ Auth::user()->email }}</span>
+                            <span class="fw-semibold text-muted fs-7 text-truncate">{{ Auth::user()->email }}</span>
                         </div>
                         <!--end::Username-->
                     </div>
@@ -138,23 +139,18 @@
         <!--end::User menu-->
         <!--begin::Action-->
         <div class="d-none d-md-inline app-navbar-item ms-2 mx-lg-2">
-            <!--begin::Link-->
-            <a href="{{ asset('demo39/dist/authentication/layouts/corporate/sign-in.html') }}"
-                class="btn btn-icon btn-custom btn-color-gray-600 btn-active-color-primary w-35px h-35px w-md-40px h-md-40px">
-                <i class="ki-outline ki-exit-right fs-1"></i>
-            </a>
-            <!--end::Link-->
+            <!--begin::Logout Form-->
+            <form method="POST" action="{{ route('logout') }}" style="display: inline;">
+                @csrf
+                <button type="submit"
+                    class="btn btn-icon btn-custom btn-color-gray-600 btn-active-color-primary w-35px h-35px w-md-40px h-md-40px"
+                    style="border: none; background: none;">
+                    <i class="ki-outline ki-exit-right fs-1"></i>
+                </button>
+            </form>
+            <!--end::Logout Form-->
         </div>
         <!--end::Action-->
-
-        <!--begin::Header menu toggle-->
-        <div class="app-navbar-item ms-3 ms-lg-6 me-3 d-flex d-lg-none">
-            <div class="btn btn-icon btn-custom btn-color-gray-600 btn-active-color-primary w-35px h-35px w-md-40px h-md-40px"
-                id="kt_app_aside_mobile_toggle">
-                <i class="ki-duotone ki-tablet-book fs-3x"><i class="path1"></i><i class="path2"></i></i>
-            </div>
-        </div>
-        <!--end::Header menu toggle-->
     </div>
     <!--end::Navbar-->
 </div>

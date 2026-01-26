@@ -68,4 +68,9 @@ Route::name('frontend.')->group(function () {
     Route::prefix('/dev')->name('dev.')->controller(DEV\MainController::class)->group(function () {
         Route::get('/changelog', 'changelog')->name('changelog');
     });
+
+    // Error pages
+    Route::get('/error/unauthorized', function () {
+        return view('errors.unauthorized-login');
+    })->name('error.unauthorized');
 });

@@ -22,10 +22,10 @@ class ReqTurnitinService
             ->get();
 
         return [
-            'header'        => 'Cek Turnitin',
-            'title'         => 'Pengajuan Cek Turnitin',
-            'subtitle'      => 'Ajukan Dokumen untuk Pengecekan Turnitin',
-            'description'   => 'Lengkapi formulir berikut untuk mengajukan dokumen yang akan dicek plagiarismenya menggunakan Turnitin.',
+            'header'        => 'Cek Plagiarisme',
+            'title'         => 'Pengajuan Cek Plagiarisme',
+            'subtitle'      => 'Ajukan Dokumen untuk Pengecekan Plagiarisme',
+            'description'   => 'Lengkapi formulir berikut untuk mengajukan dokumen yang akan dicek plagiarismenya.',
 
             'prodi_list'    => $prodiList,
             'form'          => [
@@ -42,8 +42,8 @@ class ReqTurnitinService
     public static function getMetaData()
     {
         return [
-            'title'         => 'Cek Turnitin',
-            'description'   => 'Halaman pengajuan cek turnitin perpustakaan Politeknik Caltex Riau.',
+            'title'         => 'Cek Plagiarisme',
+            'description'   => 'Halaman pengajuan cek plagiarisme perpustakaan Politeknik Caltex Riau.',
             'keywords'      => 'turnitin, cek plagiarisme, perpustakaan pcr, plagiarism check'
         ];
     }

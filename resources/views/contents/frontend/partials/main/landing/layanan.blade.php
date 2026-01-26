@@ -1,15 +1,15 @@
-<section class="our-service bg-section layanan-section">
+<section class="company-growth fact-statistics-section layanan-section">
     <div class="container z-2 position-relative">
         <div class="row">
             <div class="col-12">
                 <div class="section-title text-center mb-5">
-                    <h3 class="wow fadeInUp text-white">
+                    <h3 class="wow fadeInUp">
                         {{ data_get($layananData, 'content.subtitle') }}
                     </h3>
-                    <h2 class="wow fadeInUp text-white" data-wow-delay="0.25s">
+                    <h2 class="wow fadeInUp" data-wow-delay="0.25s">
                         {!! data_get($layananData, 'content.title') !!}
                     </h2>
-                    <p class="wow fadeInUp text-white" data-wow-delay="0.5s">
+                    <p class="wow fadeInUp" data-wow-delay="0.5s">
                         {!! data_get($layananData, 'content.description') !!}
                     </p>
                 </div>

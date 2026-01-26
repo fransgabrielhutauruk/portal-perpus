@@ -58,7 +58,7 @@ class ReqBebasPustakaController extends Controller
                 $dt['nim'] = $value['nim'] ?? '-';
                 $dt['email_mahasiswa'] = $value['email_mahasiswa'] ?? '-';
                 $dt['prodi_nama'] = $value['nama_prodi'] ?? '-';
-                $dt['status'] = ReqBebasPustaka::getStatusBadge($value['status'] ?? null);
+                $dt['status'] = ReqBebasPustaka::getStatusBadge($value['status_req'] ?? null);
 
                 $bebasPustaka = ReqBebasPustaka::find($value['reqbebaspustaka_id']);
                 $id = $value['reqbebaspustaka_id'];

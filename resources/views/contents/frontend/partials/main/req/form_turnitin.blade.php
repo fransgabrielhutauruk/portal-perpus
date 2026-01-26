@@ -105,7 +105,7 @@
                             {{-- === TAB 1: ATTENTION === --}}
                             <div class="tab-pane fade show active text-center" id="tab-attention" role="tabpanel">
                                 <div class="border-top border-bottom border-2 py-2">
-                                    <h5 class="text-capitalize">Form usulan cek turnitin ini diberikan bagi dosen
+                                    <h5 class="text-capitalize">Form usulan cek plagiarisme ini diberikan bagi dosen
                                         Politeknik Caltex Riau</h5>
                                 </div>
 
@@ -215,16 +215,16 @@
                                             </label>
                                             <div class="form-check">
                                                 <input type="radio" class="form-check-input" name="jenis_dokumen"
-                                                    id="typeSkripsi" value="skripsi" required>
+                                                    id="typeSkripsi" value="Karya Ilmiah" required>
                                                 <label class="form-check-label" for="typeSkripsi">
-                                                    Skripsi
+                                                    Karya Ilmiah
                                                 </label>
                                             </div>
                                             <div class="form-check">
                                                 <input type="radio" class="form-check-input" name="jenis_dokumen"
-                                                    id="typeArtikel" value="artikel" required>
+                                                    id="typeArtikel" value="Proyek Akhir" required>
                                                 <label class="form-check-label" for="typeArtikel">
-                                                    Artikel
+                                                    Proyek Akhir
                                                 </label>
                                             </div>
                                             <div class="help-block with-errors"></div>

@@ -60,17 +60,29 @@ class ReqBebasPustakaService
     public static function getRecentRequests($limit = 5)
     {
         try {
-            return ReqBebasPustaka::select(
-                'nama_mahasiswa',
-                'nim',
-                'prodi_id',
-                'is_syarat_terpenuhi',
-                'created_at',
-                'status'
-            )
+            return ReqBebasPustaka::with('prodi')
+                ->select(
+                    'id',
+                    'nama_mahasiswa',
+                    'nim',
+                    'prodi_id',
+                    'is_syarat_terpenuhi',
+                    'status_req',
+                    'catatan_admin',
+                    'created_at'
+                )
                 ->orderBy('created_at', 'desc')
                 ->limit($limit)
-                ->get();
+                ->get()
+                ->map(function ($item) {
+                    $statusBadges = [
+                        0 => '<span class="badge bg-warning text-dark rounded-pill">Menunggu</span>',
+                        1 => '<span class="badge bg-success rounded-pill">Disetujui</span>',
+                        2 => '<span class="badge bg-danger rounded-pill">Ditolak</span>',
+                    ];
+                    $item->status_badge = $statusBadges[$item->status_req] ?? '<span class="badge bg-secondary rounded-pill">-</span>';
+                    return $item;
+                });
         } catch (\Exception $e) {
             return [];
         }

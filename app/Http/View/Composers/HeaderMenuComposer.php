@@ -11,8 +11,6 @@ class HeaderMenuComposer
 {
     public function compose(View $view)
     {
-        $panduanMenuItems = PanduanService::getPanduanForMenu();
-        
         $menu = [
             [
                 'name'  => 'Beranda',
@@ -42,15 +40,11 @@ class HeaderMenuComposer
                 'children' => [
                     ['name' => 'Usulan Koleksi Buku', 'route' =>  route('frontend.req.buku')],
                     ['name' => 'Kebutuhan Modul Semester', 'route' => route('frontend.req.modul')],
-                    ['name' => 'Cek Turnitin', 'route' => route('frontend.req.turnitin')],
+                    ['name' => 'Cek Plagiarisme', 'route' => route('frontend.req.turnitin')],
                     ['name' => 'Surat Bebas Pustaka', 'route' => route('frontend.req.bebas-pustaka')],
                 ],
             ],
-            [
-                'name'     => 'Panduan',
-                'route'    => route('frontend.panduan.index'),
-                'children' => $panduanMenuItems,
-            ],
+            ['name' => 'Panduan', 'route' => route('frontend.panduan.index')],
             ['name' => 'Berita', 'route' => route('frontend.berita.index')],
             ['name' => 'FAQ', 'route' => route('frontend.faq.index')],
         ];

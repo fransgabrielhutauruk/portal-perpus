@@ -1,28 +1,28 @@
 <section class="our-service bg-section akses-koleksi-section">
     <div class="container z-2 position-relative">
-        <div class="row">
-            <div class="col-lg-5">
-                <div class="service-content">
-                    <div class="section-title">
-                        <h3 class="wow fadeInUp">
-                            {{ data_get($aksesKoleksiData, 'subtitle') }}
-                        </h3>
-                        <h2 class="wow fadeInUp" data-wow-delay="0.25s">
-                            {!! data_get($aksesKoleksiData, 'title') !!}
-                        </h2>
-                        <p class="wow fadeInUp" data-wow-delay="0.5s">
-                            {!! data_get($aksesKoleksiData, 'description') !!}
-                        </p>
-                    </div>
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="section-title text-center">
+                    <h3 class="wow fadeInUp text-white">
+                        {{ data_get($aksesKoleksiData, 'subtitle') }}
+                    </h3>
+                    <h2 class="wow fadeInUp text-white" data-wow-delay="0.25s">
+                        {!! data_get($aksesKoleksiData, 'title') !!}
+                    </h2>
+                    <p class="wow fadeInUp text-white" data-wow-delay="0.5s">
+                        {!! data_get($aksesKoleksiData, 'description') !!}
+                    </p>
                 </div>
             </div>
+        </div>
 
-            <div class="col-lg-7">
+        <div class="row">
+            <div class="col-12">
                 <div class="service-item-list">
                     <div class="row g-4">
                         @forelse (data_get($aksesKoleksiData, 'list', []) as $item)
-                            <div class="col-md-6">
-                                <div class="service-item wow fadeInUp h-100">
+                            <div class="col-md-4">
+                                <div class="service-item wow fadeInUp h-100" data-wow-delay="{{ ($loop->index * 0.15) + 0.2 }}s">
                                     <div class="service-item-container">
                                         <div class="service-item-content">
                                             <div class="d-flex align-items-center gap-3">

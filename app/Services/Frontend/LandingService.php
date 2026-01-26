@@ -40,49 +40,13 @@ class LandingService
     public static function getFactsAndStatisticsCallout(): array
     {
         return [
-            'title'       => '<b>Statistik</b> Perpustakaan PCR',
-            'subtitle'    => 'Fakta dan Data',
+            'title'    => 'Fakta dan Data',
             'description' => 'Perpustakaan Politeknik Caltex Riau hadir sebagai pusat sumber belajar dan informasi yang mendukung kegiatan akademik sivitas akademika. Dengan koleksi yang terus berkembang dan layanan digital yang modern, kami berkomitmen memberikan akses informasi terbaik.',
             'image'       => [
                 'src' => publicMedia('perpus-1.jpg', 'perpus'),
                 'alt' => 'Perpustakaan Politeknik Caltex Riau'
             ],
             'data'        => [
-                [
-                    'icon'      => 'fa-solid fa-book',
-                    'value'     => '18000',
-                    'label'     => 'Koleksi Buku',
-                    'important' => true,
-                    'delay'     => '0.1s',
-                    'counter'   => true,
-                    'suffix'    => '+'
-                ],
-                [
-                    'icon'      => 'fa-solid fa-clock',
-                    'value'     => '8',
-                    'label'     => 'Jam Operasional',
-                    'important' => false,
-                    'delay'     => '1.3s',
-                    'counter'   => true,
-                    'suffix'    => ' Jam/Hari'
-                ],
-                [
-                    'icon'      => 'fa-solid fa-book-open-reader',
-                    'value'     => '900',
-                    'label'     => 'Peminjaman per Tahun',
-                    'important' => true,
-                    'delay'     => '1.1s',
-                    'counter'   => true,
-                    'suffix'    => '+'
-                ],
-                [
-                    'icon'      => 'fa-solid fa-door-open',
-                    'value'     => '5',
-                    'label'     => 'Hari Buka per Minggu',
-                    'important' => false,
-                    'delay'     => '1.5s',
-                    'counter'   => true
-                ],
                 [
                     'icon'      => 'fa-solid fa-laptop',
                     'value'     => '10',
@@ -92,13 +56,13 @@ class LandingService
                     'counter'   => true
                 ],
                 [
-                    'icon'      => 'fa-solid fa-video',
-                    'value'     => '24',
-                    'label'     => 'Terpantau CCTV',
+                    'icon'      => 'fa-solid fa-book',
+                    'value'     => '18000',
+                    'label'     => 'Koleksi Buku',
                     'important' => false,
-                    'delay'     => '0.6s',
-                    'counter'   => false,
-                    'suffix'    => '/7'
+                    'delay'     => '0.1s',
+                    'counter'   => true,
+                    'suffix'    => '+'
                 ],
                 [
                     'icon'      => 'fa-solid fa-chair',
@@ -110,15 +74,14 @@ class LandingService
                     'suffix'    => '+'
                 ],
                 [
-                    'icon'      => 'fa-solid fa-users',
-                    'value'     => '10000',
-                    'label'     => 'Pengunjung per Tahun',
+                    'icon'      => 'fa-solid fa-book-open-reader',
+                    'value'     => '900',
+                    'label'     => 'Peminjaman per Tahun',
                     'important' => false,
-                    'delay'     => '1.2s',
+                    'delay'     => '1.1s',
                     'counter'   => true,
                     'suffix'    => '+'
                 ],
-
             ]
         ];
     }
@@ -137,7 +100,7 @@ class LandingService
             'list'        => [
                 [
                     'name'   => 'OPAC',
-                    'description' => 'Katalog online perpustakaan untuk mencari dan menelusuri koleksi buku, jurnal, dan bahan pustaka lainnya.',
+                    'description' => 'Katalog online untuk mencari dan menelusuri koleksi buku, jurnal, dan bahan pustaka lainnya.',
                     'url'    => 'https://opac.lib.pcr.ac.id/',
                     'icon'   => 'fa-solid fa-magnifying-glass',
                     'target' => '_blank'
@@ -190,8 +153,7 @@ class LandingService
     {
         return [
             'content' => [
-                'subtitle' => 'Fasilitas Perpustakaan',
-                'title' => '<b>Fasilitas</b> yang Mendukung Kegiatan Belajar',
+                'title' => 'Fasilitas Perpustakaan',
                 'description' => 'Perpustakaan PCR menyediakan berbagai fasilitas modern dan nyaman untuk mendukung kegiatan belajar, penelitian, dan pengembangan diri sivitas akademika.',
                 'image' => [
                     'src' => publicMedia('fasilitas.png', 'perpus'),
@@ -242,8 +204,8 @@ class LandingService
                     'url' => route('frontend.req.bebas-pustaka'),
                 ],
                 [
-                    'title' => 'Turnitin',
-                    'description' => 'Ajukan permohonan pengecekan plagiarisme untuk karya tulis ilmiah menggunakan Turnitin untuk memastikan keaslian karya Anda.',
+                    'title' => 'Cek Plagiarisme',
+                    'description' => 'Ajukan permohonan pengecekan plagiarisme untuk karya tulis ilmiah untuk memastikan keaslian karya Anda.',
                     'icon' => 'fa-solid fa-magnifying-glass',
                     'url' => route('frontend.req.turnitin'),
                 ]
