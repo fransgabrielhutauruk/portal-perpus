@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('req_modul', function (Blueprint $table) {
             $table->id('reqmodul_id');
-
+            $table->unsignedBigInteger('periode_id');
             $table->unsignedBigInteger('prodi_id')->nullable();
 
             $table->string('nama_dosen')->nullable();

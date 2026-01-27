@@ -123,14 +123,14 @@
                                 </span>
                             </div>
                             <div class="flex-grow-1">
-                                <span class="text-gray-600 fw-semibold d-block fs-7">Cek Turnitin</span>
+                                <span class="text-gray-600 fw-semibold d-block fs-7">Cek Plagiarisme</span>
                                 <span
                                     class="text-gray-800 fw-bold fs-2x">{{ number_format($pageData->stats['reqTurnitin']) }}</span>
                             </div>
                         </div>
                         <div class="separator separator-dashed mb-4"></div>
                         <div class="d-flex justify-content-between text-gray-600 fs-7">
-                            <span>Plagiarism Check</span>
+                            <span>Cek Turnitin</span>
                             <a href="{{ route('app.req-turnitin.index') }}" class="text-hover-primary">Lihat <i
                                     class="ki-outline ki-arrow-right fs-8"></i></a>
                         </div>

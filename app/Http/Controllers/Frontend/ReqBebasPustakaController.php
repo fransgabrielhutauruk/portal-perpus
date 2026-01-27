@@ -6,6 +6,7 @@ use App\Enums\StatusRequest;
 use Illuminate\Http\Request;
 use App\Models\ReqBebasPustaka;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use App\Services\Frontend\SafeDataService;
 use App\Services\Frontend\ReqBebasPustakaService;
@@ -45,6 +46,22 @@ class ReqBebasPustakaController extends Controller
 
     public function submit(Request $request)
     {
+        // Check if periode is open
+        $activePeriode = DB::table('mst_periode')
+            ->where('jenis_periode', 'req_bebas_pustaka')
+            ->whereDate('tanggal_mulai', '<=', now())
+            ->whereDate('tanggal_selesai', '>=', now())
+            ->whereNull('deleted_at')
+            ->first();
+
+        Log::error('Active Periode:', (array) $activePeriode);
+        if (!$activePeriode) {
+            return response()->json([
+                'message' => 'Periode pengajuan bebas pustaka sedang tidak dibuka. Silakan hubungi admin perpustakaan.',
+                'status' => 'error'
+            ], 403);
+        }
+
         $validated = $request->validate([
             'nama_mahasiswa'  => 'required|string|max:255',
             'email_mahasiswa' => 'required|email',
@@ -56,6 +73,7 @@ class ReqBebasPustakaController extends Controller
             DB::beginTransaction();
 
             $data = ReqBebasPustaka::create([
+                'periode_id'      => $activePeriode->periode_id,
                 'nama_mahasiswa'  => $request->nama_mahasiswa,
                 'email_mahasiswa' => $request->email_mahasiswa,
                 'nim'             => $request->nim,

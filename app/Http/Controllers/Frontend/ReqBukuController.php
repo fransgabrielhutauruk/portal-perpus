@@ -33,6 +33,20 @@ class ReqBukuController extends Controller
 
     public function submitUsulan(Request $request)
     {
+        $activePeriode = DB::table('mst_periode')
+            ->where('jenis_periode', 'req_buku')
+            ->whereDate('tanggal_mulai', '<=', now())
+            ->whereDate('tanggal_selesai', '>=', now())
+            ->whereNull('deleted_at')
+            ->first();
+
+        if (!$activePeriode) {
+            return response()->json([
+                'message' => 'Periode pengajuan usulan buku sedang tidak dibuka. Silakan hubungi admin perpustakaan.',
+                'status' => 'error'
+            ], 403);
+        }
+
         $validated = $request->validate([
             'nama_req'       => 'required|string|max:255',
             'email_req'      => 'required|email',
@@ -60,6 +74,7 @@ class ReqBukuController extends Controller
             $bahasaBuku = $request->bahasa_buku === 'inggris' ? 'Inggris' : 'Indonesia';
 
             $usulan = ReqBuku::create([
+                'periode_id' => $activePeriode->periode_id,
                 'prodi_id' => $request->prodi_id,
                 'nama_req' => $request->nama_req,
                 'email_req' => $request->email_req,

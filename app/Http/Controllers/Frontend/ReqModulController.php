@@ -34,6 +34,21 @@ class ReqModulController extends Controller
 
     public function submitUsulanModul(Request $request)
     {
+        // Check if periode is open
+        $activePeriode = DB::table('mst_periode')
+            ->where('jenis_periode', 'req_modul')
+            ->whereDate('tanggal_mulai', '<=', now())
+            ->whereDate('tanggal_selesai', '>=', now())
+            ->whereNull('deleted_at')
+            ->first();
+
+        if (!$activePeriode) {
+            return response()->json([
+                'message' => 'Periode pengajuan modul sedang tidak dibuka. Silakan hubungi admin perpustakaan.',
+                'status' => 'error'
+            ], 403);
+        }
+
         $validated = $request->validate([
             'nama_dosen' => 'required|string|max:255',
             'inisial_dosen' => 'required|string|max:10',
@@ -58,6 +73,7 @@ class ReqModulController extends Controller
                 : null;
 
             $usulanModul = ReqModul::create([
+                'periode_id' => $activePeriode->periode_id,
                 'prodi_id' => $request->prodi_id,
                 'nama_dosen' => $request->nama_dosen,
                 'inisial_dosen' => $request->inisial_dosen,

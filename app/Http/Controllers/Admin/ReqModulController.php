@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\admin;
+namespace App\Http\Controllers\Admin;
 
 use App\Enums\StatusRequest;
 use App\Http\Controllers\Controller;
@@ -146,6 +146,23 @@ class ReqModulController extends Controller
         return response()->json([
             'status' => true,
             'message' => 'Request modul telah ditolak.'
+        ]);
+    }
+
+    public function reset(Request $req): JsonResponse
+    {
+        validate_and_response([
+            'reqmodul_id' => ['ID Request Modul', 'required'],
+        ]);
+
+        $usulan = ReqModul::findOrFail($req->input('reqmodul_id'));
+        $usulan->status_req = StatusRequest::MENUNGGU->value;
+        $usulan->catatan_admin = null;
+        $usulan->save();
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Status request telah direset ke menunggu.'
         ]);
     }
 

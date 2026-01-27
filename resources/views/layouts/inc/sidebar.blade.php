@@ -18,16 +18,16 @@
                 :active="$pageData->activeMenu == 'panduan'" />
             <x-theme.menu link="{{ route('app.faq.index') }}" text="FAQ" icon="ki-outline ki-message-question"
                 :active="$pageData->activeMenu == 'faq'" />
+            <x-theme.menu link="{{ route('app.periode.index') }}" text="Periode" icon="ki-outline ki-abstract-45"
+                :active="$pageData->activeMenu == 'periode'" />
             <x-theme.menu link="{{ route('app.usulan.index') }}" text="Req Buku" icon="ki-outline ki-book"
                 :active="$pageData->activeMenu == 'usulan'" />
             <x-theme.menu link="{{ route('app.usulan-modul.index') }}" text="Req Modul" icon="ki-outline ki-book-open"
                 :active="$pageData->activeMenu == 'usulan-modul'" />
             <x-theme.menu link="{{ route('app.req-bebas-pustaka.index') }}" text="Req Bebas Pustaka"
                 icon="ki-outline ki-verify" :active="$pageData->activeMenu == 'req-bebas-pustaka'" />
-            <x-theme.menu link="{{ route('app.req-turnitin.index') }}" text="Req Turnitin"
+            <x-theme.menu link="{{ route('app.req-turnitin.index') }}" text="Req Plagiarisme"
                 icon="ki-outline ki-shield-tick" :active="$pageData->activeMenu == 'req-turnitin'" />
-            <x-theme.menu link="{{ route('app.periode.index') }}" text="Periode" icon="ki-outline ki-abstract-45"
-                :active="$pageData->activeMenu == 'periode'" />
         @endif
 
         @if (auth()->user()->hasAnyRole([UserRole::ADMIN->value]))

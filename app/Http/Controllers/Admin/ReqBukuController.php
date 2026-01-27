@@ -141,6 +141,23 @@ class ReqBukuController extends Controller
         ]);
     }
 
+    public function reset(Request $req): JsonResponse
+    {
+        validate_and_response([
+            'reqbuku_id' => ['ID Usulan Buku', 'required'],
+        ]);
+
+        $usulan = ReqBuku::findOrFail($req->input('reqbuku_id'));
+        $usulan->status_req = StatusRequest::MENUNGGU->value;
+        $usulan->catatan_admin = null;
+        $usulan->save();
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Status usulan telah direset ke menunggu.'
+        ]);
+    }
+
     public function destroy(Request $req, $param1 = ''): JsonResponse
     {
         if ($param1 == '') {

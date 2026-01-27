@@ -59,6 +59,25 @@
         @endslot
     </x-modal>
 
+    <x-modal id="modalReset" type="centered" :static="true" size="" jf-modal="reset"
+        title="Reset Request">
+        <form id="formReset" class="needs-validation" jf-form="reset">
+            <input type="hidden" name="reqmodul_id" value="">
+
+            <div class="alert alert-warning d-flex align-items-center">
+                <i class="ki-outline ki-information-5 fs-2x me-3"></i>
+                <div>
+                    <strong>Perhatian:</strong> Data akan dikembalikan ke status <strong>Menunggu</strong>. 
+                    Catatan admin akan dihapus.
+                </div>
+            </div>
+        </form>
+
+        @slot('action')
+            <x-btn.form action="save" class="act-save btn-warning" jf-save="reset">Reset Request</x-btn.form>
+        @endslot
+    </x-modal>
+
     <x-modal id="modalDetail" type="centered" :static="true" size="xl" jf-modal="detail"
         title="Detail Request Modul">
         <div class="modal-body p-0">
@@ -174,6 +193,11 @@
                     <i class="ki-outline ki-cross fs-3"></i> Tolak
                 </button>
             </div>
+            <div id="detail-actions-reset" style="display:none;">
+                <button type="button" class="btn btn-sm btn-warning" id="btn-detail-reset">
+                    <i class="ki-outline ki-arrow-circle-left fs-3"></i> Reset Request
+                </button>
+            </div>
         @endslot
     </x-modal>
 @endsection
@@ -231,17 +255,22 @@
                     // Handle status badge
                     var statusBadge = '';
                     if (data.status_req == 0) {
-                        statusBadge = '<span class="badge badge-warning">Pending</span>';
+                        statusBadge = '<span class="badge badge-warning">Menunggu</span>';
                         $('#detail-actions-pending').show();
                         $('#detail-actions-pending').data('id', detailId);
+                        $('#detail-actions-reset').hide();
                         $('#row-catatan-admin').hide();
                     } else if (data.status_req == 1) {
                         statusBadge = '<span class="badge badge-success">Disetujui</span>';
                         $('#detail-actions-pending').hide();
+                        $('#detail-actions-reset').show();
+                        $('#detail-actions-reset').data('id', detailId);
                         $('#row-catatan-admin').hide();
-                    } else if (data.status_req == 2) {
+                    } else if (data.status_req == -1) {
                         statusBadge = '<span class="badge badge-danger">Ditolak</span>';
                         $('#detail-actions-pending').hide();
+                        $('#detail-actions-reset').show();
+                        $('#detail-actions-reset').data('id', detailId);
                         $('#row-catatan-admin').show();
                         $('#detail-catatan_admin').text(data.catatan_admin || '-');
                     }
@@ -271,6 +300,40 @@
             setTimeout(function() {
                 $('[jf-reject="' + detailId + '"]').click();
             }, 300);
+        });
+
+        // Handle reset from detail modal
+        $(document).on('click', '#btn-detail-reset', function() {
+            var detailId = $('#detail-actions-reset').data('id');
+            $('[jf-modal="detail"]').modal('hide');
+
+            setTimeout(function() {
+                $('#formReset input[name="reqmodul_id"]').val(detailId);
+                $('[jf-modal="reset"]').modal('show');
+            }, 300);
+        });
+
+        // Custom handler for reset save button
+        $(document).on('click', '[jf-save="reset"]', function(e) {
+            e.preventDefault();
+            
+            var form = $('#formReset');
+            var formData = form.serializeArray();
+            var data = {};
+            
+            formData.forEach(function(field) {
+                data[field.name] = field.value;
+            });
+
+            ajaxRequest({
+                link: '{{ route("app.usulan-modul.reset") }}',
+                data: data,
+                swal_success: true,
+                callback: function() {
+                    $('[jf-modal="reset"]').modal('hide');
+                    $('table[jf-data="modul"]').DataTable().ajax.reload(null, false);
+                }
+            });
         });
     </script>
 @endpush

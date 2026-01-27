@@ -118,7 +118,7 @@ class HeroService
                 'subtitle'     => 'Layanan Perpustakaan',
                 'titles'       => [
                     'Usulan Buku, Kebutuhan Modul Semester',
-                    'Bebas Pustaka, Cek Turnitin'
+                    'Bebas Pustaka, Cek Plagiarisme'
                 ],
                 'media'        => [
                     'type'     => 'image',

@@ -28,6 +28,7 @@ class ReqTurnitin extends Model
         'keterangan',
         'status',
         'catatan_admin',
+        'file_hasil_turnitin',
         'created_by',
         'updated_by',
         'deleted_by',

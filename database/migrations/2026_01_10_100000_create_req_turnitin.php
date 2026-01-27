@@ -28,6 +28,7 @@ return new class extends Migration
 
             $table->string('status_req')->default(0);
             $table->text('catatan_admin')->nullable();
+            $table->string('file_hasil_turnitin')->nullable();
 
             $table->string('created_by')->nullable();
             $table->string('updated_by')->nullable();

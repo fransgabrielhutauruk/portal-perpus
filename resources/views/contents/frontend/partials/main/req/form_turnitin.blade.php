@@ -301,6 +301,53 @@
                         </div>
                     </form>
                 </div>
+
+                <div class="mt-5 wow fadeInUp" data-wow-delay="0.6s">
+                    <div class="section-title m-0">
+                        <h3 class="wow fadeInUp fs-5">Riwayat Pengajuan Cek Plagiarisme Terbaru</h3>
+                    </div>
+                    <div class="table-responsive rounded p-4 border border-3">
+                        <table class="table table-hover history-table">
+                            <thead>
+                                <tr>
+                                    <th>Nama Dosen</th>
+                                    <th>Judul Dokumen</th>
+                                    <th>Jenis Dokumen</th>
+                                    <th>Tanggal Pengajuan</th>
+                                    <th class="text-center">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse(data_get($content, 'history', []) as $item)
+                                    <tr>
+                                        <td>{{ $item->nama_dosen }}</td>
+                                        <td>{{ $item->judul_dokumen }}</td>
+                                        <td>
+                                            <span class="badge bg-info text-dark">{{ $item->jenis_dokumen }}</span>
+                                        </td>
+                                        <td>{{ \Carbon\Carbon::parse($item->created_at)->format('d M Y') }}</td>
+                                        <td class="text-center">
+                                            @if ($item->status_req == -1)
+                                                {!! $item->status_badge !!}
+                                                @if ($item->catatan_admin)
+                                                    <small class="d-block text-muted mt-1"
+                                                        style="font-size: 0.75rem;">[Catatan:
+                                                        {{ $item->catatan_admin }}]</small>
+                                                @endif
+                                            @else
+                                                {!! $item->status_badge !!}
+                                            @endif
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="5" class="text-center py-4 text-muted">Belum ada data.</td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -609,6 +656,7 @@
                         allowOutsideClick: false
                     }).then(() => {
                         form.reset();
+                        if (body.new_data) addHistoryRow(body.new_data);
                         switchTab('tab-attention');
                     });
                 } else {
@@ -666,10 +714,34 @@
         if (validateTab(currentTabId)) switchTab(nextTabId);
     }
 
+    function addHistoryRow(data) {
+        const tbody = document.querySelector('.history-table tbody');
+        tbody.querySelector('td[colspan="5"]')?.closest('tr').remove();
+
+        const statusBadges = {
+            0: '<span class="badge bg-warning text-dark rounded-pill">Menunggu</span>',
+            1: '<span class="badge bg-success rounded-pill">Disetujui</span>',
+            default: '<span class="badge bg-danger rounded-pill">Ditolak</span>'
+        };
+
+        const jenisBadge = `<span class="badge bg-info text-dark">${data.jenis_dokumen}</span>`;
+
+        tbody.insertAdjacentHTML('afterbegin', `
+            <tr class="table-success">
+                <td>${data.nama_dosen}</td>
+                <td>${data.judul_dokumen}</td>
+                <td>${jenisBadge}</td>
+                <td>${data.date_fmt}</td>
+                <td class="text-center">${statusBadges[data.status_req] || statusBadges.default}</td>
+            </tr>`);
+
+        setTimeout(() => tbody.querySelector('tr.table-success')?.classList.remove('table-success'), 2000);
+    }
+
     function autofillForm() {
         document.querySelector('input[name="nama_dosen"]').value = "Dr. Ahmad Fauzi, M.Kom";
         document.querySelector('input[name="inisial_dosen"]').value = "AF";
-        document.querySelector('input[name="email_dosen"]').value = "ahmad.fauzi@pcr.ac.id";
+        document.querySelector('input[name="email_dosen"]').value = "frans22si@mahasiswa.pcr.ac.id";
         document.querySelector('input[name="nip"]').value = "19850315201203";
         const prodi = document.querySelector('select[name="prodi_id"]');
         if (prodi.options.length > 1) prodi.selectedIndex = 1;

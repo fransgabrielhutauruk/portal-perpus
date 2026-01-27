@@ -62,7 +62,7 @@ class ReqBebasPustakaService
         try {
             return ReqBebasPustaka::with('prodi')
                 ->select(
-                    'id',
+                    'reqbebaspustaka_id as id',
                     'nama_mahasiswa',
                     'nim',
                     'prodi_id',

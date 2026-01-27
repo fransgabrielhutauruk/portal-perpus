@@ -16,7 +16,7 @@
             </div>
         </div>
 
-        <div class="row g-4">
+        <div class="row g-4 justify-content-center">
             @php
                 $allGuides = data_get($panduanData, 'guides', []);
                 $displayGuides = array_slice($allGuides, 0, 3);

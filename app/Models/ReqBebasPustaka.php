@@ -44,6 +44,7 @@ class ReqBebasPustaka extends Model
      * @var array
      */
     public $fillable = [
+        'periode_id',
         'nama_mahasiswa',
         'prodi_id',
         'nim',
@@ -121,12 +122,14 @@ class ReqBebasPustaka extends Model
             });
     }
 
-    /**
-     * Relasi ke tabel prodi
-     */
     public function prodi()
     {
         return $this->belongsTo(Prodi::class, 'prodi_id', 'prodi_id');
+    }
+
+    public function periode()
+    {
+        return $this->belongsTo(Periode::class, 'periode_id', 'periode_id');
     }
 
     public function getStatusBadgeAttribute(): string

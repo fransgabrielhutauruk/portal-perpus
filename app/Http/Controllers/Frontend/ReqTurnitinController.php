@@ -70,6 +70,13 @@ class ReqTurnitinController extends Controller
             return response()->json([
                 'message' => 'Pengajuan cek turnitin berhasil dikirim!',
                 'status' => 'success',
+                'new_data' => [
+                    'nama_dosen' => $reqTurnitin->nama_dosen,
+                    'judul_dokumen' => $reqTurnitin->judul_dokumen,
+                    'jenis_dokumen' => $reqTurnitin->jenis_dokumen,
+                    'date_fmt' => $reqTurnitin->created_at->format('d M Y'),
+                    'status_req' => $reqTurnitin->status_req
+                ]
             ]);
         } catch (\Exception $e) {
             DB::rollBack();

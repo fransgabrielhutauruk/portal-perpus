@@ -4,13 +4,6 @@ $newest = data_get($content, 'newest');
 <section class="newest-section">
     <div class="container">
         <div class="row newest-grid">
-            <div class="col-12">
-                <div class="section-title">
-                    <h2 class="wow fadeInUp" data-wow-delay="0.1s">
-                        Berita <span>Terkini</span>
-                    </h2>
-                </div>
-            </div>
             @if ($newest)
             @foreach ($newest as $news)
             <div class="col-lg-4 col-md-6 mb-4">

@@ -5,8 +5,6 @@ namespace App\Http\Controllers\Frontend;
 use App\Http\Controllers\Controller;
 use App\Services\Frontend\BeritaService;
 use App\Services\Frontend\LandingService;
-use App\Services\CampusLife\VirtualTourService;
-use App\Services\Frontend\SDGService;
 use App\Services\Frontend\HeroService;
 use App\Services\Frontend\SafeDataService;
 
@@ -19,6 +17,7 @@ class MainController extends Controller
             fn() => LandingService::getPageConfig(),
             SafeDataService::getPageConfigFallbacks()
         );
+
         $content    = SafeDataService::safeExecute(
             fn() => LandingService::getContent(),
             $fallbacks->konten ?? null

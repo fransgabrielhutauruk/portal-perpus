@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Enums\StatusRequest;
 use App\Models\ReqTurnitin;
+use App\Jobs\SendTurnitinEmail;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 use Illuminate\Http\JsonResponse;
@@ -56,12 +57,7 @@ class ReqTurnitinController extends Controller
                 $dt['nama_dosen'] = $value['nama_dosen'] ?? '-';
                 $dt['nip'] = $value['nip'] ?? '-';
                 $dt['judul_dokumen'] = $value['judul_dokumen'] ?? '-';
-
-                // Badge for jenis_dokumen
-                $jenisBadge = $value['jenis_dokumen'] == 'skripsi'
-                    ? '<span class="badge badge-primary">Skripsi</span>'
-                    : '<span class="badge badge-info">Artikel</span>';
-                $dt['jenis_dokumen'] = $jenisBadge;
+                $dt['jenis_dokumen'] = $value['jenis_dokumen'] ?? '-';
 
                 $dt['status_req'] = ReqTurnitin::getStatusBadge($value['status_req'] ?? null);
 
@@ -73,7 +69,7 @@ class ReqTurnitinController extends Controller
                     'btn' => [],
                 ];
 
-                if ($turnitin && $turnitin->status == StatusRequest::MENUNGGU->value) {
+                if ($turnitin && $turnitin->status_req == StatusRequest::MENUNGGU->value) {
                     $dataAction['btn'] = [
                         ['action' => 'detail', 'attr' => ['jf-detail' => $id]],
                         ['action' => 'approve', 'attr' => ['jf-approve' => $id]],
@@ -108,6 +104,11 @@ class ReqTurnitinController extends Controller
                 $userData['file_url'] = asset($currData->file_dokumen);
             }
 
+            // Add result file URL if exists
+            if ($currData->file_hasil_turnitin) {
+                $userData['file_hasil_url'] = asset('uploads/' . $currData->file_hasil_turnitin);
+            }
+
             return response()->json([
                 'status' => true,
                 'message' => 'Data loaded',
@@ -122,15 +123,41 @@ class ReqTurnitinController extends Controller
     {
         validate_and_response([
             'reqturnitin_id' => ['ID Request Turnitin', 'required'],
+            'file_hasil' => ['File Hasil Turnitin', 'required|file|mimes:pdf,doc,docx|max:10240'],
         ]);
 
-        $turnitin = ReqTurnitin::findOrFail($req->input('reqturnitin_id'));
+        $turnitin = ReqTurnitin::with('prodi')->findOrFail($req->input('reqturnitin_id'));
+
+        /* ===============================
+           1. UPLOAD FILE HASIL
+        =============================== */
+        $file = $req->file('file_hasil');
+        $fileName = 'turnitin_' . $turnitin->nip . '_' . time() . '.' . $file->getClientOriginalExtension();
+        $filePath = $file->storeAs('turnitin', $fileName, 'public');
+
+        /* ===============================
+           2. UPDATE DATABASE
+        =============================== */
+        $turnitin->file_hasil_turnitin = $filePath;
         $turnitin->status_req = StatusRequest::DISETUJUI->value;
         $turnitin->save();
 
+        /* ===============================
+           3. KIRIM EMAIL VIA QUEUE (BACKGROUND)
+        =============================== */
+        $dosenData = [
+            'nama' => $turnitin->nama_dosen,
+            'nip' => $turnitin->nip,
+            'email' => $turnitin->email_dosen,
+            'judul_dokumen' => $turnitin->judul_dokumen,
+        ];
+
+        $fullFilePath = storage_path('app/public/' . $filePath);
+        SendTurnitinEmail::dispatch($dosenData, $fullFilePath);
+
         return response()->json([
             'status' => true,
-            'message' => 'Request cek turnitin telah disetujui.'
+            'message' => 'Request cek plagiarisme telah disetujui. Email sedang dikirim ke dosen.'
         ]);
     }
 
@@ -149,6 +176,26 @@ class ReqTurnitinController extends Controller
         return response()->json([
             'status' => true,
             'message' => 'Request cek turnitin telah ditolak.'
+        ]);
+    }
+
+    public function reset(Request $req): JsonResponse
+    {
+        validate_and_response([
+            'reqturnitin_id' => ['ID Request Turnitin', 'required'],
+        ]);
+
+        $turnitin = ReqTurnitin::findOrFail($req->input('reqturnitin_id'));
+        
+        // Reset status dan field terkait
+        $turnitin->status_req = StatusRequest::MENUNGGU->value;
+        $turnitin->catatan_admin = null;
+        $turnitin->file_hasil_turnitin = null;
+        $turnitin->save();
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Status request telah direset ke menunggu.'
         ]);
     }
 
