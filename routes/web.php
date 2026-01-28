@@ -2,15 +2,8 @@
 
 use App\Enums\UserRole;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\ProfileController;
 
 include_once __DIR__ . "/web-frontend.php";
-
-Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-});
 
 require __DIR__ . '/auth.php';
 
@@ -43,6 +36,7 @@ Route::prefix('app')
         Route::post('/req-bebas-pustaka/approve', [App\Http\Controllers\Admin\ReqBebasPustakaController::class, 'approve'])->name('app.req-bebas-pustaka.approve');
         Route::post('/req-bebas-pustaka/reject', [App\Http\Controllers\Admin\ReqBebasPustakaController::class, 'reject'])->name('app.req-bebas-pustaka.reject');
         Route::post('/req-bebas-pustaka/reset', [App\Http\Controllers\Admin\ReqBebasPustakaController::class, 'reset'])->name('app.req-bebas-pustaka.reset');
+        Route::get('/req-bebas-pustaka/download', [App\Http\Controllers\Admin\ReqBebasPustakaController::class, 'download'])->name('app.req-bebas-pustaka.download');
         generalRoute(App\Http\Controllers\Admin\ReqTurnitinController::class, 'req-turnitin', 'app');
         Route::post('/req-turnitin/approve', [App\Http\Controllers\Admin\ReqTurnitinController::class, 'approve'])->name('app.req-turnitin.approve');
         Route::post('/req-turnitin/reject', [App\Http\Controllers\Admin\ReqTurnitinController::class, 'reject'])->name('app.req-turnitin.reject');

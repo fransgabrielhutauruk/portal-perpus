@@ -50,7 +50,7 @@ class ReqBukuService
         ];
     }
 
-    public static function getRecentProposals($limit = 5)
+    public static function getRecentProposals($limit = 20)
     {
         try {
 

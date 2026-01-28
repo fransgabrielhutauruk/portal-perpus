@@ -40,7 +40,7 @@ class ReqModulService
         return [
             'header'        => 'Kebutuhan Modul Semester',
             'title'         => 'Request Pengadaan Modul/Buku',
-            'subtitle'      => 'Ajukan Kebutuhan Modul Sebagai Pengampu Mata Kuliah',
+            'subtitle'      => 'Pengajuan Kebutuhan Modul',
             'description'   => 'Lengkapi koleksi modul mata kuliah Anda melalui formulir permintaan ini.',
 
             // Pass the period status to the view
@@ -58,7 +58,7 @@ class ReqModulService
         ];
     }
 
-    public static function getRecentProposals($limit = 5)
+    public static function getRecentProposals($limit = 20)
     {
         try {
             return ReqModul::select(
@@ -68,7 +68,8 @@ class ReqModulService
                 'inisial_dosen',
                 'praktikum',
                 'created_at',
-                'status_req'
+                'status_req',
+                'catatan_admin'
             )
                 ->orderBy('created_at', 'desc')
                 ->limit($limit)

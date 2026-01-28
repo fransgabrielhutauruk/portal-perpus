@@ -110,8 +110,8 @@
                                 </div>
 
                                 <div class="mb-2 mt-3">
-                                    <p class="mb-0">Setelah Selesai Mengisi Formulir Ini, Petugas Akan
-                                        Mengonfirmasikan Melalui Email, Pastikan Email yang Anda Masukkan Benar.</p>
+                                    <p class="mb-0">Setelah selesai mengisi formulir ini, petugas akan
+                                        mengonfirmasikan melalui Email, pastikan Email yang Anda masukkan benar.</p>
                                 </div>
 
                                 <div class="contact-form-btn mt-3">
@@ -292,7 +292,7 @@
                                             </div>
                                             <button type="button" id="btnOpenModal" class="btn-default"
                                                 onclick="openConfirmation()">
-                                                <i class="fa-solid fa-paper-plane me-2"></i>Kirim Pengajuan
+                                                Kirim Pengajuan
                                             </button>
                                         </div>
                                     </div>
@@ -310,22 +310,21 @@
                         <table class="table table-hover history-table">
                             <thead>
                                 <tr>
+                                    <th>Tanggal Pengajuan</th>
                                     <th>Nama Dosen</th>
                                     <th>Judul Dokumen</th>
-                                    <th>Jenis Dokumen</th>
-                                    <th>Tanggal Pengajuan</th>
                                     <th class="text-center">Status</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @forelse(data_get($content, 'history', []) as $item)
                                     <tr>
+                                        <td>{{ tanggal($item->created_at, ' ') }}</td>
                                         <td>{{ $item->nama_dosen }}</td>
-                                        <td>{{ $item->judul_dokumen }}</td>
                                         <td>
-                                            <span class="badge bg-info text-dark">{{ $item->jenis_dokumen }}</span>
+                                            {{ $item->judul_dokumen }}
+                                            <span class="badge bg-secondary text-light ms-2">{{ $item->jenis_dokumen }}</span>
                                         </td>
-                                        <td>{{ \Carbon\Carbon::parse($item->created_at)->format('d M Y') }}</td>
                                         <td class="text-center">
                                             @if ($item->status_req == -1)
                                                 {!! $item->status_badge !!}
@@ -341,7 +340,7 @@
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="5" class="text-center py-4 text-muted">Belum ada data.</td>
+                                        <td colspan="4" class="text-center py-4 text-muted">Belum ada data.</td>
                                     </tr>
                                 @endforelse
                             </tbody>
@@ -716,7 +715,7 @@
 
     function addHistoryRow(data) {
         const tbody = document.querySelector('.history-table tbody');
-        tbody.querySelector('td[colspan="5"]')?.closest('tr').remove();
+        tbody.querySelector('td[colspan="4"]')?.closest('tr').remove();
 
         const statusBadges = {
             0: '<span class="badge bg-warning text-dark rounded-pill">Menunggu</span>',
@@ -724,14 +723,13 @@
             default: '<span class="badge bg-danger rounded-pill">Ditolak</span>'
         };
 
-        const jenisBadge = `<span class="badge bg-info text-dark">${data.jenis_dokumen}</span>`;
+        const jenisBadge = `<span class="badge bg-secondary text-light ms-2">${data.jenis_dokumen}</span>`;
 
         tbody.insertAdjacentHTML('afterbegin', `
             <tr class="table-success">
-                <td>${data.nama_dosen}</td>
-                <td>${data.judul_dokumen}</td>
-                <td>${jenisBadge}</td>
                 <td>${data.date_fmt}</td>
+                <td>${data.nama_dosen}</td>
+                <td>${data.judul_dokumen} ${jenisBadge}</td>
                 <td class="text-center">${statusBadges[data.status_req] || statusBadges.default}</td>
             </tr>`);
 

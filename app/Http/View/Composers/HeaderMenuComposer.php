@@ -3,9 +3,6 @@
 namespace App\Http\View\Composers;
 
 use Illuminate\View\View;
-use Illuminate\Support\Str;
-use App\Models\Dimension\Jurusan;
-use App\Services\Frontend\PanduanService;
 
 class HeaderMenuComposer
 {

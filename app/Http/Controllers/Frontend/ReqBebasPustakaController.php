@@ -96,7 +96,7 @@ class ReqBebasPustakaController extends Controller
                     'nama_mahasiswa' => $data->nama_mahasiswa,
                     'nim'            => $data->nim,
                     'prodi_nama'     => $data->prodi->nama_prodi ?? '-',
-                    'date_fmt'       => $data->created_at->format('d M Y'),
+                    'date_fmt'       => tanggal($data->created_at, ' '),
                     'status_req'     => $data->status_req
                 ]
             ], 200);

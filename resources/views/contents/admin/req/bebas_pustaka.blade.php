@@ -260,5 +260,15 @@
                 }
             });
         });
+
+        $(document).on('click', '[jf-download]', function(e) {
+            e.preventDefault();
+            
+            var reqbebaspustakaId = $(this).attr('jf-download');
+            var downloadUrl = '{{ route("app.req-bebas-pustaka.download") }}?reqbebaspustaka_id=' + reqbebaspustakaId;
+            
+            window.location.href = downloadUrl;
+        });
+
     </script>
 @endpush

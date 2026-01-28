@@ -74,7 +74,7 @@ class ReqTurnitinController extends Controller
                     'nama_dosen' => $reqTurnitin->nama_dosen,
                     'judul_dokumen' => $reqTurnitin->judul_dokumen,
                     'jenis_dokumen' => $reqTurnitin->jenis_dokumen,
-                    'date_fmt' => $reqTurnitin->created_at->format('d M Y'),
+                    'date_fmt' => tanggal($reqTurnitin->created_at, ' '),
                     'status_req' => $reqTurnitin->status_req
                 ]
             ]);

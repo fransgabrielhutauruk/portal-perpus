@@ -5,21 +5,16 @@
  * Created At: {{currTime}}
  */
 
-namespace App\Models;
+namespace App\Models\Dimension;
 
-use App\Models\Dimension\Prodi;
-use App\Enums\StatusRequest;
-use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\DB;
-use Spatie\Activitylog\LogOptions;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Query\JoinClause;
-use Spatie\Activitylog\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\DB;
 use Spatie\Activitylog\Facades\CauserResolver;
-use Illuminate\Database\Eloquent\Casts\Attribute;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
-class ReqBebasPustaka extends Model
+class Prodi extends Model
 {
     use SoftDeletes;
     use LogsActivity;
@@ -28,14 +23,14 @@ class ReqBebasPustaka extends Model
      *
      * @var string
      */
-    public $table = 'req_bebas_pustaka';
+    public $table = 'dm_prodi';
 
     /**
      * set kolom primary key, default primary key kolom adalah id
      *
      * @var string
      */
-    protected $primaryKey = 'reqbebaspustaka_id';
+    protected $primaryKey = 'prodi_id';
 
 
     /**
@@ -44,15 +39,9 @@ class ReqBebasPustaka extends Model
      * @var array
      */
     public $fillable = [
-        'periode_id',
-        'nama_mahasiswa',
-        'prodi_id',
-        'nim',
-        'email_mahasiswa',
-        'is_syarat_terpenuhi',
-        'status_req',
-        'catatan_admin',
-        'file_hasil_bebas_pustaka',
+        'alias_prodi',
+        'nama_prodi',
+        'alias_jurusan',
         'created_by',
         'updated_by',
         'deleted_by',
@@ -64,12 +53,12 @@ class ReqBebasPustaka extends Model
      * @var array
      */
     protected $casts = [
-        'reqbebaspustaka_id'    => 'string',
+        'prodi_id'    => 'string',
 
     ];
 
     public static array $exceptEdit = [
-        'reqbebaspustaka_id',
+        'prodi_id',
         'created_at',
         'updated_at',
         'deleted_at'
@@ -118,34 +107,8 @@ class ReqBebasPustaka extends Model
             ->useLogName(env('APP_NAME'))
             ->setDescriptionForEvent(function ($eventName) {
                 $aksi = eventActivityLogBahasa($eventName);
-                return userInisial() . " {$aksi} table :subject.nama_mahasiswa";
+                return userInisial() . " {$aksi} table :subject.{{tableSubject}}";
             });
-    }
-
-    public function prodi()
-    {
-        return $this->belongsTo(Prodi::class, 'prodi_id', 'prodi_id');
-    }
-
-    public function periode()
-    {
-        return $this->belongsTo(Periode::class, 'periode_id', 'periode_id');
-    }
-
-    public function getStatusBadgeAttribute(): string
-    {
-        return self::getStatusBadge($this->status_req);
-    }
-
-    public static function getStatusBadge($statusReq): string
-    {
-        $badges = [
-            StatusRequest::MENUNGGU->value => '<span class="badge badge-warning bg-warning text-dark rounded-pill">Menunggu</span>',
-            StatusRequest::DISETUJUI->value => '<span class="badge badge-success bg-success rounded-pill">Disetujui</span>',
-            StatusRequest::DITOLAK->value => '<span class="badge badge-danger bg-danger rounded-pill">Ditolak</span>',
-        ];
-
-        return $badges[$statusReq] ?? '<span class="badge badge-secondary rounded-pill">Unknown</span>';
     }
 
     // mutator (setter and getter)
@@ -215,9 +178,8 @@ class ReqBebasPustaka extends Model
     public static function getDataDetail($where = [], $whereBinding = [], $get = true)
     {
         $query = DB::table('')
-            ->selectRaw('a.*, p.nama_prodi')
+            ->selectRaw('*')
             ->from((new self)->table . ' as a')
-            ->leftJoin('dm_prodi as p', 'a.prodi_id', '=', 'p.prodi_id')
             ->where(notRaw($where))
             ->whereRaw(withRaw($where), $whereBinding)
             ->whereNull('a.deleted_at');

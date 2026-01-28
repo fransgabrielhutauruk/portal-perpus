@@ -101,7 +101,7 @@ class ReqBukuController extends Controller
                     'judul_buku' => $usulan->judul_buku,
                     'penulis_buku' => $usulan->penulis_buku,
                     'nama_req' => $usulan->nama_req,
-                    'date_fmt' => $usulan->created_at->format('d M Y'),
+                    'date_fmt' => tanggal($usulan->created_at, ' '),
                     'status_req' => $usulan->status_req
                 ]
             ]);

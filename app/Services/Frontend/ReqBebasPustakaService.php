@@ -42,7 +42,7 @@ class ReqBebasPustakaService
             'subtitle'      => 'Pengajuan Surat Bebas Pustaka',
             'description'   => 'Lengkapi persyaratan administrasi perpustakaan Anda untuk keperluan wisuda atau yudisium.',
 
-            // Period Status
+            'active_periode' => $activePeriode,
             'is_open'        => $isOpen,
             'periode_name'   => $periodeName,
 
@@ -57,7 +57,7 @@ class ReqBebasPustakaService
         ];
     }
 
-    public static function getRecentRequests($limit = 5)
+    public static function getRecentRequests($limit = 20)
     {
         try {
             return ReqBebasPustaka::with('prodi')

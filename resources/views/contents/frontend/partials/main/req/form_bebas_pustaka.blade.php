@@ -139,11 +139,11 @@
                                             yang Yudisium</h5>
                                     </div>
                                     <div class="d-inline-block text-center border-0 pt-3 px-4 rounded-3 mt-2">
-                                        <p class="mb-0" style="color: var(--primary-main)">
+                                        <p class="mb-0 text-danger">
                                             <i class="fa-solid fa-triangle-exclamation me-2"></i>Batas Tanggal
                                             Usulan
                                             <strong>{{ data_get($content, 'periode_name') }} </strong> Adalah
-                                            <strong>{{ \Carbon\Carbon::parse(data_get($content, 'active_periode.tanggal_selesai'))->isoFormat('D MMMM Y') }}</strong>
+                                            <strong>{{ tanggal(data_get($content, 'active_periode.tanggal_selesai'), ' ') }}</strong>
                                         </p>
                                     </div>
                                     <div class="mb-2 mt-3">
@@ -151,12 +151,14 @@
                                             Mengonfirmasikan Melalui Email, Pastikan Email yang Anda Masukkan Benar.</p>
                                     </div>
 
-                                    <div class="contact-form-btn mt-3">
-                                        <button type="button" id="btnToStep2" class="btn-default"
-                                            onclick="switchTab('tab-requirements')">
-                                            Selanjutnya
-                                        </button>
-                                    </div>
+                                    @if (data_get($content, 'is_open'))
+                                        <div class="contact-form-btn mt-3">
+                                            <button type="button" id="btnToStep2" class="btn-default"
+                                                onclick="switchTab('tab-requirements')">
+                                                Selanjutnya
+                                            </button>
+                                        </div>
+                                    @endif
 
                                     <div class="d-flex">
                                         <button type="button" class="btn btn-sm btn-outline-warning rounded-pill"
@@ -186,10 +188,6 @@
                                                 [
                                                     'key' => 'check_pa',
                                                     'label' => 'Sudah upload file Proyek Akhir (PA) di repository?',
-                                                ],
-                                                [
-                                                    'key' => 'check_poster',
-                                                    'label' => 'Sudah upload Poster PA di repository?',
                                                 ],
                                                 [
                                                     'key' => 'check_hardcopy_pa',
@@ -344,20 +342,20 @@
                         <table class="table table-hover history-table">
                             <thead>
                                 <tr>
+                                    <th>Tanggal Pengajuan</th>
                                     <th>Nama Mahasiswa</th>
                                     <th>NIM</th>
                                     <th>Program Studi</th>
-                                    <th>Tanggal Pengajuan</th>
                                     <th class="text-center">Status</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @forelse(data_get($content, 'history', []) as $item)
                                     <tr>
+                                        <td>{{ tanggal($item->created_at, ' ') }}</td>
                                         <td>{{ $item->nama_mahasiswa }}</td>
                                         <td>{{ $item->nim }}</td>
                                         <td>{{ data_get($item->prodi, 'nama_prodi', '-') }}</td>
-                                        <td>{{ \Carbon\Carbon::parse($item->created_at)->format('d M Y') }}</td>
                                         <td class="text-center">
                                             @if ($item->status_req == -1)
                                                 {!! $item->status_badge !!}
@@ -653,7 +651,7 @@
 
     function validateRequirements() {
         let isValid = true;
-        const requirements = ['check_pa', 'check_kp', 'check_hardcopy_kp', 'check_hardcopy_pa', 'check_poster',
+        const requirements = ['check_pa', 'check_kp', 'check_hardcopy_kp', 'check_hardcopy_pa',
             'check_buku', 'check_modul'
         ];
 
@@ -805,10 +803,10 @@
 
         tbody.insertAdjacentHTML('afterbegin', `
             <tr class="table-success">
+                <td>${data.date_fmt}</td>
                 <td>${data.nama_mahasiswa}</td>
                 <td>${data.nim}</td>
                 <td>${data.prodi_nama}</td>
-                <td>${data.date_fmt}</td>
                 <td class="text-center">${statusBadges[data.status_req] || statusBadges.default}</td>
             </tr>`);
 

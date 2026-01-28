@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Models\Prodi;
+use App\Models\Dimension\Prodi;
 use App\Enums\StatusRequest;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Model;
@@ -26,7 +26,7 @@ class ReqTurnitin extends Model
         'judul_dokumen',
         'file_dokumen',
         'keterangan',
-        'status',
+        'status_req',
         'catatan_admin',
         'file_hasil_turnitin',
         'created_by',

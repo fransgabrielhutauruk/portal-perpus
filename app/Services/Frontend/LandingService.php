@@ -2,9 +2,6 @@
 
 namespace App\Services\Frontend;
 
-use App\Models\Dimension\Jurusan;
-use App\Models\Konten\Konten;
-
 class LandingService
 {
     /**
@@ -23,13 +20,90 @@ class LandingService
     }
 
     /**
-     * Get infografis image path for landing page
+     * Get meta data for Landing page
      *
-     * @return string
+     * @return array
      */
-    public static function getInfografisImage(): string
+    public static function getMetaData(): array
     {
-        return publicMedia('info-grafis.jpg');
+        return [
+            'title'       => data_get(self::getContent(), 'title'),
+            'description' => 'Politeknik Caltex Riau (PCR) adalah perguruan tinggi di Riau yang didirikan atas kerja sama Pemerintah Provinsi Riau dengan PT Chevron Pacific Indonesia',
+            'keywords'    => 'PCR,Politeknik,Caltex,Riau,Mahasiswa,Politeknik Riau,Penerimaan Mahasiswa,Politeknik Caltex',
+        ];
+    }
+
+    /**
+     * Get page configuration for Landing page
+     *
+     * @return array
+     */
+    public static function getPageConfig(): array
+    {
+        $meta = self::getMetaData();
+
+        return [
+            'background_image' => null, // No specific background image for this page
+            'seo'              => [
+                'title'                      => data_get($meta, 'title'),
+                'description'                => data_get($meta, 'description'),
+                'keywords'                   => data_get($meta, 'keywords'),
+                'canonical'                  => route('frontend.home'),
+                'og_image'                   => data_get(SiteIdentityService::getSiteIdentity(), 'logo_path'),
+                'og_type'                    => 'website',
+                'structured_data'            => self::getStructuredData(),
+                'breadcrumb_structured_data' => self::getBreadcrumbStructuredData()
+            ]
+        ];
+    }
+
+    /**
+     * Get structured data for Landing page
+     *
+     * @return array
+     */
+    public static function getStructuredData(): array
+    {
+        $identy   = SiteIdentityService::getSiteIdentity();
+        $metaData = self::getMetaData();
+
+        return [
+            '@context'    => 'https://schema.org',
+            '@type'       => 'WebSite',
+            'headline'    => $metaData['title'],
+            'description' => $metaData['description'],
+            'name'        => $metaData['title'],
+            'publisher'   => [
+                '@type' => 'Organization',
+                'name'  => data_get($identy, 'name'),
+                'logo'  => [
+                    '@type' => 'ImageObject',
+                    'url'   => data_get($identy, 'logo_path')
+                ]
+            ],
+            'url'         => url()->current()
+        ];
+    }
+
+    /**
+     * Get breadcrumb structured data for Landing page
+     *
+     * @return array
+     */
+    public static function getBreadcrumbStructuredData(): array
+    {
+        return [
+            '@context'        => 'https://schema.org',
+            '@type'           => 'BreadcrumbList',
+            'itemListElement' => [
+                [
+                    '@type'    => 'ListItem',
+                    'position' => 1,
+                    'name'     => 'Beranda',
+                    'item'     => route('frontend.home')
+                ]
+            ]
+        ];
     }
 
     /**
@@ -181,7 +255,7 @@ class LandingService
         return [
             'content' => [
                 'subtitle' => 'Layanan Perpustakaan',
-                'title' => '<b>Layanan</b> untuk Sivitas Akademika',
+                'title' => '<b>Layanan</b> Sivitas Akademika',
                 'description' => 'Perpustakaan PCR menyediakan berbagai layanan untuk memudahkan kebutuhan akademik Anda.'
             ],
             'services' => [
@@ -244,129 +318,6 @@ class LandingService
                 'description' => 'Unduh panduan praktis untuk membantu Anda memaksimalkan penggunaan layanan dan fasilitas perpustakaan PCR.'
             ],
             'guides' => $guides
-        ];
-    }
-
-    /**
-     * Get FAQ data for landing page
-     *
-     * @return array
-     */
-    public static function getFaqData(): array
-    {
-        $faqList = \App\Models\Faq::select(['faq_id', 'pertanyaan', 'jawaban'])
-            ->whereNull('deleted_at')
-            ->orderBy('created_at', 'ASC')
-            ->limit(6)
-            ->get();
-
-        $faqs = [];
-        foreach ($faqList as $faq) {
-            $faqs[] = [
-                'id' => $faq->faq_id,
-                'question' => $faq->pertanyaan,
-                'answer' => $faq->jawaban,
-            ];
-        }
-
-        return [
-            'content' => [
-                'subtitle' => 'FAQ',
-                'title' => '<b>Pertanyaan</b> yang Sering Diajukan',
-                'description' => 'Temukan jawaban untuk pertanyaan umum seputar layanan dan fasilitas perpustakaan PCR.'
-            ],
-            'faqs' => $faqs,
-            'action' => [
-                'text' => 'Lihat Semua FAQ',
-                'url' => route('frontend.faq.index')
-            ]
-        ];
-    }
-
-    /**
-     * Get meta data for Landing page
-     *
-     * @return array
-     */
-    public static function getMetaData(): array
-    {
-        return [
-            'title'       => data_get(self::getContent(), 'title'),
-            'description' => 'Politeknik Caltex Riau (PCR) adalah perguruan tinggi di Riau yang didirikan atas kerja sama Pemerintah Provinsi Riau dengan PT Chevron Pacific Indonesia',
-            'keywords'    => 'PCR,Politeknik,Caltex,Riau,Mahasiswa,Politeknik Riau,Penerimaan Mahasiswa,Politeknik Caltex',
-        ];
-    }
-
-    /**
-     * Get page configuration for Landing page
-     *
-     * @return array
-     */
-    public static function getPageConfig(): array
-    {
-        $meta = self::getMetaData();
-
-        return [
-            'background_image' => null, // No specific background image for this page
-            'seo'              => [
-                'title'                      => data_get($meta, 'title'),
-                'description'                => data_get($meta, 'description'),
-                'keywords'                   => data_get($meta, 'keywords'),
-                'canonical'                  => route('frontend.home'),
-                'og_image'                   => data_get(SiteIdentityService::getSiteIdentity(), 'logo_path'),
-                'og_type'                    => 'website',
-                'structured_data'            => self::getStructuredData(),
-                'breadcrumb_structured_data' => self::getBreadcrumbStructuredData()
-            ]
-        ];
-    }
-
-    /**
-     * Get structured data for Landing page
-     *
-     * @return array
-     */
-    public static function getStructuredData(): array
-    {
-        $identy   = SiteIdentityService::getSiteIdentity();
-        $metaData = self::getMetaData();
-
-        return [
-            '@context'    => 'https://schema.org',
-            '@type'       => 'WebSite',
-            'headline'    => $metaData['title'],
-            'description' => $metaData['description'],
-            'name'        => $metaData['title'],
-            'publisher'   => [
-                '@type' => 'Organization',
-                'name'  => data_get($identy, 'name'),
-                'logo'  => [
-                    '@type' => 'ImageObject',
-                    'url'   => data_get($identy, 'logo_path')
-                ]
-            ],
-            'url'         => url()->current()
-        ];
-    }
-
-    /**
-     * Get breadcrumb structured data for Landing page
-     *
-     * @return array
-     */
-    public static function getBreadcrumbStructuredData(): array
-    {
-        return [
-            '@context'        => 'https://schema.org',
-            '@type'           => 'BreadcrumbList',
-            'itemListElement' => [
-                [
-                    '@type'    => 'ListItem',
-                    'position' => 1,
-                    'name'     => 'Beranda',
-                    'item'     => route('frontend.home')
-                ]
-            ]
         ];
     }
 }

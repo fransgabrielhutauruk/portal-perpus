@@ -7,7 +7,7 @@
 
 namespace App\Models;
 
-use App\Models\Prodi;
+use App\Models\Dimension\Prodi;
 use App\Models\Periode;
 use App\Enums\StatusRequest;
 use Illuminate\Support\Collection;

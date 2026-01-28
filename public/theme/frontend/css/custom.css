@@ -1053,6 +1053,20 @@ header.main-header .header-sticky.active .container-fluid::before {
     color: var(--accent-color);
 }
 
+@media only screen and (max-width: 1360px) {
+    .nav-menu-wrapper {
+        display: none !important;
+    }
+
+    .navbar-toggle {
+        display: block !important;
+    }
+
+    .header-btn-- {
+        display: none !important;
+    }
+}
+
 /************************************/
 /***        04. Hero css	      ***/
 /************************************/
@@ -2649,7 +2663,7 @@ header.main-header .header-sticky.active .container-fluid::before {
     background-repeat: no-repeat;
     background-position: top right;
     background-size: auto;
-    padding: 100px 0;
+    padding: 50px 0;
     margin-bottom: 60px;
 }
 

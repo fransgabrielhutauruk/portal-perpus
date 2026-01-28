@@ -133,7 +133,7 @@ class SiteIdentityService
                 'external' => false
             ],
             [
-                'title'    => 'Cek Turnitin',
+                'title'    => 'Cek Plagiarisme',
                 'url'      => '/layanan/req-turnitin',
                 'external' => false
             ],

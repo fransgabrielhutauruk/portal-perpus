@@ -19,10 +19,11 @@
         <div class="row">
             <div class="col-12">
                 <div class="service-item-list">
-                    <div class="row g-4">
+                    <div class="row g-5">
                         @forelse (data_get($aksesKoleksiData, 'list', []) as $item)
-                            <div class="col-md-4">
-                                <div class="service-item wow fadeInUp h-100" data-wow-delay="{{ ($loop->index * 0.15) + 0.2 }}s">
+                            <div class="col-lg-4 col-md-6 col-12">
+                                <div class="service-item wow fadeInUp h-100"
+                                    data-wow-delay="{{ $loop->index * 0.15 + 0.2 }}s">
                                     <div class="service-item-container">
                                         <div class="service-item-content">
                                             <div class="d-flex align-items-center gap-3">
@@ -33,17 +34,23 @@
                                                     {{ $item['name'] }}
                                                 </h3>
                                             </div>
-                                            <p>
-                                                {{ $item['description'] ?? '' }}
-                                            </p>
-
-                                            <div class="service-btn mt-3">
-                                                <a href="{{ $item['url'] }}" class="btn-default btn-highlighted btn-sm"
-                                                    @if (isset($item['target'])) target="{{ $item['target'] }}" @endif>
-                                                    Akses {{ $item['name'] }}
-                                                </a>
+                                            <div class="row justify-content-start">
+                                                <div class="col-md-8">
+                                                    <p class="mt-0 text-justify">
+                                                        {{ $item['description'] ?? '' }}
+                                                    </p>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <div class="service-btn mt-3">
+                                                        <a href="{{ $item['url'] }}"
+                                                            class="btn-default btn-highlighted"
+                                                            style="padding: 15px 45px 15px 20px;font-size: 14px;"
+                                                            @if (isset($item['target'])) target="{{ $item['target'] }}" @endif>
+                                                            Akses
+                                                        </a>
+                                                    </div>
+                                                </div>
                                             </div>
-
                                         </div>
                                     </div>
                                 </div>

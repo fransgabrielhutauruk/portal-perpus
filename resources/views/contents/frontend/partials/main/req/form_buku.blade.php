@@ -141,15 +141,15 @@
                             <div class="tab-content mt-5" id="usulanTabsContent">
                                 <div class="tab-pane fade show active text-center" id="tab-attention" role="tabpanel">
                                     <div class="border-top border-bottom border-2 py-2">
-                                        <h5 class="text-capitalize">Form usulan buku ini diberikan bagi civitas
+                                        <h5 class="text-capitalize">Form usulan buku ini diberikan bagi sivitas
                                             akademika Politeknik Caltex
                                             Riau</h5>
                                     </div>
                                     <div class="d-inline-block text-center border-0 pt-3 px-4 rounded-3 mt-2">
-                                        <p class="mb-0" style="color: var(--primary-main)">
+                                        <p class="mb-0 text-danger">
                                             <i class="fa-solid fa-triangle-exclamation me-2"></i>Batas Tanggal Usulan
                                             <strong>{{ data_get($content, 'periode_name') }} </strong> Adalah
-                                            <strong>{{ \Carbon\Carbon::parse(data_get($content, 'active_periode.tanggal_selesai'))->isoFormat('D MMMM Y') }}</strong>
+                                            <strong>{{ tanggal(data_get($content, 'active_periode.tanggal_selesai'), ' ') }}</strong>
                                         </p>
                                     </div>
 
@@ -178,12 +178,14 @@
                                         Silakan centang persetujuan terlebih dahulu
                                     </div>
 
-                                    <div class="contact-form-btn mt-3">
-                                        <button type="button" id="btnToStep2" class="btn-default"
-                                            onclick="proceedToNextTab()">
-                                            Selanjutnya
-                                        </button>
-                                    </div>
+                                    @if (data_get($content, 'is_open'))
+                                        <div class="contact-form-btn mt-3">
+                                            <button type="button" id="btnToStep2" class="btn-default"
+                                                onclick="proceedToNextTab()">
+                                                Selanjutnya
+                                            </button>
+                                        </div>
+                                    @endif
 
                                     <div class="d-flex">
                                         <button type="button" class="btn btn-sm btn-outline-warning rounded-pill"
@@ -236,9 +238,8 @@
                                             <div class="form-group">
                                                 <label class="fw-bold text-muted small text-uppercase">Nomor
                                                     Identitas <span class="text-danger">*</span></label>
-                                                <input type="number" name="nim" id="input_nim"
-                                                    class="form-control" placeholder="Masukkan NIM" required
-                                                    data-error="NIM Wajib diisi">
+                                                <input type="number" name="nim" id="input_nim" class="form-control"
+                                                    placeholder="Masukkan NIM" required data-error="NIM Wajib diisi">
                                                 <input type="number" name="nip" id="input_nip"
                                                     class="form-control" placeholder="Masukkan NIP"
                                                     style="display:none;" data-error="NIP Wajib diisi">
@@ -492,20 +493,20 @@
                         <table class="table table-hover history-table">
                             <thead>
                                 <tr>
+                                    <th>Tanggal Usulan</th>
+                                    <th>Pengusul</th>
                                     <th>Judul Buku</th>
                                     <th>Penulis</th>
-                                    <th>Pengusul</th>
-                                    <th>Tanggal Usulan</th>
                                     <th class="text-center">Status</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @forelse(data_get($content, 'history', []) as $item)
                                     <tr>
+                                        <td>{{ tanggal($item->created_at, ' ') }}</td>
+                                        <td>{{ $item->nama_req }}</td>
                                         <td>{{ $item->judul_buku }}</td>
                                         <td>{{ $item->penulis_buku }}</td>
-                                        <td>{{ $item->nama_req }}</td>
-                                        <td>{{ \Carbon\Carbon::parse($item->created_at)->format('d M Y') }}</td>
                                         <td class="text-center">
                                             @if ($item->status_req == -1)
                                                 {!! $item->status_badge !!}
@@ -698,10 +699,10 @@
 
         tbody.insertAdjacentHTML('afterbegin', `
             <tr class="table-success">
+                <td>${data.date_fmt}</td>
+                <td>${data.nama_req}</td>
                 <td>${data.judul_buku}</td>
                 <td>${data.penulis_buku}</td>
-                <td>${data.nama_req}</td>
-                <td>${data.date_fmt}</td>
                 <td class="text-center">${statusBadges[data.status_req] || statusBadges.default}</td>
             </tr>`);
 

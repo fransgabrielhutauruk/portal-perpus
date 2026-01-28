@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Admin;
 
 use App\Enums\StatusRequest;
 use App\Models\ReqBebasPustaka;
-use App\Jobs\SendBebasPustakaEmail;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 use Illuminate\Http\JsonResponse;
@@ -14,9 +13,6 @@ use Spatie\Permission\Models\Role;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Blade;
 use PhpOffice\PhpWord\TemplateProcessor;
-use PhpOffice\PhpWord\Settings;
-use Dompdf\Dompdf;
-use Dompdf\Options;
 
 class ReqBebasPustakaController extends Controller
 {
@@ -79,6 +75,12 @@ class ReqBebasPustakaController extends Controller
                         ['action' => 'reject', 'attr' => ['jf-reject' => $id]],
                         ['action' => 'delete', 'attr' => ['jf-delete' => $id]],
                     ];
+                } elseif ($bebasPustaka && $bebasPustaka->status_req == StatusRequest::DISETUJUI->value) {
+                    $dataAction['btn'] = [
+                        ['action' => 'detail', 'attr' => ['jf-detail' => $id]],
+                        ['action' => 'download', 'attr' => ['jf-download' => $id], 'label' => 'Download DOCX'],
+                        ['action' => 'delete', 'attr' => ['jf-delete' => $id]],
+                    ];
                 } else {
                     $dataAction['btn'] = [
                         ['action' => 'detail', 'attr' => ['jf-detail' => $id]],
@@ -124,15 +126,11 @@ class ReqBebasPustakaController extends Controller
 
         $bebasPustaka = ReqBebasPustaka::with('periode', 'prodi')->findOrFail($req->input('reqbebaspustaka_id'));
 
-        /* ===============================
-       1. LOAD TEMPLATE DOCX
-    =============================== */
+        //    1. LOAD TEMPLATE DOCX
         $templatePath = storage_path('app/private/template_bebas_pustaka.docx');
         $templateProcessor = new TemplateProcessor($templatePath);
 
-        /* ===============================
-       2. REPLACE PLACEHOLDER
-    =============================== */
+        //    2. REPLACE PLACEHOLDER
         $templateProcessor->setValue('nama', $bebasPustaka->nama_mahasiswa);
         $templateProcessor->setValue('nim', $bebasPustaka->nim ?? '-');
         $templateProcessor->setValue('prodi', $bebasPustaka->prodi->nama_prodi ?? '-');
@@ -140,36 +138,20 @@ class ReqBebasPustakaController extends Controller
         $templateProcessor->setValue('tanggal', tanggal($bebasPustaka->created_at, ' ', false) ?? '-');
         $templateProcessor->setValue('kaperpus', "Nina Fadilah Najwa, S.Kom, M.Kom." ?? '-');
 
-        /* ===============================
-       3. SAVE DOCX RESULT
-    =============================== */
+        //    3. SAVE DOCX RESULT
         $docxName = 'bebas_pustaka_' . $bebasPustaka->nim . '_' . time() . '.docx';
         $docxPath = storage_path('app/private/' . $docxName);
         $templateProcessor->saveAs($docxPath);
 
-        /* ===============================
-       4. UPDATE DATABASE
-    =============================== */
+        //    4. UPDATE DATABASE
         $bebasPustaka->file_hasil_bebas_pustaka = 'storage/private/' . $docxName;
         $bebasPustaka->status_req = StatusRequest::DISETUJUI->value;
         $bebasPustaka->is_syarat_terpenuhi = true;
         $bebasPustaka->save();
 
-        /* ===============================
-       5. KIRIM EMAIL VIA QUEUE (BACKGROUND)
-    =============================== */
-        $mahasiswaData = [
-            'nama' => $bebasPustaka->nama_mahasiswa,
-            'nim' => $bebasPustaka->nim,
-            'prodi' => $bebasPustaka->prodi->nama_prodi ?? '-',
-            'email' => $bebasPustaka->email_mahasiswa,
-        ];
-
-        SendBebasPustakaEmail::dispatch($mahasiswaData, $docxPath);
-
         return response()->json([
             'status' => true,
-            'message' => 'Request bebas pustaka telah disetujui. Email sedang dikirim ke mahasiswa.'
+            'message' => 'Request bebas pustaka telah disetujui. File DOCX siap untuk diunduh.'
         ]);
     }
 
@@ -188,6 +170,35 @@ class ReqBebasPustakaController extends Controller
         return response()->json([
             'status' => true,
             'message' => 'Request bebas pustaka telah ditolak.'
+        ]);
+    }
+
+    public function download(Request $req)
+    {
+        validate_and_response([
+            'reqbebaspustaka_id' => ['ID Request Bebas Pustaka', 'required'],
+        ]);
+
+        $bebasPustaka = ReqBebasPustaka::findOrFail($req->input('reqbebaspustaka_id'));
+
+        if ($bebasPustaka->status_req != StatusRequest::DISETUJUI->value) {
+            abort(403, 'File hanya dapat diunduh untuk request yang sudah disetujui.');
+        }
+
+        if (!$bebasPustaka->file_hasil_bebas_pustaka) {
+            abort(404, 'File tidak ditemukan. Silakan approve ulang request ini.');
+        }
+
+        $filePath = storage_path('app/private/' . basename($bebasPustaka->file_hasil_bebas_pustaka));
+
+        if (!file_exists($filePath)) {
+            abort(404, 'File tidak ditemukan di storage. Silakan approve ulang request ini.');
+        }
+
+        $fileName = 'Surat_Bebas_Pustaka_' . $bebasPustaka->nim . '.docx';
+
+        return response()->download($filePath, $fileName, [
+            'Content-Type' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
         ]);
     }
 

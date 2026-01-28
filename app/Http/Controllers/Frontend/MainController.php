@@ -58,11 +58,6 @@ class MainController extends Controller
             $fallbacks->panduan ?? []
         );
 
-        $faqData = SafeDataService::safeExecute(
-            fn() => LandingService::getFaqData(),
-            $fallbacks->faq ?? []
-        );
-
         return view('contents.frontend.pages.index', compact(
             'pageConfig',
             'content',
@@ -72,7 +67,6 @@ class MainController extends Controller
             'fasilitasData',
             'layananData',
             'panduanData',
-            'faqData',
             'beritaData',
         ));
     }

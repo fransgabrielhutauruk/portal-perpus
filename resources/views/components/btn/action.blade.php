@@ -27,6 +27,10 @@
     <a href="{{ $link != '' ? $link : 'javascript:;' }}" class="btn btn-icon btn-sm mh-25px mw-25px btn-light-danger act-{{ str_replace(' ', '_', $action) }} {{ $class }}" {{ $attributes }} title="{{ $title != '' ? $title : 'Tolak' }}">
         <i class="{{ $icon != '' ? $icon : 'ki-outline ki-cross-circle' }} fs-3"></i>
     </a>
+@elseif ($action == 'download')
+    <a href="{{ $link != '' ? $link : 'javascript:;' }}" class="btn btn-icon btn-sm mh-25px mw-25px btn-light-info act-{{ str_replace(' ', '_', $action) }} {{ $class }}" {{ $attributes }} title="{{ $title != '' ? $title : 'Download File' }}">
+        <i class="{{ $icon != '' ? $icon : 'ki-outline ki-cloud-download' }} fs-3"></i>
+    </a>
 @elseif ($action == 'detail')
     <a href="{{ $link != '' ? $link : 'javascript:;' }}" class="btn btn-icon btn-sm mh-25px mw-25px btn-light-primary act-{{ str_replace(' ', '_', $action) }} {{ $class }}" {{ $attributes }} title="{{ $title != '' ? $title : 'Detail data' }}">
         <i class="{{ $icon != '' ? $icon : 'ki-outline ki-magnifier' }} fs-3"></i>

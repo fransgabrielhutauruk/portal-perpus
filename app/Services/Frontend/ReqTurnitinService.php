@@ -43,7 +43,7 @@ class ReqTurnitinService
      * @param int $limit
      * @return \Illuminate\Support\Collection
      */
-    public static function getRecentRequests($limit = 5)
+    public static function getRecentRequests($limit = 20)
     {
         try {
             return ReqTurnitin::with('prodi')

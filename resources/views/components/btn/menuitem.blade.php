@@ -31,6 +31,14 @@
             {{ $title != '' ? $title : 'Detail data' }}
         </a>
     </div>
+@elseif ($action == 'download')
+    <div class="menu-item px-3">
+        <a href="{{ $link != '' ? $link : '#' }}" class="menu-link align-items-start px-3 text-gray-700 act-{{ str_replace(' ', '_', $action) }} {{ $class }}" {{ $attributes }} title="{{ $title != '' ? $title : 'download file' }}">
+            <i class="{{ $icon != '' ? $icon : 'ki-outline ki-cloud-download' }} fs-3 me-2"></i>
+
+            {{ $title != '' ? $title : 'Download File' }}
+        </a>
+    </div>
 @else
     <div class="menu-item px-3">
         <a href="{{ $link != '' ? $link : '#' }}" class="menu-link align-items-start px-3 text-gray-700 act-{{ str_replace(' ', '_', $action) }} {{ $class }}" {{ $attributes }} title="{{ $title != '' ? $title : 'lainnya' }}">

@@ -9,6 +9,7 @@ use App\Services\Frontend\ReqModulService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use App\Enums\StatusRequest;
 
 class ReqModulController extends Controller
 {
@@ -87,6 +88,7 @@ class ReqModulController extends Controller
                 'jumlah_dibutuhkan' => $request->jumlah_dibutuhkan ?? 0,
                 'deskripsi_kebutuhan' => $request->deskripsi_kebutuhan,
                 'file' => $filePath,
+                'status_req' => StatusRequest::MENUNGGU->value,
             ]);
 
             DB::commit();
@@ -98,9 +100,9 @@ class ReqModulController extends Controller
                     'judul_modul' => $usulanModul->judul_modul,
                     'nama_mata_kuliah' => $usulanModul->nama_mata_kuliah,
                     'nama_dosen' => $usulanModul->nama_dosen,
-                    'inisial_dosen' => $usulanModul->inisial_dosen,
+                    'date_fmt' => tanggal($usulanModul->created_at, ' '),
                     'praktikum' => $usulanModul->praktikum,
-                    'status' => $usulanModul->status
+                    'status_req' => $usulanModul->status_req
                 ]
             ]);
         } catch (\Exception $e) {
