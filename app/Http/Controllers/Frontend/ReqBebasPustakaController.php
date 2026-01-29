@@ -67,6 +67,8 @@ class ReqBebasPustakaController extends Controller
             'email_mahasiswa' => 'required|email',
             'nim'             => 'required|string',
             'prodi_id'        => 'required|numeric',
+            'link_kp_repository' => 'required|url',
+            'link_pa_repository' => 'required|url',
         ]);
 
         try {
@@ -78,7 +80,8 @@ class ReqBebasPustakaController extends Controller
                 'email_mahasiswa' => $request->email_mahasiswa,
                 'nim'             => $request->nim,
                 'prodi_id'        => $request->prodi_id,
-
+                'link_kp_repository' => $request->link_kp_repository,
+                'link_pa_repository' => $request->link_pa_repository,
                 'is_syarat_terpenuhi'      => false,
                 'status_req'               => StatusRequest::MENUNGGU->value,
                 'catatan_admin'            => null,

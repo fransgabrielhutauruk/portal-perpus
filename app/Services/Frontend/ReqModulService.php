@@ -101,7 +101,7 @@ class ReqModulService
     public static function getPageConfig()
     {
         $meta = self::getMetaData();
-        $bg = publicMedia('perpus-2.jpg', 'perpus');
+        $bg = publicMedia('perpus-4.webp', 'perpus');
 
         return [
             'background_image' => $bg,

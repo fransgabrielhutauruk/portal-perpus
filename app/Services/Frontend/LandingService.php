@@ -117,7 +117,7 @@ class LandingService
             'title'    => 'Fakta dan Data',
             'description' => 'Perpustakaan Politeknik Caltex Riau hadir sebagai pusat sumber belajar dan informasi yang mendukung kegiatan akademik sivitas akademika. Dengan koleksi yang terus berkembang dan layanan digital yang modern, kami berkomitmen memberikan akses informasi terbaik.',
             'image'       => [
-                'src' => publicMedia('perpus-1.jpg', 'perpus'),
+                'src' => publicMedia('perpus-depan-2.webp', 'perpus'),
                 'alt' => 'Perpustakaan Politeknik Caltex Riau'
             ],
             'data'        => [

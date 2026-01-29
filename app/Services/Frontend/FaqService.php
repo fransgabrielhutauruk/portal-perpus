@@ -51,7 +51,7 @@ class FaqService
 
         return [
             'page_title' => 'FAQ',
-            'page_subtitle' => 'Frequently Asked Questions',
+            'page_subtitle' => 'Frequently Asked <b>Questions</b>',
             'page_description' => 'Berikut adalah daftar pertanyaan yang sering diajukan beserta jawabannya.',
             'faq_list' => $faqList,
             'total_faq' => $faqList->count()

@@ -49,6 +49,8 @@ class ReqBebasPustaka extends Model
         'prodi_id',
         'nim',
         'email_mahasiswa',
+        'link_kp_repository',
+        'link_pa_repository',
         'is_syarat_terpenuhi',
         'status_req',
         'catatan_admin',
@@ -220,7 +222,8 @@ class ReqBebasPustaka extends Model
             ->leftJoin('dm_prodi as p', 'a.prodi_id', '=', 'p.prodi_id')
             ->where(notRaw($where))
             ->whereRaw(withRaw($where), $whereBinding)
-            ->whereNull('a.deleted_at');
+            ->whereNull('a.deleted_at')
+            ->orderBy('a.created_at', 'desc');
         return $get ? $query->get() : $query;
     }
 }

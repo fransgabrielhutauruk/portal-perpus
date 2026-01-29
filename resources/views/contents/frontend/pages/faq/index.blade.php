@@ -5,7 +5,7 @@
 <x-frontend.seo :pageConfig="$pageConfig" />
 
 @section('content')
-    <x-frontend.page-header :breadcrumbs="$breadcrumbs" :image="publicMedia('perpus-2.jpg', 'perpus')">
+    <x-frontend.page-header :breadcrumbs="$breadcrumbs" :image="publicMedia('perpus-11.webp', 'perpus')">
         FAQ
     </x-frontend.page-header>
 
@@ -14,7 +14,9 @@
             <div class="row">
                 <div class="col-12">
                     <div class="section-title text-center mb-5">
-                        <h2 class="wow fadeInUp">{{ data_get($content, 'page_title') }}</h2>
+                        <h3 class="wow fadeInUp">{{ data_get($content, 'page_title') }}</h2>
+                        <h2 class="wow fadeInUp" data-wow-delay="0.25s">{!! data_get($content, 'page_subtitle') !!}
+                        </h2>
                         <p class="wow fadeInUp mt-3" data-wow-delay="0.25s">{{ data_get($content, 'page_description') }}</p>
                     </div>
                 </div>
@@ -96,7 +98,7 @@
     }
 
     .faq-question[aria-expanded="true"] {
-        background: linear-gradient(135deg, var(--primary-color, #0066cc) 0%, var(--secondary-color, #004999) 100%);
+        background: linear-gradient(134deg, var(--primary-color, #0066cc) 0%, var(--secondary-color, #004999) 150%);
     }
 
     .faq-question[aria-expanded="true"] .faq-question-icon,

@@ -111,7 +111,7 @@ class ReqBebasPustakaService
     {
         $meta = self::getMetaData();
 
-        $bg = publicMedia('perpus-4.jpg', 'perpus');
+        $bg = publicMedia('perpus-1.webp', 'perpus');
 
         return [
             'background_image' => $bg,

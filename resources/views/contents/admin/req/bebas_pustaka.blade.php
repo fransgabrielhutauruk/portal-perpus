@@ -18,7 +18,8 @@
         </div>
     </div>
 
-    <x-modal id="modalReject" type="centered" :static="true" size="" jf-modal="reject" title="Tolak Request Bebas Pustaka">
+    <x-modal id="modalReject" type="centered" :static="true" size="" jf-modal="reject"
+        title="Tolak Request Bebas Pustaka">
         <form id="formReject" class="needs-validation" jf-form="reject">
             <input type="hidden" name="reqbebaspustaka_id" value="">
             <x-form.textarea class="mb-2" name="catatan_admin" label="Alasan Penolakan" required />
@@ -47,15 +48,14 @@
         @endslot
     </x-modal>
 
-    <x-modal id="modalReset" type="centered" :static="true" size="" jf-modal="reset"
-        title="Reset Request">
+    <x-modal id="modalReset" type="centered" :static="true" size="" jf-modal="reset" title="Reset Request">
         <form id="formReset" class="needs-validation" jf-form="reset">
             <input type="hidden" name="reqbebaspustaka_id" value="">
 
             <div class="alert alert-warning d-flex align-items-center">
                 <i class="ki-outline ki-information-5 fs-2x me-3"></i>
                 <div>
-                    <strong>Perhatian:</strong> Data akan dikembalikan ke status <strong>Menunggu</strong>. 
+                    <strong>Perhatian:</strong> Data akan dikembalikan ke status <strong>Menunggu</strong>.
                     Catatan admin akan dihapus.
                 </div>
             </div>
@@ -66,7 +66,8 @@
         @endslot
     </x-modal>
 
-    <x-modal id="modalDetail" type="centered" :static="true" size="lg" jf-modal="detail" title="Detail Request Bebas Pustaka">
+    <x-modal id="modalDetail" type="centered" :static="true" size="lg" jf-modal="detail"
+        title="Detail Request Bebas Pustaka">
         <div class="modal-body p-0">
             <div class="table-responsive">
                 <table class="table table-row-bordered table-row-gray-300 gy-4 mb-0">
@@ -98,6 +99,18 @@
                             <td class="fw-bold">Syarat Terpenuhi</td>
                             <td><span id="detail-syarat_terpenuhi">-</span></td>
                         </tr>
+                        <tr id="row-link-kp" style="display:none;">
+                            <td class="fw-bold">Link Repository KP</td>
+                            <td><a id="detail-link_kp_repository" href="#" target="_blank"
+                                    class="btn btn-sm btn-light-info"><i class="ki-outline ki-link"></i> Buka Link KP</a>
+                            </td>
+                        </tr>
+                        <tr id="row-link-pa" style="display:none;">
+                            <td class="fw-bold">Link Repository PA</td>
+                            <td><a id="detail-link_pa_repository" href="#" target="_blank"
+                                    class="btn btn-sm btn-light-info"><i class="ki-outline ki-link"></i> Buka Link PA</a>
+                            </td>
+                        </tr>
                     </tbody>
                     <thead>
                         <tr>
@@ -109,7 +122,9 @@
                     <tbody>
                         <tr id="row-file" style="display:none;">
                             <td class="fw-bold w-200px">File Hasil</td>
-                            <td><a id="detail-file" href="#" target="_blank" class="btn btn-sm btn-light-primary"><i class="ki-outline ki-file"></i> Lihat File</a></td>
+                            <td><a id="detail-file" href="#" target="_blank"
+                                    class="btn btn-sm btn-light-primary"><i class="ki-outline ki-file"></i> Lihat File</a>
+                            </td>
                         </tr>
                         <tr>
                             <td class="fw-bold w-200px">Status</td>
@@ -152,32 +167,50 @@
         // Detail modal handler
         $(document).on('click', '[jf-data="bebas-pustaka"] [jf-detail]', function() {
             var detailId = $(this).attr('jf-detail');
-            
+
             ajaxRequest({
                 link: '{{ route('app.req-bebas-pustaka.data') }}/detail',
-                data: { reqbebaspustaka_id: detailId },
+                data: {
+                    reqbebaspustaka_id: detailId
+                },
                 callback: function(origin, resp) {
                     var data = resp.data;
-                    
+
                     $('#detail-nama_mahasiswa').text(data.nama_mahasiswa || '-');
                     $('#detail-nim').text(data.nim || '-');
                     $('#detail-email_mahasiswa').text(data.email_mahasiswa || '-');
                     $('#detail-prodi').text(data.prodi_nama || data.prodi?.nama_prodi || '-');
-                    
+
+                    // Handle repository links
+                    if (data.link_kp_repository) {
+                        $('#row-link-kp').show();
+                        $('#detail-link_kp_repository').attr('href', data.link_kp_repository);
+                    } else {
+                        $('#row-link-kp').hide();
+                    }
+
+                    if (data.link_pa_repository) {
+                        $('#row-link-pa').show();
+                        $('#detail-link_pa_repository').attr('href', data.link_pa_repository);
+                    } else {
+                        $('#row-link-pa').hide();
+                    }
+
                     // Syarat terpenuhi badge
-                    var syaratBadge = data.is_syarat_terpenuhi 
-                        ? '<span class="badge badge-success">Terpenuhi</span>' 
-                        : '<span class="badge badge-warning">Belum Terpenuhi</span>';
+                    var syaratBadge = data.is_syarat_terpenuhi ?
+                        '<span class="badge badge-success">Terpenuhi</span>' :
+                        '<span class="badge badge-warning">Belum Terpenuhi</span>';
                     $('#detail-syarat_terpenuhi').html(syaratBadge);
-                    
+
                     // Handle file if exists
                     if (data.file_hasil_bebas_pustaka) {
                         $('#row-file').show();
-                        $('#detail-file').attr('href', data.file_url || '/storage/' + data.file_hasil_bebas_pustaka);
+                        $('#detail-file').attr('href', data.file_url || '/storage/' + data
+                            .file_hasil_bebas_pustaka);
                     } else {
                         $('#row-file').hide();
                     }
-                    
+
                     // Handle status badge
                     var statusBadge = '';
                     if (data.status_req == 0) {
@@ -201,7 +234,7 @@
                         $('#detail-catatan_admin').text(data.catatan_admin || '-');
                     }
                     $('#detail-status').html(statusBadge);
-                    
+
                     $('[jf-modal="detail"]').modal('show');
                 }
             });
@@ -211,7 +244,7 @@
         $(document).on('click', '#btn-detail-approve', function() {
             var detailId = $('#detail-actions-pending').data('id');
             $('[jf-modal="detail"]').modal('hide');
-            
+
             setTimeout(function() {
                 $('[jf-approve="' + detailId + '"]').click();
             }, 300);
@@ -221,7 +254,7 @@
         $(document).on('click', '#btn-detail-reject', function() {
             var detailId = $('#detail-actions-pending').data('id');
             $('[jf-modal="detail"]').modal('hide');
-            
+
             setTimeout(function() {
                 $('[jf-reject="' + detailId + '"]').click();
             }, 300);
@@ -241,17 +274,17 @@
         // Custom handler for reset save button
         $(document).on('click', '[jf-save="reset"]', function(e) {
             e.preventDefault();
-            
+
             var form = $('#formReset');
             var formData = form.serializeArray();
             var data = {};
-            
+
             formData.forEach(function(field) {
                 data[field.name] = field.value;
             });
 
             ajaxRequest({
-                link: '{{ route("app.req-bebas-pustaka.reset") }}',
+                link: '{{ route('app.req-bebas-pustaka.reset') }}',
                 data: data,
                 swal_success: true,
                 callback: function() {
@@ -263,12 +296,12 @@
 
         $(document).on('click', '[jf-download]', function(e) {
             e.preventDefault();
-            
+
             var reqbebaspustakaId = $(this).attr('jf-download');
-            var downloadUrl = '{{ route("app.req-bebas-pustaka.download") }}?reqbebaspustaka_id=' + reqbebaspustakaId;
-            
+            var downloadUrl = '{{ route('app.req-bebas-pustaka.download') }}?reqbebaspustaka_id=' +
+                reqbebaspustakaId;
+
             window.location.href = downloadUrl;
         });
-
     </script>
 @endpush

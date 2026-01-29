@@ -18,6 +18,8 @@ return new class extends Migration
             $table->unsignedBigInteger('prodi_id')->nullable();
             $table->string('nim');
             $table->string('email_mahasiswa');
+            $table->string('link_kp_repository')->nullable();
+            $table->string('link_pa_repository')->nullable();
             $table->boolean('is_syarat_terpenuhi')->default(false);
             $table->integer('status_req')->default(0); 
             $table->text('catatan_admin')->nullable();

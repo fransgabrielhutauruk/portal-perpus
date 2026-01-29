@@ -34,9 +34,9 @@ class PanduanService
         
         return [
             'header' => 'Panduan',
-            'title' => 'Panduan Perpustakaan Politeknik Caltex Riau',
-            'subtitle' => '',
-            'description' => 'Kumpulan panduan dan tutorial penggunaan layanan perpustakaan PCR',
+            'title' => 'Panduan Perpustakaan',
+            'subtitle' => '<b>Panduan Penggunaan</b> Layanan Perpustakaan',
+            'description' => 'Temukan berbagai panduan dan tutorial untuk memanfaatkan layanan dan fasilitas Perpustakaan Politeknik Caltex Riau secara optimal.',
             'panduan_list' => $panduanList,
         ];
     }
@@ -81,9 +81,10 @@ class PanduanService
     public static function getPageConfig($panduanData = null): array
     {
         $meta = self::getMetaData();
+        $bg = publicMedia('perpus-11.webp', 'perpus');
 
         return [
-            'background_image' => null,
+            'background_image' => $bg,
             'seo' => [
                 'title' => $panduanData ? $panduanData->judul : $meta['title'],
                 'description' => $panduanData && $panduanData->deskripsi ? $panduanData->deskripsi : $meta['description'],

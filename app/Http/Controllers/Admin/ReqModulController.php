@@ -27,6 +27,7 @@ class ReqModulController extends Controller
             ->ajax(route('app.usulan-modul.data') . '/list')
             ->columns([
                 Column::make(['title' => 'No', 'data' => 'no']),
+                Column::make(['title' => 'Dikirim Pada', 'data' => 'dikirim_pada']),
                 Column::make(['title' => 'Judul Modul', 'data' => 'judul_modul']),
                 Column::make(['title' => 'Matkul', 'data' => 'nama_mata_kuliah']),
                 Column::make(['title' => 'Dosen', 'data' => 'nama_dosen']),
@@ -54,6 +55,7 @@ class ReqModulController extends Controller
                 $dt = [];
 
                 $dt['no']               = ++$start;
+                $dt['dikirim_pada'] = $value['created_at'] ? date('d-m-Y H:i', strtotime($value['created_at'])) : '-';
                 $dt['nama_dosen']       = $value['nama_dosen']       ?? '-';
                 $dt['judul_modul']      = $value['judul_modul']      ?? '-';
                 $dt['nama_mata_kuliah'] = $value['nama_mata_kuliah'] ?? '-';

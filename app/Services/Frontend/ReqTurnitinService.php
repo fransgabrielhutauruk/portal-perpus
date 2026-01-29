@@ -97,7 +97,7 @@ class ReqTurnitinService
     public static function getPageConfig()
     {
         $meta = self::getMetaData();
-        $bg = publicMedia('perpus-3.jpg', 'perpus');
+        $bg = publicMedia('perpus-7.webp', 'perpus');
 
         return [
             'background_image' => $bg,

@@ -231,6 +231,33 @@
                                                             terpenuhi (Ya).
                                                         </div>
                                                     </div>
+
+                                                    @if ($item['key'] === 'check_kp' || $item['key'] === 'check_pa')
+                                                        <div class="col-12 mt-2 repository-link-container d-none"
+                                                            id="{{ $item['key'] }}_link_container">
+                                                            <div class="form-group mb-0">
+                                                                <label class="fw-bold text-muted small"
+                                                                    for="{{ $item['key'] }}_link">
+                                                                    <i class="fa-solid fa-link me-1"></i> Link
+                                                                    Repository
+                                                                    @if ($item['key'] === 'check_kp')
+                                                                        (KP)
+                                                                    @else
+                                                                        (PA)
+                                                                    @endif
+                                                                </label>
+                                                                <input type="url"
+                                                                    name="{{ $item['key'] === 'check_kp' ? 'link_kp_repository' : 'link_pa_repository' }}"
+                                                                    id="{{ $item['key'] }}_link"
+                                                                    class="form-control form-control-sm repository-link-input"
+                                                                    placeholder="Cth: https://repository.lib.pcr.ac.id/id/eprint/..."
+                                                                    data-error="URL repository tidak valid">
+                                                                <small class="text-muted">Masukkan link detail file
+                                                                    sistem repository Anda</small>
+                                                                <div class="help-block with-errors"></div>
+                                                            </div>
+                                                        </div>
+                                                    @endif
                                                 </div>
                                             @endforeach
                                         </div>
@@ -410,466 +437,149 @@
     </div>
 </div>
 
-{{-- --- JAVASCRIPT LOGIC --- --}}
 <script>
-    /*! Validator v0.11.9 by @1000hz */ + function(a) {
-        "use strict";
+    document.addEventListener('DOMContentLoaded', () => {
+        const tabs = document.querySelectorAll('#usulanTabs button[data-bs-target]');
+        tabs.forEach((btn, i) => {
+            if (i > 0) btn.disabled = true;
+        });
 
-        function b(b) {
-            return b.is('[type="checkbox"]') ? b.prop("checked") : b.is('[type="radio"]') ? !!a('[name="' + b.attr(
-                "name") + '"]:checked').length : b.is("select[multiple]") ? (b.val() || []).length : b.val()
-        }
-
-        function c(b) {
-            return this.each(function() {
-                var c = a(this),
-                    e = a.extend({}, d.DEFAULTS, c.data(), "object" == typeof b && b),
-                    f = c.data("bs.validator");
-                (f || "destroy" != b) && (f || c.data("bs.validator", f = new d(this, e)), "string" ==
-                    typeof b && f[b]())
-            })
-        }
-        var d = function(c, e) {
-            this.options = e, this.validators = a.extend({}, d.VALIDATORS, e.custom), this.$element = a(c), this
-                .$btn = a('button[type="submit"], input[type="submit"]').filter('[form="' + this.$element.attr(
-                    "id") + '"]').add(this.$element.find('input[type="submit"], button[type="submit"]')), this
-                .update(), this.$element.on("input.bs.validator change.bs.validator focusout.bs.validator", a.proxy(
-                    this.onInput, this)), this.$element.on("submit.bs.validator", a.proxy(this.onSubmit, this)),
-                this.$element.on("reset.bs.validator", a.proxy(this.reset, this)), this.$element.find(
-                    "[data-match]").each(function() {
-                    var c = a(this),
-                        d = c.attr("data-match");
-                    a(d).on("input.bs.validator", function() {
-                        b(c) && c.trigger("input.bs.validator")
-                    })
-                }), this.$inputs.filter(function() {
-                    return b(a(this)) && !a(this).closest(".has-error").length
-                }).trigger("focusout"), this.$element.attr("novalidate", !0)
-        };
-        d.VERSION = "0.11.9", d.INPUT_SELECTOR = ':input:not([type="hidden"], [type="submit"], [type="reset"], button)',
-            d.FOCUS_OFFSET = 20, d.DEFAULTS = {
-                delay: 500,
-                html: !1,
-                disable: !0,
-                focus: !0,
-                custom: {},
-                errors: {
-                    match: "Does not match",
-                    minlength: "Not long enough"
-                },
-                feedback: {
-                    success: "glyphicon-ok",
-                    error: "glyphicon-remove"
-                }
-            }, d.VALIDATORS = {
-                "native": function(a) {
-                    var b = a[0];
-                    return b.checkValidity ? !b.checkValidity() && !b.validity.valid && (b.validationMessage ||
-                        "error!") : void 0
-                },
-                match: function(b) {
-                    var c = b.attr("data-match");
-                    return b.val() !== a(c).val() && d.DEFAULTS.errors.match
-                },
-                minlength: function(a) {
-                    var b = a.attr("data-minlength");
-                    return a.val().length < b && d.DEFAULTS.errors.minlength
-                }
-            }, d.prototype.update = function() {
-                var b = this;
-                return this.$inputs = this.$element.find(d.INPUT_SELECTOR).add(this.$element.find(
-                    '[data-validate="true"]')).not(this.$element.find('[data-validate="false"]').each(function() {
-                    b.clearErrors(a(this))
-                })), this.toggleSubmit(), this
-            }, d.prototype.onInput = function(b) {
-                var c = this,
-                    d = a(b.target),
-                    e = "focusout" !== b.type;
-                this.$inputs.is(d) && this.validateInput(d, e).done(function() {
-                    c.toggleSubmit()
-                })
-            }, d.prototype.validateInput = function(c, d) {
-                var e = (b(c), c.data("bs.validator.errors"));
-                c.is('[type="radio"]') && (c = this.$element.find('input[name="' + c.attr("name") + '"]'));
-                var f = a.Event("validate.bs.validator", {
-                    relatedTarget: c[0]
-                });
-                if (this.$element.trigger(f), !f.isDefaultPrevented()) {
-                    var g = this;
-                    return this.runValidators(c).done(function(b) {
-                        c.data("bs.validator.errors", b), b.length ? d ? g.defer(c, g.showErrors) : g
-                            .showErrors(c) : g.clearErrors(c), e && b.toString() === e.toString() || (f = b
-                                .length ? a.Event("invalid.bs.validator", {
-                                    relatedTarget: c[0],
-                                    detail: b
-                                }) : a.Event("valid.bs.validator", {
-                                    relatedTarget: c[0],
-                                    detail: e
-                                }), g.$element.trigger(f)), g.toggleSubmit(), g.$element.trigger(a.Event(
-                                "validated.bs.validator", {
-                                    relatedTarget: c[0]
-                                }))
-                    })
-                }
-            }, d.prototype.runValidators = function(c) {
-                function d(a) {
-                    return c.attr("data-" + a + "-error")
-                }
-
-                function e() {
-                    var a = c[0].validity;
-                    return a.typeMismatch ? c.attr("data-type-error") : a.patternMismatch ? c.attr(
-                            "data-pattern-error") : a.stepMismatch ? c.attr("data-step-error") : a.rangeOverflow ? c
-                        .attr(
-                            "data-max-error") : a.rangeUnderflow ? c.attr("data-min-error") : a.valueMissing ? c.attr(
-                            "data-required-error") : null
-                }
-
-                function f() {
-                    return c.attr("data-error")
-                }
-
-                function g(a) {
-                    return d(a) || e() || f()
-                }
-                var h = [],
-                    i = a.Deferred();
-                return c.data("bs.validator.deferred") && c.data("bs.validator.deferred").reject(), c.data(
-                    "bs.validator.deferred", i), a.each(this.validators, a.proxy(function(a, d) {
-                    var e = null;
-                    !b(c) && !c.attr("required") || void 0 === c.attr("data-" + a) && "native" != a || !(e =
-                        d.call(this, c)) || (e = g(a) || e, !~h.indexOf(e) && h.push(e))
-                }, this)), !h.length && b(c) && c.attr("data-remote") ? this.defer(c, function() {
-                    var d = {};
-                    d[c.attr("name")] = b(c), a.get(c.attr("data-remote"), d).fail(function(a, b, c) {
-                        h.push(g("remote") || c)
-                    }).always(function() {
-                        i.resolve(h)
-                    })
-                }) : i.resolve(h), i.promise()
-            }, d.prototype.validate = function() {
-                var b = this;
-                return a.when(this.$inputs.map(function() {
-                    return b.validateInput(a(this), !1)
-                })).then(function() {
-                    b.toggleSubmit(), b.focusError()
-                }), this
-            }, d.prototype.focusError = function() {
-                if (this.options.focus) {
-                    var b = this.$element.find(".has-error:first :input");
-                    0 !== b.length && (a("html, body").animate({
-                        scrollTop: b.offset().top - d.FOCUS_OFFSET
-                    }, 250), b.focus())
-                }
-            }, d.prototype.showErrors = function(b) {
-                var c = this.options.html ? "html" : "text",
-                    d = b.data("bs.validator.errors"),
-                    e = b.closest(".form-group"),
-                    f = e.find(".help-block.with-errors"),
-                    g = e.find(".form-control-feedback");
-                d.length && (d = a("<ul/>").addClass("list-unstyled").append(a.map(d, function(b) {
-                    return a("<li/>")[c](b)
-                })), void 0 === f.data("bs.validator.originalContent") && f.data("bs.validator.originalContent",
-                    f.html()), f.empty().append(d), e.addClass("has-error has-danger"), e.hasClass(
-                    "has-feedback") && g.removeClass(this.options.feedback.success) && g.addClass(this.options
-                    .feedback.error) && e.removeClass(this.options.feedback.success) && e.removeClass(
-                    "has-success"))
-            }, d.prototype.clearErrors = function(a) {
-                var c = a.closest(".form-group"),
-                    d = c.find(".help-block.with-errors"),
-                    e = c.find(".form-control-feedback");
-                d.html(d.data("bs.validator.originalContent")), c.removeClass("has-error has-danger has-success"), c
-                    .hasClass("has-feedback") && e.removeClass(this.options.feedback.error) && e.removeClass(this
-                        .options.feedback.success) && b(a) && e.addClass(this.options.feedback.success) && c.addClass(
-                        "has-success")
-            }, d.prototype.hasErrors = function() {
-                function b() {
-                    return !!(a(this).data("bs.validator.errors") || []).length
-                }
-                return !!this.$inputs.filter(b).length
-            }, d.prototype.isIncomplete = function() {
-                function c() {
-                    var c = b(a(this));
-                    return !("string" == typeof c ? a.trim(c) : c)
-                }
-                return !!this.$inputs.filter("[required]").filter(c).length
-            }, d.prototype.onSubmit = function(a) {
-                this.validate(), (this.isIncomplete() || this.hasErrors()) && a.preventDefault()
-            }, d.prototype.toggleSubmit = function() {
-                this.options.disable && this.$btn.toggleClass("disabled", this.isIncomplete() || this.hasErrors())
-            }, d.prototype.defer = function(b, c) {
-                return c = a.proxy(c, this, b), this.options.delay ? (window.clearTimeout(b.data(
-                    "bs.validator.timeout")), void b.data("bs.validator.timeout", window.setTimeout(c, this
-                    .options.delay))) : c()
-            }, d.prototype.reset = function() {
-                return this.$element.find(".form-control-feedback").removeClass(this.options.feedback.error)
-                    .removeClass(this.options.feedback.success), this.$inputs.removeData(["bs.validator.errors",
-                        "bs.validator.deferred"
-                    ]).each(function() {
-                        var b = a(this),
-                            c = b.data("bs.validator.timeout");
-                        window.clearTimeout(c) && b.removeData("bs.validator.timeout")
-                    }), this.$element.find(".help-block.with-errors").each(function() {
-                        var b = a(this),
-                            c = b.data("bs.validator.originalContent");
-                        b.removeData("bs.validator.originalContent").html(c)
-                    }), this.$btn.removeClass("disabled"), this.$element.find(".has-error, .has-danger, .has-success")
-                    .removeClass("has-error has-danger has-success"), this
-            }, d.prototype.destroy = function() {
-                return this.reset(), this.$element.removeAttr("novalidate").removeData("bs.validator").off(
-                        ".bs.validator"), this.$inputs.off(".bs.validator"), this.options = null, this.validators =
-                    null, this.$element = null, this.$btn = null, this.$inputs = null, this
-            };
-        var e = a.fn.validator;
-        a.fn.validator = c, a.fn.validator.Constructor = d, a.fn.validator.noConflict = function() {
-            return a.fn.validator = e, this
-        }, a(window).on("load", function() {
-            a('form[data-toggle="validator"]').each(function() {
-                var b = a(this);
-                c.call(b, b.data())
-            })
-        })
-    }(jQuery);
-</script>
-
-<script>
-    $(document).ready(function() {
-        // Initialize Validator
-        $('#formUsulan').validator();
-
-        // Enable all tab navigation
-        document.querySelectorAll('#usulanTabs button[data-bs-target]').forEach(button => {
-            button.disabled = false;
-            button.style.cursor = 'pointer';
-            button.addEventListener('click', function(e) {
-                e.preventDefault();
-                const targetId = this.getAttribute('data-bs-target').substring(1); // Remove #
-                switchTab(targetId);
+        ['check_kp', 'check_pa'].forEach(k => {
+            document.querySelectorAll(`input[name="${k}"]`).forEach(r => {
+                r.addEventListener('change', () => toggleRepositoryLinkField(k, r.value));
             });
         });
     });
 
+    function toggleRepositoryLinkField(key, val) {
+        const box = document.getElementById(`${key}_link_container`);
+        const input = document.getElementById(`${key}_link`);
+        if (val === '1') {
+            box.classList.remove('d-none');
+            input.required = true;
+        } else {
+            box.classList.add('d-none');
+            input.required = false;
+            input.value = '';
+        }
+    }
+
     function validateRequirements() {
-        let isValid = true;
-        const requirements = ['check_pa', 'check_kp', 'check_hardcopy_kp', 'check_hardcopy_pa',
-            'check_buku', 'check_modul'
-        ];
-
-        requirements.forEach(name => {
-            const val = $(`input[name="${name}"]:checked`).val();
-            const container = $(`input[name="${name}"]`).closest('.req-item');
-            const errorMsg = container.find('.error-msg');
-
-            // Cek jika belum dipilih (undefined) atau dipilih "0" (Tidak)
-            if (val !== '1') {
-                isValid = false;
-                errorMsg.removeClass('d-none'); // Tampilkan pesan error per item
+        let ok = true;
+        ['check_pa', 'check_kp', 'check_hardcopy_kp', 'check_hardcopy_pa', 'check_buku', 'check_modul']
+        .forEach(n => {
+            const checked = document.querySelector(`input[name="${n}"]:checked`);
+            const wrap = document.querySelector(`input[name="${n}"]`).closest('.req-item');
+            const err = wrap.querySelector('.error-msg');
+            if (!checked || checked.value !== '1') {
+                ok = false;
+                err.classList.remove('d-none');
             } else {
-                errorMsg.addClass('d-none');
+                err.classList.add('d-none');
+            }
+
+            if (n === 'check_kp' && checked?.value === '1') {
+                const link = document.getElementById('check_kp_link');
+                if (!link.value || !link.checkValidity()) {
+                    ok = false;
+                    link.reportValidity();
+                }
+            }
+
+            if (n === 'check_pa' && checked?.value === '1') {
+                const link = document.getElementById('check_pa_link');
+                if (!link.value || !link.checkValidity()) {
+                    ok = false;
+                    link.reportValidity();
+                }
             }
         });
-
-        const globalError = $('#globalError');
-        if (!isValid) {
-            globalError.removeClass('d-none');
-        } else {
-            globalError.addClass('d-none');
-        }
-
-        return isValid;
+        return ok;
     }
 
-    // --- 1. Modal Logic ---
     function openConfirmation() {
-        // 1. Validasi Input Standar (Nama, NIM, dll)
-        const isInfoValid = validateTab('tab-user');
-
-        // 2. Validasi Syarat Khusus (Semua harus "1")
-        const isRequirementsValid = validateRequirements();
-
-        if (isInfoValid && isRequirementsValid) {
-            // Jika semua valid, tampilkan modal konfirmasi
-            var myModal = new bootstrap.Modal(document.getElementById('confirmationModal'));
-            myModal.show();
-        } else if (!isRequirementsValid) {
-            // Jika syarat tidak valid, scroll ke bagian syarat
-            $('html, body').animate({
-                scrollTop: $("#requirements-container").offset().top - 100
-            }, 500);
+        if (validateTab('tab-user') && validateRequirements()) {
+            new bootstrap.Modal('#confirmationModal').show();
+        } else {
+            document.getElementById('requirements-container')
+                .scrollIntoView({
+                    behavior: 'smooth'
+                });
         }
     }
 
-    // --- 2. AJAX Submission ---
     function submitUsulanAjax() {
-        const formUsulan = document.getElementById('formUsulan');
-        const btnOpenModal = document.getElementById('btnOpenModal');
-        const loadingIndicator = document.getElementById('loadingIndicator');
-
-        // Hide Modal
-        var modalEl = document.getElementById('confirmationModal');
-        var modal = bootstrap.Modal.getInstance(modalEl);
-        modal.hide();
-
-        // UI Loading State
-        loadingIndicator.classList.remove('d-none');
-        btnOpenModal.disabled = true;
-
-        // Prepare Data
-        const formData = new FormData(formUsulan);
-        const jsonData = {};
-        formData.forEach((value, key) => {
-            jsonData[key] = value;
-        });
-
-        fetch(formUsulan.action, {
+        const form = document.getElementById('formUsulan');
+        const btn = document.getElementById('btnOpenModal');
+        const load = document.getElementById('loadingIndicator');
+        bootstrap.Modal.getInstance(
+            document.getElementById('confirmationModal')
+        ).hide();
+        load.classList.remove('d-none');
+        btn.disabled = true;
+        fetch(form.action, {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                    'Accept': 'application/json'
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
                 },
-                body: JSON.stringify(jsonData)
+                body: new FormData(form)
             })
+            .then(r => r.json())
             .then(res => {
-                const contentType = res.headers.get('content-type');
-                if (!contentType || !contentType.includes('application/json')) {
-                    throw new Error('Server mengembalikan response tidak valid');
-                }
-                return res.json().then(data => ({
-                    status: res.status,
-                    body: data
-                }));
+                load.classList.add('d-none');
+                btn.disabled = false;
+                Swal.fire('Berhasil', res.message, 'success');
+                form.reset();
+                switchTab('tab-attention');
             })
-            .then(({
-                status,
-                body
-            }) => {
-                loadingIndicator.classList.add('d-none');
-                btnOpenModal.disabled = false;
-
-                if (status === 200 || status === 201) {
-                    // SUCCESS
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Berhasil!',
-                        text: body.message,
-                        confirmButtonText: 'OK',
-                        confirmButtonColor: '#28a745',
-                        allowOutsideClick: false
-                    }).then(() => {
-                        formUsulan.reset();
-                        if (body.new_data) addHistoryRow(body.new_data);
-                        switchTab('tab-attention');
-                    });
-                } else {
-                    const errorMsg = body.errors ?
-                        Object.values(body.errors).flat().join('\n') :
-                        body.message || 'Terjadi kesalahan.';
-
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Gagal!',
-                        text: errorMsg,
-                        confirmButtonText: 'OK',
-                        confirmButtonColor: '#dc3545'
-                    });
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                loadingIndicator.classList.add('d-none');
-                btnOpenModal.disabled = false;
-
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error!',
-                    text: error.message || 'Terjadi kesalahan jaringan.',
-                    confirmButtonText: 'OK',
-                    confirmButtonColor: '#dc3545'
-                });
+            .catch(() => {
+                load.classList.add('d-none');
+                btn.disabled = false;
+                Swal.fire('Error', 'Gagal submit', 'error');
             });
+
     }
 
-    // --- NEW FUNCTION: Add Row to Table (Updated for Bebas Pustaka) ---
-    function addHistoryRow(data) {
-        const tbody = document.querySelector('.history-table tbody');
-        tbody.querySelector('td[colspan="5"]')?.closest('tr').remove();
-
-        const statusBadges = {
-            0: '<span class="badge bg-warning text-dark rounded-pill">Menunggu</span>',
-            1: '<span class="badge bg-success rounded-pill">Disetujui</span>',
-            default: '<span class="badge bg-danger rounded-pill">Ditolak</span>'
-        };
-
-        tbody.insertAdjacentHTML('afterbegin', `
-            <tr class="table-success">
-                <td>${data.date_fmt}</td>
-                <td>${data.nama_mahasiswa}</td>
-                <td>${data.nim}</td>
-                <td>${data.prodi_nama}</td>
-                <td class="text-center">${statusBadges[data.status_req] || statusBadges.default}</td>
-            </tr>`);
-
-        setTimeout(() => tbody.querySelector('tr.table-success')?.classList.remove('table-success'), 2000);
+    function validateTab(id) {
+        let valid = true;
+        document.querySelectorAll(`#${id} input, #${id} select`)
+            .forEach(el => {
+                if (!el.checkValidity()) {
+                    el.reportValidity();
+                    valid = false;
+                }
+            });
+        return valid;
     }
 
-    // --- 3. Validation Helpers ---
-    function validateTab(tabId) {
-        var $currentTab = $('#' + tabId);
-        // Kita hanya validasi input standar di sini (text, email, number, select)
-        var $inputs = $currentTab.find('input[type="text"], input[type="number"], input[type="email"], select');
-        var isValid = true;
-
-        $inputs.each(function() {
-            var $el = $(this);
-            // Cek validitas bawaan HTML5
-            if (!this.checkValidity()) isValid = false;
-            // Trigger validator plugin
-            $el.trigger('input');
-            // Cek class error dari validator plugin
-            if ($el.closest('.form-group').hasClass('has-error')) isValid = false;
-        });
-
-        return isValid;
+    function switchTab(id) {
+        const trigger = document.querySelector(`[data-bs-target="#${id}"]`);
+        trigger.disabled = false;
+        new bootstrap.Tab(trigger).show();
     }
 
     function validateAndNext(currentTabId, nextTabId) {
-        // Special handling for requirements tab
         if (currentTabId === 'tab-requirements') {
-            const isRequirementsValid = validateRequirements();
-            if (isRequirementsValid) {
+            if (validateRequirements()) {
                 switchTab(nextTabId);
             } else {
-                // Scroll to requirements container
-                $('html, body').animate({
-                    scrollTop: $("#requirements-container").offset().top - 100
-                }, 500);
+                document.getElementById('requirements-container')
+                    .scrollIntoView({
+                        behavior: 'smooth'
+                    });
             }
-        } else if (validateTab(currentTabId)) {
-            switchTab(nextTabId);
+        } else {
+            if (validateTab(currentTabId)) {
+                switchTab(nextTabId);
+            }
         }
     }
 
-    // --- 4. Wizard Helpers ---
-    function switchTab(targetId) {
-        const triggerEl = document.querySelector(`button[data-bs-target="#${targetId}"]`);
-        const tab = new bootstrap.Tab(triggerEl);
-        triggerEl.disabled = false;
-        tab.show();
-        document.querySelectorAll('.nav-link').forEach(btn => btn.classList.remove('active'));
-        triggerEl.classList.add('active');
-    }
-
     function autofillForm() {
-
-        document.querySelector('input[name="nama_mahasiswa"]').value = "Mahasiswa Calon Wisudawan";
-        document.querySelector('input[name="email_mahasiswa"]').value = "mahasiswa@pcr.ac.id";
-        document.querySelector('input[name="nim"]').value = "2355301999";
-
-        const prodi = document.querySelector('select[name="prodi_id"]');
+        document.querySelector('[name="nama_mahasiswa"]').value = "Mahasiswa Demo";
+        document.querySelector('[name="nim"]').value = "2355301999";
+        document.querySelector('[name="email_mahasiswa"]').value = "mahasiswa@pcr.ac.id";
+        const prodi = document.querySelector('[name="prodi_id"]');
         if (prodi.options.length > 1) prodi.selectedIndex = 1;
-
-        $('#formUsulan').validator('update');
-        $('#formUsulan').find('.form-control').trigger('input');
     }
 </script>

@@ -6,7 +6,7 @@
                 <h2 class="wow fadeInUp" data-wow-delay="0.4s">
                     Pertanyaan yang <span>Sering Diajukan</span>
                 </h2>
-                <p class="wow fadeInUp" data-wow-delay="0.6s">
+                <p class="wow fadeInUp" data-wow-delay="0.6s" style="margin-top: 10px">
                     Temukan jawaban atas hal yang sering ditanyakan kepada kami.
                 </p>
             </div>

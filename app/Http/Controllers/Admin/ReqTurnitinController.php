@@ -27,6 +27,7 @@ class ReqTurnitinController extends Controller
         $builder = app('datatables.html');
         $dataTable = $builder->serverSide(true)->ajax(route('app.req-turnitin.data') . '/list')->columns([
             Column::make(['title' => 'No', 'data' => 'no']),
+            Column::make(['title' => 'Dikirim Pada', 'data' => 'dikirim_pada']),
             Column::make(['title' => 'Nama Dosen', 'data' => 'nama_dosen']),
             Column::make(['title' => 'NIP', 'data' => 'nip']),
             Column::make(['title' => 'Judul Dokumen', 'data' => 'judul_dokumen']),
@@ -54,6 +55,7 @@ class ReqTurnitinController extends Controller
                 $dt = [];
 
                 $dt['no'] = ++$start;
+                $dt['dikirim_pada'] = $value['created_at'] ? date('d-m-Y H:i', strtotime($value['created_at'])) : '-';
                 $dt['nama_dosen'] = $value['nama_dosen'] ?? '-';
                 $dt['nip'] = $value['nip'] ?? '-';
                 $dt['judul_dokumen'] = $value['judul_dokumen'] ?? '-';

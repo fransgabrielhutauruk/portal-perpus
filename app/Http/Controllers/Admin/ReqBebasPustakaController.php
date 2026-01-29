@@ -27,10 +27,11 @@ class ReqBebasPustakaController extends Controller
         $builder = app('datatables.html');
         $dataTable = $builder->serverSide(true)->ajax(route('app.req-bebas-pustaka.data') . '/list')->columns([
             Column::make(['title' => 'No', 'data' => 'no']),
+            Column::make(['title' => 'Dikirim Pada', 'data' => 'dikirim_pada']),
             Column::make(['title' => 'Nama Mahasiswa', 'data' => 'nama_mahasiswa']),
             Column::make(['title' => 'NIM', 'data' => 'nim']),
-            Column::make(['title' => 'Email', 'data' => 'email_mahasiswa']),
             Column::make(['title' => 'Prodi', 'data' => 'prodi_nama']),
+            Column::make(['title' => 'Bukti', 'data' => 'bukti']),
             Column::make(['title' => 'Status', 'data' => 'status']),
             Column::make(['title' => 'Aksi', 'data' => 'action', 'class' => 'text-center']),
         ]);
@@ -47,17 +48,19 @@ class ReqBebasPustakaController extends Controller
     {
         if ($param1 == 'list') {
             $filter = [];
-            $data = DataTables::of(ReqBebasPustaka::getDataDetail($filter, get: false))->toArray();
+            $data = DataTables::of(ReqBebasPustaka::getDataDetail($filter, get: true))->toArray();
             $start = $req->input('start');
             $resp = [];
             foreach ($data['data'] as $key => $value) {
                 $dt = [];
 
                 $dt['no'] = ++$start;
+                $dt['dikirim_pada'] = $value['created_at'] ? date('d-m-Y H:i', strtotime($value['created_at'])) : '-';
                 $dt['nama_mahasiswa'] = $value['nama_mahasiswa'] ?? '-';
                 $dt['nim'] = $value['nim'] ?? '-';
-                $dt['email_mahasiswa'] = $value['email_mahasiswa'] ?? '-';
                 $dt['prodi_nama'] = $value['nama_prodi'] ?? '-';
+                $dt['bukti'] = '<a href="' . ($value['link_kp_repository'] ?? '#') . '" target="_blank">Link Repository KP</a><br>' .
+                    '<a href="' . ($value['link_pa_repository'] ?? '#') . '" target="_blank">Link Repository PA</a>';
                 $dt['status'] = ReqBebasPustaka::getStatusBadge($value['status_req'] ?? null);
 
                 $bebasPustaka = ReqBebasPustaka::find($value['reqbebaspustaka_id']);

@@ -86,7 +86,7 @@ class ReqBukuService
     {
         $meta = self::getMetaData();
 
-        $bg = publicMedia('perpus-1.jpg', 'perpus');
+        $bg = publicMedia('perpus-2.webp', 'perpus');
 
         return [
             'background_image' => $bg,

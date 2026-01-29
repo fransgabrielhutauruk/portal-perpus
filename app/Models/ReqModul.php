@@ -226,7 +226,8 @@ class ReqModul extends Model
             ->from((new self)->table . ' as a')
             ->where(notRaw($where))
             ->whereRaw(withRaw($where), $whereBinding)
-            ->whereNull('a.deleted_at');
+            ->whereNull('a.deleted_at')
+            ->orderBy('a.created_at', 'desc');
         return $get ? $query->get() : $query;
     }
 }

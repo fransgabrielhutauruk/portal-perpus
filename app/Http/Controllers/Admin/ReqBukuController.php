@@ -26,6 +26,7 @@ class ReqBukuController extends Controller
         $builder = app('datatables.html');
         $dataTable = $builder->serverSide(true)->ajax(route('app.usulan.data') . '/list')->columns([
             Column::make(['title' => 'No', 'data' => 'no']),
+            Column::make(['title' => 'Dikirim Pada', 'data' => 'dikirim_pada']),
             Column::make(['title' => 'Judul Buku', 'data' => 'judul_buku']),
             Column::make(['title' => 'Tahun Terbit', 'data' => 'tahun_terbit']),
             Column::make(['title' => 'Nama', 'data' => 'nama_req']),
@@ -53,6 +54,7 @@ class ReqBukuController extends Controller
                 $dt = [];
 
                 $dt['no']       = ++$start;
+                $dt['dikirim_pada'] = $value['created_at'] ? date('d-m-Y H:i', strtotime($value['created_at'])) : '-';
                 $dt['nama_req']     = $value['nama_req']     ?? '-';
                 $dt['email_req']    = $value['email_req']    ?? '-';
                 $dt['judul_buku']   = $value['judul_buku']   ?? '-';

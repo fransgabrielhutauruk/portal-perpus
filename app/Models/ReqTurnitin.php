@@ -71,11 +71,12 @@ class ReqTurnitin extends Model
      */
     public static function getDataDetail($where = [], $whereBinding = [], $get = true)
     {
-        $query = \DB::table('')
+        $query = DB::table('')
             ->selectRaw('a.*, p.nama_prodi')
             ->from('req_turnitin as a')
             ->leftJoin('dm_prodi as p', 'a.prodi_id', '=', 'p.prodi_id')
-            ->whereNull('a.deleted_at');
+            ->whereNull('a.deleted_at')
+            ->orderBy('a.created_at', 'desc');
         return $get ? $query->get() : $query;
     }
 }

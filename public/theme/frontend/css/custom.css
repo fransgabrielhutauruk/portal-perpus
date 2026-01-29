@@ -5055,7 +5055,7 @@ header.main-header .header-sticky.active .container-fluid::before {
 }
 
 .content-page {
-    padding: 100px 0;
+    padding: 60px 0;
     display: flex;
     flex-direction: column;
     gap: 70px;
