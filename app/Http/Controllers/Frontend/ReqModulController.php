@@ -35,12 +35,12 @@ class ReqModulController extends Controller
 
     public function submitUsulanModul(Request $request)
     {
-        // Check if periode is open
         $activePeriode = DB::table('mst_periode')
             ->where('jenis_periode', 'req_modul')
             ->whereDate('tanggal_mulai', '<=', now())
             ->whereDate('tanggal_selesai', '>=', now())
             ->whereNull('deleted_at')
+            ->orderByDesc('created_at')
             ->first();
 
         if (!$activePeriode) {
