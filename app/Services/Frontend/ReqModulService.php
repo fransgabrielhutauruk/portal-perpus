@@ -58,7 +58,7 @@ class ReqModulService
         ];
     }
 
-    public static function getRecentProposals($limit = 20)
+    public static function getRecentProposals($limit = 10)
     {
         try {
             return ReqModul::select(

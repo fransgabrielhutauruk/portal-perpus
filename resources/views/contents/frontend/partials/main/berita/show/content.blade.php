@@ -23,7 +23,7 @@ $beritaContent = data_get($content, 'content');
                             </span>
                             <span class="news-category-author">
                                 <i class="fas fa-user data-icon"></i>
-                                {{ data_get($content, 'content.author') }}
+                                Admin
                             </span>
                         </div>
                     </div>

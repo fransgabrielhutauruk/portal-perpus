@@ -96,7 +96,7 @@ class HeroService
                 ],
                 'media'        => [
                     'type'     => 'image',
-                    'src'      => publicMedia('perpus-1.webp', 'perpus'),
+                    'src'      => publicMedia('perpus-7.webp', 'perpus'),
                     'duration' => 12
                 ],
                 'cta'          => self::getDefaultCTA(),
@@ -122,7 +122,7 @@ class HeroService
                 ],
                 'media'        => [
                     'type'     => 'image',
-                    'src'      => publicMedia('perpus-10.webp', 'perpus'),
+                    'src'      => publicMedia('perpus-depan-2.webp', 'perpus'),
                     'duration' => 12
                 ],
                 'social_media' => true

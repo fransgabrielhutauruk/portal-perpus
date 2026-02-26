@@ -7,11 +7,15 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\DB;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\Facades\CauserResolver;
+use Illuminate\Support\Facades\Auth;
 use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable, HasRoles;
+    use HasFactory, Notifiable, HasRoles, LogsActivity;
 
     /**
      * The attributes that are mass assignable.
@@ -58,5 +62,19 @@ class User extends Authenticatable
             ->where(notRaw($where))
             ->whereRaw(withRaw($where), $whereBinding);
         return $get ? $query->get() : $query;
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        CauserResolver::setCauser(causerActivityLog());
+        return LogOptions::defaults()
+            ->logOnlyDirty()
+            ->dontLogIfAttributesChangedOnly(['email_verified_at', 'remember_token', 'password'])
+            ->useLogName(env('APP_NAME'))
+            ->setDescriptionForEvent(function ($eventName) {
+                $aksi = eventActivityLogBahasa($eventName);
+                $inisial = Auth::check() ? userInisial() : 'system';
+                return "{$inisial} {$aksi} table users";
+            });
     }
 }

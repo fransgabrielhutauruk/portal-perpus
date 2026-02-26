@@ -19,8 +19,8 @@
         </div>
 
         {{-- Statistics Section --}}
-        <div class="row align-items-center mb-5">
-            <div class="col-lg-5">
+        <div class="row align-items-center mb-2 mb-lg-5">
+            <div class="col-lg-5 mb-4 mb-lg-0">
                 <div class="company-growth-image">
                     <figure class="image-anime reveal">
                         <img src="{{ data_get($statisticsData, 'image.src') }}"
@@ -30,7 +30,7 @@
             </div>
 
             <div class="col-lg-7">
-                <div class="section-title ms-2">
+                <div class="section-title ms-lg-2">
                     <h3 class="wow fadeInUp">
                         {{ data_get($statisticsData, 'title') }}
                     </h3>
@@ -78,7 +78,7 @@
 
         {{-- Fasilitas Section --}}
         <div class="row align-items-center">
-            <div class="col-lg-6 order-2 order-lg-1 mt-3 mt-lg-0">
+            <div class="col-lg-6 mt-3 mt-lg-0">
                 <div class="our-potential-content">
                     <div class="section-title mb-3">
                         <h3 class="wow fadeInUp">
@@ -100,7 +100,7 @@
                 </div>
             </div>
 
-            <div class="col-lg-6 order-1 order-lg-2">
+            <div class="col-lg-6">
                 <div class="our-potential-img">
                     <figure class="image-anime reveal">
                         <img src="{{ data_get($fasilitasData, 'content.image.src') }}"

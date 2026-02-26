@@ -246,11 +246,10 @@ class BeritaService
     public static function getBeritaForLanding(): array
     {
         $latestBerita = self::getLatestBerita(3);
-        
+
         $highlighted = [];
-        
+
         if ($latestBerita->count() > 0) {
-            // Take 3 latest berita for carousel
             foreach ($latestBerita as $berita) {
                 $highlighted[] = [
                     'title'     => $berita->judul_berita,
@@ -263,7 +262,7 @@ class BeritaService
                 ];
             }
         }
-        
+
         return [
             'content' => [
                 'subtitle' => 'Berita & Informasi',
@@ -273,5 +272,4 @@ class BeritaService
             'highlighted' => $highlighted
         ];
     }
-
 }

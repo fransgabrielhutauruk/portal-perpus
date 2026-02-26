@@ -38,6 +38,8 @@
                 :active="$pageData->activeMenu == 'prodi'" />
             <x-theme.menu link="{{ route('app.user.index') }}" text="Pengguna" icon="ki-outline ki-setting-3"
                 :active="$pageData->activeMenu == 'pengguna'" />
+            <x-theme.menu link="{{ route('app.activity-log.index') }}" text="Activity Log" icon="ki-outline ki-scroll"
+                :active="$pageData->activeMenu == 'activity-log'" />
         @endif
 
     </div>

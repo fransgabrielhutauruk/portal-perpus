@@ -34,6 +34,17 @@ class AuthController extends Controller
                     ->with('error', 'Email tidak diizinkan untuk login.');
             }
             Auth::login($user, true);
+
+            activity()
+                ->causedBy($user)
+                ->useLog('auth')
+                ->withProperties([
+                    'ip' => request()->ip(),
+                    'user_agent' => request()->userAgent(),
+                    'provider' => $provider,
+                ])
+                ->log('Login ke sistem');
+
             return redirect()->intended('/app/dashboard');
         } catch (\Exception $e) {
             return redirect()->route('frontend.error.unauthorized')

@@ -14,16 +14,16 @@
         <div class="container">
             <div class="row justify-content-center mb-3">
                 <div class="col-lg-8 text-center">
-                    <div class="section-title wow fadeInUp">
-                        <h3 class="wow fadeInUp">
+                    <div class="section-title">
+                        <h3 class="wow fadeInUp" data-wow-delay="0.4s">
                             Tentang Kami
                         </h3>
-                        <h2>Profil <b>Perpustakaan PCR</b></h2>
+                        <h2 class="wow fadeInUp">Profil <b>Perpustakaan PCR</b></h2>
                     </div>
                 </div>
             </div>
 
-            <div class="row justify-content-center">
+            <div class="row justify-content-center wow fadeInLeft" data-wow-delay="0.5s">
                 <div class="col-lg-10">
                     <div class="content-text">
                         <p class="lead">
@@ -215,14 +215,6 @@
         }
 
         @media (max-width: 991px) {
-            .page-header {
-                padding: 50px 0 30px;
-            }
-
-            .page-header-content h1 {
-                font-size: 2rem;
-            }
-
             .sejarah-content {
                 padding: 60px 0;
             }

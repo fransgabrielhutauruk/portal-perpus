@@ -187,7 +187,8 @@ class Periode extends Model
             ->from((new self)->table.' as a')
             ->where(notRaw($where))
             ->whereRaw(withRaw($where), $whereBinding)
-            ->whereNull('a.deleted_at');
+            ->whereNull('a.deleted_at')
+            ->orderBy('created_at', 'desc');
         return $get ? $query->get() : $query;
     }
 }

@@ -1,8 +1,8 @@
-<section class="company-growth fact-statistics-section layanan-section">
+<section class="company-growth fact-statistics-section panduan-landing-section">
     <div class="container">
         <div class="row">
             <div class="col-12">
-                <div class="section-title text-center mb-5">
+                <div class="section-title text-center mb-4 mb-lg-5">
                     <h3 class="wow fadeInUp">
                         {{ data_get($panduanData, 'content.subtitle') }}
                     </h3>
@@ -16,7 +16,7 @@
             </div>
         </div>
 
-        <div class="row g-4 justify-content-center">
+        <div class="row g-3 g-lg-4 justify-content-center">
             @php
                 $allGuides = data_get($panduanData, 'guides', []);
                 $displayGuides = array_slice($allGuides, 0, 3);
@@ -24,7 +24,7 @@
             @endphp
 
             @forelse ($displayGuides as $index => $guide)
-                <div class="col-lg-3 col-md-6 col-sm-12">
+                <div class="col-lg-3 col-md-6 col-6">
                     <div class="panduan-card wow fadeInUp" data-wow-delay="{{ 0.15 * ($index + 1) }}s">
                         <div class="panduan-card-icon">
                             <i class="fa-solid fa-file-pdf"></i>
@@ -49,7 +49,7 @@
             @endforelse
 
             @if ($totalGuides > 3)
-                <div class="col-lg-3 col-md-6 col-sm-12">
+                <div class="col-lg-3 col-md-6 col-6">
                     <div class="panduan-card panduan-card-more wow fadeInUp" data-wow-delay="0.6s">
                         <div class="panduan-card-icon" style="background: var(--primary-main)">
                             <i class="fa-solid fa-book-open"></i>
@@ -70,7 +70,7 @@
 </section>
 
 <style>
-    .panduan-section {
+    .panduan-landing-section {
         padding: 80px 0;
         background: #fff;
     }
@@ -157,29 +157,78 @@
     }
 
     @media (max-width: 991px) {
-        .panduan-section {
+        .panduan-landing-section {
             padding: 60px 0;
         }
 
         .panduan-card {
-            margin-bottom: 20px;
+            margin-bottom: 0;
         }
     }
 
     @media (max-width: 767px) {
+        .panduan-landing-section {
+            padding: 50px 0;
+        }
+
+        .panduan-card {
+            padding: 20px 14px;
+            border-radius: 12px;
+        }
+
+        .panduan-card:hover {
+            transform: translateY(-5px);
+        }
+
         .panduan-card-icon {
-            width: 70px;
-            height: 70px;
-            font-size: 2rem;
+            width: 56px;
+            height: 56px;
+            font-size: 1.5rem;
+            margin-bottom: 12px;
         }
 
         .panduan-title {
-            font-size: 1.05rem;
+            font-size: 0.9rem;
             min-height: auto;
+            margin-bottom: 8px;
+        }
+
+        .panduan-card-body {
+            margin-bottom: 12px;
         }
 
         .panduan-description {
-            font-size: 0.85rem;
+            font-size: 0.8rem;
+        }
+
+        .panduan-card-footer .btn-default {
+            padding: 10px 12px;
+            font-size: 0.75rem;
+        }
+
+        .panduan-card-footer .btn-default i {
+            display: none;
+        }
+    }
+
+    @media (max-width: 375px) {
+        .panduan-card {
+            padding: 16px 10px;
+        }
+
+        .panduan-card-icon {
+            width: 48px;
+            height: 48px;
+            font-size: 1.25rem;
+        }
+
+        .panduan-title {
+            font-size: 0.8rem;
+        }
+
+        .panduan-card-footer .btn-default {
+            padding: 8px 10px;
+            font-size: 0.7rem;
         }
     }
 </style>

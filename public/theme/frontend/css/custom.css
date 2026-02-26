@@ -5680,7 +5680,7 @@ body:not(:has(.navbar[data-is-home])) {
 
         @media only screen and (max-width: 767px) {
             line-height: 2.5rem;
-            font-size: 30px;
+            font-size: 28px;
         }
     }
 
@@ -9016,11 +9016,6 @@ main .bg-hero {
         height: auto;
     }
 
-    .our-potential-img img {
-        height: auto;
-        aspect-ratio: 1 / 0.9;
-    }
-
     .our-pricing {
         padding: 50px 0;
     }
@@ -10587,4 +10582,99 @@ main .bg-hero {
     max-width: 60px;
     max-height: 50px;
     object-fit: contain;
+}
+
+/************************************/
+/*** Mobile Responsive - Landing  ***/
+/************************************/
+
+@media only screen and (max-width: 767px) {
+    /* Hero Section - Mobile */
+    .hero.hero-slider-layout .hero-slide {
+        padding-inline: 16px;
+        padding-bottom: 40px;
+    }
+
+    .hero-content .section-title h3 {
+        font-size: 14px;
+        margin-bottom: 8px;
+    }
+
+    .hero-btn-cta {
+        flex-direction: column;
+        gap: 10px;
+        width: 100%;
+    }
+
+    .hero-btn-cta .btn-default {
+        width: 100%;
+        text-align: center;
+        margin: 0 !important;
+        justify-content: center;
+    }
+
+    .hero-btn-social {
+        gap: 12px;
+        justify-content: center;
+    }
+
+    .hero-btn-social .btn-social {
+        padding: 10px;
+        min-width: 44px;
+        min-height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* Fakta Fasilitas - Mobile */
+    .fact-statistics-section .section-title h3 {
+        font-size: 18px;
+    }
+
+    .fact-statistics-section .company-growth-image img {
+        border-radius: 12px;
+    }
+
+    .fact-statistics-item-sm .fact-statistics-icon {
+        width: 35px !important;
+        height: 35px !important;
+        font-size: 1rem !important;
+    }
+
+    .fact-statistics-item-sm .fact-statistics-content h2 {
+        font-size: 1.2rem !important;
+    }
+
+    .fact-statistics-item-sm .fact-statistics-content p {
+        font-size: 0.75rem !important;
+    }
+
+    /* Fasilitas - Mobile */
+    .our-potential-content .section-title h3 {
+        font-size: 18px;
+    }
+
+    .potential-body-list ul li {
+        font-size: 14px;
+    }
+}
+
+@media only screen and (max-width: 480px) {
+    .hero.hero-slider-layout .hero-slide {
+        padding-inline: 12px;
+        padding-bottom: 30px;
+        padding-top: 160px;
+    }
+
+    .hero.hero-slider-layout .hero-pagination {
+        bottom: 16px;
+        right: 16px;
+    }
+
+    .hero.hero-slider-layout .hero-pagination .swiper-pagination-bullet {
+        width: 8px;
+        height: 8px;
+        margin: 0 3px;
+    }
 }

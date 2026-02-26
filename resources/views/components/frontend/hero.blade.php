@@ -48,8 +48,8 @@
 
                                             {{-- CTA Buttons --}}
                                             @if (data_get($slide, 'cta_buttons'))
-                                                <div class="d-flex flex-column gap-4">
-                                                    <div class="hero-btn wow fadeInUp">
+                                                <div class="d-flex flex-column gap-4 gap-md-4 gap-3">
+                                                    <div class="hero-btn hero-btn-cta wow fadeInUp">
                                                         @foreach (data_get($slide, 'cta_buttons', []) as $cta)
                                                             <a href="{{ data_get($cta, 'url', '#') }}"
                                                                class="{{ data_get($cta, 'class', 'btn-default') }}"
@@ -61,7 +61,7 @@
 
                                                     {{-- Social Media --}}
                                                     @if (data_get($slide, 'show_social_media', true))
-                                                        <div class="hero-btn wow fadeInUp">
+                                                        <div class="hero-btn hero-btn-social wow fadeInUp">
                                                             @foreach (data_get($site_identity, 'social_media', []) as $social)
                                                                 <a href="{{ data_get($social, 'url', '#') }}"
                                                                    target="_blank"

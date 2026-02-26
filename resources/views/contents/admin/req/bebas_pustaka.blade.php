@@ -9,6 +9,7 @@
 @section('content')
     <div id="kt_app_content_container" class="app-container container-fluid" data-cue="slideInLeft" data-duration="1000"
         data-delay="0">
+        @include('contents.admin.req.tabs')
         <div class="row">
             <div class="col-md">
                 <x-table.dttable :builder="$pageData->dataTable" class="align-middle" :responsive="false" jf-data="bebas-pustaka"

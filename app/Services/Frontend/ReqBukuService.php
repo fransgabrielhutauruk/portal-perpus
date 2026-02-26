@@ -20,10 +20,9 @@ class ReqBukuService
         $history = self::getRecentProposals();
         $activePeriode = DB::table('mst_periode')
             ->where('jenis_periode', 'req_buku')
-            ->whereDate('tanggal_mulai', '<=', now())
-            ->whereDate('tanggal_selesai', '>=', now())
             ->whereNull('deleted_at')
-            ->first(); // Gets the row object or null
+            ->orderByDesc('created_at')
+            ->first();
 
         // 2. Fetch Prodi List
         $prodiList = DB::table('dm_prodi')
@@ -50,7 +49,7 @@ class ReqBukuService
         ];
     }
 
-    public static function getRecentProposals($limit = 20)
+    public static function getRecentProposals($limit = 10)
     {
         try {
 

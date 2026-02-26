@@ -32,6 +32,7 @@ class PeriodeController extends Controller
             Column::make(['title' => 'Jenis Periode', 'data' => 'jenis_periode']),
             Column::make(['title' => 'Tanggal Mulai', 'data' => 'tanggal_mulai']),            
             Column::make(['title' => 'Tanggal Selesai', 'data' => 'tanggal_selesai']),
+            Column::make(['title' => 'Status', 'data' => 'status', 'orderable' => false]),
             Column::make(['title' => 'Aksi', 'data' => 'action']),            
         ]);
 
@@ -60,6 +61,19 @@ class PeriodeController extends Controller
                 $dt['tanggal_mulai']    = tanggal($value['tanggal_mulai'], ' ') ?? '-';
                 $dt['tanggal_selesai']    = tanggal($value['tanggal_selesai'], ' ') ?? '-';
                 
+                $today = date('Y-m-d');
+                $tanggalMulai = $value['tanggal_mulai'] ?? null;
+                $tanggalSelesai = $value['tanggal_selesai'] ?? null;
+                
+                if ($tanggalMulai && $tanggalSelesai) {
+                    if ($today >= $tanggalMulai && $today <= $tanggalSelesai) {
+                        $dt['status'] = '<span class="badge badge-light-success">Dibuka</span>';
+                    } else {
+                        $dt['status'] = '<span class="badge badge-light-danger">Ditutup</span>';
+                    }
+                } else {
+                    $dt['status'] = '<span class="badge badge-light-secondary">-</span>';
+                }
 
                 $Periode = Periode::find($value['periode_id']);
 

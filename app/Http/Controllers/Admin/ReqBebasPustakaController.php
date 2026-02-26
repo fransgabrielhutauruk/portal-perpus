@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Enums\StatusRequest;
+use App\Models\Kaperpus;
 use App\Models\ReqBebasPustaka;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
@@ -44,7 +45,196 @@ class ReqBebasPustakaController extends Controller
         return $this->view('admin.req.bebas_pustaka');
     }
 
-    public function data(Request $req, $param1 = ''): JsonResponse
+    public function show($param1 = '', $param2 = '')
+    {
+        // Kaperpus data list (DataTable AJAX)
+        if ($param1 == 'kaperpus' && $param2 == 'list') {
+            return $this->kaperpusData(request());
+        }
+
+        // Kaperpus set active
+        if ($param1 == 'kaperpus' && $param2 == 'set-active') {
+            return $this->kaperpusSetActive(request());
+        }
+
+        // Kaperpus page view
+        if ($param1 == 'kaperpus' && $param2 == '') {
+            $this->title = 'Kelola Kaperpus';
+            $this->activeMenu = 'kaperpus';
+            $this->breadCrump[] = ['title' => 'Request Bebas Pustaka', 'link' => route('app.req-bebas-pustaka.index')];
+            $this->breadCrump[] = ['title' => 'Kelola Kaperpus', 'link' => url()->current()];
+
+            $builder = app('datatables.html');
+            $dataTable = $builder->serverSide(true)->ajax(route('app.req-bebas-pustaka.show', ['param1' => 'kaperpus', 'param2' => 'list']))->columns([
+                Column::make(['width' => '5%', 'title' => 'No', 'data' => 'no', 'orderable' => false, 'searchable' => false, 'className' => 'text-center']),
+                Column::make(['title' => 'Nama Kaperpus', 'data' => 'nama_kaperpus']),
+                Column::make(['title' => 'Tanda Tangan', 'data' => 'ttd_kaperpus']),
+                Column::make(['title' => 'Status', 'data' => 'status']),
+                Column::make(['title' => 'Aksi', 'data' => 'action', 'class' => 'text-center']),
+            ]);
+
+            $this->dataView([
+                'dataTable' => $dataTable,
+            ]);
+
+            return $this->view('admin.req.kaperpus');
+        }
+
+        abort(404, 'Halaman tidak ditemukan');
+    }
+
+    // ========================
+    // KAPERPUS CRUD METHODS
+    // ========================
+
+    private function kaperpusData(Request $req): JsonResponse
+    {
+        $filter = [];
+        $data = DataTables::of(Kaperpus::getDataDetail($filter, get: true))->toArray();
+        $start = $req->input('start');
+        $resp = [];
+        foreach ($data['data'] as $key => $value) {
+            $dt = [];
+
+            $dt['no'] = ++$start;
+            $dt['nama_kaperpus'] = $value['nama_kaperpus'] ?? '-';
+            $dt['ttd_kaperpus'] = '<img src="' . publicMedia($value['ttd_kaperpus'], 'ttd_kaperpus') . '" class="w-150px">';
+
+            $dt['status'] = $value['is_active']
+                ? '<span class="badge badge-success">Aktif</span>'
+                : '<span class="badge badge-secondary">Tidak Aktif</span>';
+
+            $id = encid($value['kaperpus_id']);
+
+            $btns = [
+                ['action' => 'edit', 'attr' => ['jf-edit' => $id]],
+                ['action' => 'delete', 'attr' => ['jf-delete' => $id]],
+            ];
+
+            if (!$value['is_active']) {
+                array_unshift($btns, ['action' => 'to_active', 'attr' => ['jf-set-active' => $value['kaperpus_id']], 'label' => 'Set Aktif', 'class' => 'btn-sm btn-success']);
+            }
+
+            $dataAction = [
+                'id'  => $id,
+                'btn' => $btns,
+            ];
+
+            $dt['action'] = Blade::render('<x-btn.actiontable :id="$id" :btn="$btn"/>', $dataAction);
+            $resp[] = $dt;
+        }
+
+        $data['data'] = $resp;
+
+        return response()->json($data);
+    }
+
+    private function kaperpusSetActive(Request $req): JsonResponse
+    {
+        validate_and_response([
+            'kaperpus_id' => ['ID Kaperpus', 'required'],
+        ]);
+
+        DB::beginTransaction();
+        try {
+            // Nonaktifkan semua kaperpus
+            Kaperpus::where('is_active', true)->update(['is_active' => false]);
+
+            // Aktifkan yang dipilih
+            $kaperpus = Kaperpus::findOrFail($req->input('kaperpus_id'));
+            $kaperpus->is_active = true;
+            $kaperpus->save();
+
+            DB::commit();
+            return response()->json([
+                'status' => true,
+                'message' => 'Kaperpus berhasil diaktifkan.'
+            ]);
+        } catch (\Throwable $th) {
+            DB::rollback();
+            abort(404, 'Gagal mengaktifkan kaperpus, ' . $th->getMessage());
+        }
+    }
+
+    public function store(Request $req, $param1 = ''): JsonResponse
+    {
+        if ($param1 == 'kaperpus') {
+            validate_and_response([
+                'nama_kaperpus' => ['Nama Kaperpus', 'required'],
+            ]);
+
+            $data['nama_kaperpus'] = clean_post('nama_kaperpus');
+            $data['is_active'] = false;
+
+            // if ($req->hasFile('ttd_kaperpus')) {
+            //     $data['ttd_kaperpus'] = $req->file('ttd_kaperpus')->store('uploads/kaperpus', 'public');
+            // }
+
+            if ($req->hasFile('ttd_kaperpus')) {
+                $do_upload = uploadMedia('ttd_kaperpus', 'ttd_kaperpus');
+                if (!$do_upload['status'])
+                    abort(500, 'Update data gagal, ' . $do_upload['message']);
+                $data['ttd_kaperpus'] = $do_upload['data']['filename'];
+            }
+
+            DB::beginTransaction();
+            try {
+                $inserted = Kaperpus::create($data);
+
+                DB::commit();
+                return response()->json([
+                    'status' => true,
+                    'message' => 'Data kaperpus berhasil ditambah.',
+                    'data' => ['kaperpus_id' => encid($inserted->kaperpus_id)]
+                ]);
+            } catch (\Throwable $th) {
+                DB::rollback();
+                abort(404, 'Tambah data gagal, ' . $th->getMessage());
+            }
+        }
+
+        abort(404, 'Halaman tidak ditemukan');
+    }
+
+    public function update(Request $req, $param1 = ''): JsonResponse
+    {
+        if ($param1 == 'kaperpus') {
+            validate_and_response([
+                'nama_kaperpus' => ['Nama Kaperpus', 'required'],
+            ]);
+
+            $id = $req->input('kaperpus_id');
+            $currData = Kaperpus::findOrFail($id);
+
+            $data['nama_kaperpus'] = $req->input('nama_kaperpus');
+
+            if ($req->hasFile('ttd_kaperpus')) {
+                $do_upload = uploadMedia('ttd_kaperpus', 'ttd_kaperpus');
+                if (!$do_upload['status'])
+                    abort(500, 'Update data gagal, ' . $do_upload['message']);
+                $data['ttd_kaperpus'] = $do_upload['data']['filename'];
+            }
+
+            DB::beginTransaction();
+            try {
+                $currData->update($data);
+
+                DB::commit();
+                return response()->json([
+                    'status' => true,
+                    'message' => 'Update data berhasil.',
+                    'data' => ['kaperpus_id' => $id]
+                ]);
+            } catch (\Throwable $th) {
+                DB::rollback();
+                abort(404, 'Update data gagal, ' . $th->getMessage());
+            }
+        }
+
+        abort(404, 'Halaman tidak ditemukan');
+    }
+
+    public function data(Request $req, $param1 = '', $param2 = ''): JsonResponse
     {
         if ($param1 == 'list') {
             $filter = [];
@@ -98,7 +288,18 @@ class ReqBebasPustakaController extends Controller
             $data['data'] = $resp;
 
             return response()->json($data);
-        } else if ($param1 = 'detail') {
+        } else if ($param1 == 'detail' && $param2 == 'kaperpus') {
+            validate_and_response([
+                'id' => ['Parameter data', 'required'],
+            ]);
+            $currData = Kaperpus::findOrFail(decid($req->input('id')));
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Data loaded',
+                'data' => $currData->toArray()
+            ]);
+        } else if ($param1 == 'detail') {
             validate_and_response([
                 'reqbebaspustaka_id' => ['Parameter data', 'required'],
             ]);
@@ -138,8 +339,18 @@ class ReqBebasPustakaController extends Controller
         $templateProcessor->setValue('nim', $bebasPustaka->nim ?? '-');
         $templateProcessor->setValue('prodi', $bebasPustaka->prodi->nama_prodi ?? '-');
         $templateProcessor->setValue('tahun', $bebasPustaka->periode->tanggal_selesai ? \Carbon\Carbon::parse($bebasPustaka->periode->tanggal_selesai)->format('Y') : '-');
-        $templateProcessor->setValue('tanggal', tanggal($bebasPustaka->created_at, ' ', false) ?? '-');
-        $templateProcessor->setValue('kaperpus', "Nina Fadilah Najwa, S.Kom, M.Kom." ?? '-');
+        $templateProcessor->setValue('tanggal', tanggal(now(), ' ', false) ?? '-');
+        $kaperpus = Kaperpus::getActive();
+        $templateProcessor->setValue('kaperpus', $kaperpus ? $kaperpus->nama_kaperpus : '-');
+
+        // Set tanda tangan jika ada
+        if ($kaperpus && $kaperpus->ttd_kaperpus && file_exists(storage_path('app/public/ttd_kaperpus/' . $kaperpus->ttd_kaperpus))) {
+            $templateProcessor->setImageValue('ttd_kaperpus', [
+                'path' => storage_path('app/public/ttd_kaperpus/' . $kaperpus->ttd_kaperpus),
+                'width' => 150,
+                'height' => 75,
+            ]);
+        }
 
         //    3. SAVE DOCX RESULT
         $docxName = 'bebas_pustaka_' . $bebasPustaka->nim . '_' . time() . '.docx';
@@ -224,7 +435,27 @@ class ReqBebasPustakaController extends Controller
 
     public function destroy(Request $req, $param1 = ''): JsonResponse
     {
-        if ($param1 == '') {
+        if ($param1 == 'kaperpus') {
+            validate_and_response([
+                'id' => ['Parameter data', 'required'],
+            ]);
+            $id = $req->input('id');
+            $currData = Kaperpus::findOrFail(decid($id));
+
+            DB::beginTransaction();
+            try {
+                $currData->delete();
+
+                DB::commit();
+                return response()->json([
+                    'status' => true,
+                    'message' => 'Data kaperpus berhasil dihapus'
+                ]);
+            } catch (\Throwable $th) {
+                DB::rollback();
+                abort(404, 'Hapus data gagal, ' . $th->getMessage());
+            }
+        } elseif ($param1 == '') {
             validate_and_response([
                 'id' => ['Parameter data', 'required'],
             ]);

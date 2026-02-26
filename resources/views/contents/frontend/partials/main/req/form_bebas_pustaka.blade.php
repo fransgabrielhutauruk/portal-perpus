@@ -147,8 +147,8 @@
                                         </p>
                                     </div>
                                     <div class="mb-2 mt-3">
-                                        <p class="mb-0">Setelah Selesai Mengisi Formulir Ini, Petugas Akan
-                                            Mengonfirmasikan Melalui Email, Pastikan Email yang Anda Masukkan Benar.</p>
+                                        <p class="mb-0">Setelah selesai mengisi formulir ini, petugas akan
+                                            mengonfirmasikan melalui Email, pastikan Email yang Anda masukkan benar.</p>
                                     </div>
 
                                     @if (data_get($content, 'is_open'))

@@ -9,7 +9,9 @@
 
 @if ($action == 'edit')
     <div class="menu-item px-3">
-        <a href="{{ $link != '' ? $link : '#' }}" class="menu-link align-items-start px-3 text-gray-700 act-{{ str_replace(' ', '_', $action) }} {{ $class }}" {{ $attributes }} title="{{ $title != '' ? $title : 'edit data' }}">
+        <a href="{{ $link != '' ? $link : '#' }}"
+            class="menu-link align-items-start px-3 text-gray-700 act-{{ str_replace(' ', '_', $action) }} {{ $class }}"
+            {{ $attributes }} title="{{ $title != '' ? $title : 'edit data' }}">
             <i class="{{ $icon != '' ? $icon : 'ki-outline ki-notepad-edit' }} fs-3 me-2"></i>
 
             {{ $title != '' ? $title : 'Edit data' }}
@@ -17,7 +19,9 @@
     </div>
 @elseif ($action == 'delete')
     <div class="menu-item px-3">
-        <a href="{{ $link != '' ? $link : '#' }}" class="menu-link align-items-start px-3 text-gray-700 act-{{ str_replace(' ', '_', $action) }} {{ $class }}" {{ $attributes }} title="{{ $title != '' ? $title : 'hapus data' }}">
+        <a href="{{ $link != '' ? $link : '#' }}"
+            class="menu-link align-items-start px-3 text-gray-700 act-{{ str_replace(' ', '_', $action) }} {{ $class }}"
+            {{ $attributes }} title="{{ $title != '' ? $title : 'hapus data' }}">
             <i class="{{ $icon != '' ? $icon : 'ki-outline ki-trash' }} fs-3 me-2"></i>
 
             {{ $title != '' ? $title : 'Hapus data' }}
@@ -25,7 +29,9 @@
     </div>
 @elseif ($action == 'detail')
     <div class="menu-item px-3">
-        <a href="{{ $link != '' ? $link : '#' }}" class="menu-link align-items-start px-3 text-gray-700 act-{{ str_replace(' ', '_', $action) }} {{ $class }}" {{ $attributes }} title="{{ $title != '' ? $title : 'detail data' }}">
+        <a href="{{ $link != '' ? $link : '#' }}"
+            class="menu-link align-items-start px-3 text-gray-700 act-{{ str_replace(' ', '_', $action) }} {{ $class }}"
+            {{ $attributes }} title="{{ $title != '' ? $title : 'detail data' }}">
             <i class="{{ $icon != '' ? $icon : 'ki-outline ki-eye' }} fs-3 me-2"></i>
 
             {{ $title != '' ? $title : 'Detail data' }}
@@ -33,15 +39,49 @@
     </div>
 @elseif ($action == 'download')
     <div class="menu-item px-3">
-        <a href="{{ $link != '' ? $link : '#' }}" class="menu-link align-items-start px-3 text-gray-700 act-{{ str_replace(' ', '_', $action) }} {{ $class }}" {{ $attributes }} title="{{ $title != '' ? $title : 'download file' }}">
+        <a href="{{ $link != '' ? $link : '#' }}"
+            class="menu-link align-items-start px-3 text-gray-700 act-{{ str_replace(' ', '_', $action) }} {{ $class }}"
+            {{ $attributes }} title="{{ $title != '' ? $title : 'download file' }}">
             <i class="{{ $icon != '' ? $icon : 'ki-outline ki-cloud-download' }} fs-3 me-2"></i>
 
             {{ $title != '' ? $title : 'Download File' }}
         </a>
     </div>
+@elseif ($action == 'approve')
+    <div class="menu-item px-3">
+        <a href="{{ $link != '' ? $link : '#' }}"
+            class="menu-link align-items-start px-3 text-gray-700 act-{{ str_replace(' ', '_', $action) }} {{ $class }}"
+            {{ $attributes }} title="{{ $title != '' ? $title : 'setujui' }}">
+            <i class="{{ $icon != '' ? $icon : 'ki-outline ki-check-circle' }} fs-3 me-2"></i>
+
+            {{ $title != '' ? $title : 'Setujui' }}
+        </a>
+    </div>
+@elseif ($action == 'reject')
+    <div class="menu-item px-3">
+        <a href="{{ $link != '' ? $link : '#' }}"
+            class="menu-link align-items-start px-3 text-gray-700 act-{{ str_replace(' ', '_', $action) }} {{ $class }}"
+            {{ $attributes }} title="{{ $title != '' ? $title : 'tolak' }}">
+            <i class="{{ $icon != '' ? $icon : 'ki-outline ki-cross-circle' }} fs-3 me-2"></i>
+
+            {{ $title != '' ? $title : 'Tolak' }}
+        </a>
+    </div>
+@elseif ($action == 'to_active')
+    <div class="menu-item px-3">
+        <a href="{{ $link != '' ? $link : '#' }}"
+            class="menu-link align-items-start px-3 text-gray-700 act-{{ str_replace(' ', '_', $action) }} {{ $class }}"
+            {{ $attributes }} title="{{ $title != '' ? $title : 'tolak' }}">
+            <i class="{{ $icon != '' ? $icon : 'ki-outline ki-check-circle' }} fs-3 me-2"></i>
+
+            {{ $title != '' ? $title : 'Aktfikan' }}
+        </a>
+    </div>
 @else
     <div class="menu-item px-3">
-        <a href="{{ $link != '' ? $link : '#' }}" class="menu-link align-items-start px-3 text-gray-700 act-{{ str_replace(' ', '_', $action) }} {{ $class }}" {{ $attributes }} title="{{ $title != '' ? $title : 'lainnya' }}">
+        <a href="{{ $link != '' ? $link : '#' }}"
+            class="menu-link align-items-start px-3 text-gray-700 act-{{ str_replace(' ', '_', $action) }} {{ $class }}"
+            {{ $attributes }} title="{{ $title != '' ? $title : 'lainnya' }}">
             <i class="{{ $icon != '' ? $icon : 'ki-outline ki-abstract-14' }} fs-3 me-2"></i>
 
             {{ $title != '' ? $title : 'Lainnya' }}

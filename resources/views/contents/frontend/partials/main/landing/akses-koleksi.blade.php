@@ -19,37 +19,30 @@
         <div class="row">
             <div class="col-12">
                 <div class="service-item-list">
-                    <div class="row g-5">
+                    <div class="row g-4 g-lg-5">
                         @forelse (data_get($aksesKoleksiData, 'list', []) as $item)
                             <div class="col-lg-4 col-md-6 col-12">
                                 <div class="service-item wow fadeInUp h-100"
                                     data-wow-delay="{{ $loop->index * 0.15 + 0.2 }}s">
                                     <div class="service-item-container">
                                         <div class="service-item-content">
-                                            <div class="d-flex align-items-center gap-3">
-                                                <div class="icon-box text-white">
+                                            <div class="d-flex align-items-center gap-3 mb-0">
+                                                <div class="icon-box text-white flex-shrink-0">
                                                     <i class="{{ $item['icon'] }}"></i>
                                                 </div>
                                                 <h3 class="mb-0">
                                                     {{ $item['name'] }}
                                                 </h3>
                                             </div>
-                                            <div class="row justify-content-start">
-                                                <div class="col-md-8">
-                                                    <p class="mt-0 text-justify">
-                                                        {{ $item['description'] ?? '' }}
-                                                    </p>
-                                                </div>
-                                                <div class="col-md-3">
-                                                    <div class="service-btn mt-3">
-                                                        <a href="{{ $item['url'] }}"
-                                                            class="btn-default btn-highlighted"
-                                                            style="padding: 15px 45px 15px 20px;font-size: 14px;"
-                                                            @if (isset($item['target'])) target="{{ $item['target'] }}" @endif>
-                                                            Akses
-                                                        </a>
-                                                    </div>
-                                                </div>
+                                            <p class="mt-0 mb-3 text-justify akses-koleksi-desc">
+                                                {{ $item['description'] ?? '' }}
+                                            </p>
+                                            <div class="service-btn mt-auto">
+                                                <a href="{{ $item['url'] }}"
+                                                    class="btn-default btn-highlighted akses-koleksi-btn"
+                                                    @if (isset($item['target'])) target="{{ $item['target'] }}" @endif>
+                                                    Akses
+                                                </a>
                                             </div>
                                         </div>
                                     </div>
@@ -82,3 +75,49 @@
         </div>
     </div>
 </section>
+
+<style>
+    .akses-koleksi-section .service-item-content {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+    }
+
+    .akses-koleksi-btn {
+        padding: 15px 45px 15px 20px;
+        font-size: 14px;
+    }
+
+    @media (max-width: 767px) {
+        .akses-koleksi-section {
+            padding: 60px 0;
+        }
+
+        .akses-koleksi-section .icon-box {
+            width: 50px;
+            height: 50px;
+        }
+
+        .akses-koleksi-section .service-item-content h3 {
+            font-size: 16px;
+        }
+
+        .akses-koleksi-desc {
+            font-size: 14px;
+        }
+
+        .akses-koleksi-btn {
+            padding: 12px 40px 12px 16px;
+            font-size: 13px;
+            width: 100%;
+            text-align: center;
+        }
+    }
+
+    @media (max-width: 991px) and (min-width: 768px) {
+        .akses-koleksi-btn {
+            padding: 13px 42px 13px 18px;
+            font-size: 13px;
+        }
+    }
+</style>

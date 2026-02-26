@@ -34,7 +34,7 @@
                             <div class="card-body d-flex flex-column">
                                 <div class="d-flex align-items-center mb-3">
                                     <div class="icon-box me-3"
-                                        style="width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; background: var(--primary-main); border-radius: 10px;">
+                                        style="width: 50px; height: 50px; min-width: 50px; display: flex; align-items: center; justify-content: center; background: var(--primary-main); border-radius: 10px; flex-shrink: 0;">
                                         <i class="fa-solid fa-file-pdf fs-2 text-white"></i>
                                     </div>
                                     <h5 class="card-title mb-0 flex-grow-1">{{ $panduan->judul }}</h5>

@@ -2,7 +2,7 @@
     <div class="container z-2 position-relative">
         <div class="row">
             <div class="col-12">
-                <div class="section-title text-center mb-5">
+                <div class="section-title text-center mb-4 mb-lg-5">
                     <h3 class="wow fadeInUp">
                         {{ data_get($layananData, 'content.subtitle') }}
                     </h3>
@@ -16,16 +16,16 @@
             </div>
         </div>
         
-        <div class="row g-4">
+        <div class="row g-3 g-lg-4">
             @foreach (data_get($layananData, 'services', []) as $index => $service)
-                <div class="col-lg-3 col-md-6 col-sm-12">
+                <div class="col-lg-3 col-md-6 col-6">
                     <div class="layanan-card wow fadeInUp" data-wow-delay="{{ 0.2 * ($index + 1) }}s">
                         <div class="layanan-card-icon" style="color: var(--primary-main)">
-                            <i class="{{ $service['icon'] ?? 'fa-solid fa-circle-info' }} fa-3x"></i>
+                            <i class="{{ $service['icon'] ?? 'fa-solid fa-circle-info' }} fa-2x fa-lg-3x"></i>
                         </div>
                         <div class="layanan-card-body">
                             <h4 class="layanan-card-title">{{ $service['title'] }}</h4>
-                            <p class="layanan-card-description">{{ $service['description'] }}</p>
+                            <p class="layanan-card-description d-none d-md-block">{{ $service['description'] }}</p>
                         </div>
                         <div class="layanan-card-footer">
                             <a href="{{ $service['url'] }}" class="btn-default w-100">
@@ -107,17 +107,68 @@
     }
     
     .layanan-card {
-        margin-bottom: 20px;
+        margin-bottom: 0;
     }
-}
 
-@media (max-width: 767px) {
     .layanan-card-title {
         font-size: 1.1rem;
     }
     
     .layanan-card-description {
         font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 767px) {
+    .layanan-section {
+        padding: 50px 0;
+    }
+
+    .layanan-card {
+        padding: 20px 14px;
+        border-radius: 12px;
+    }
+
+    .layanan-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .layanan-card-icon {
+        margin-bottom: 12px;
+    }
+
+    .layanan-card-icon i {
+        font-size: 1.5rem !important;
+    }
+
+    .layanan-card-title {
+        font-size: 0.9rem;
+        margin-bottom: 8px;
+        min-height: auto;
+    }
+    
+    .layanan-card-body {
+        margin-bottom: 12px;
+    }
+
+    .layanan-card-footer .btn-default {
+        padding: 10px 12px 10px 12px;
+        font-size: 0.75rem;
+    }
+}
+
+@media (max-width: 375px) {
+    .layanan-card {
+        padding: 16px 10px;
+    }
+
+    .layanan-card-title {
+        font-size: 0.8rem;
+    }
+
+    .layanan-card-footer .btn-default {
+        padding: 8px 10px;
+        font-size: 0.7rem;
     }
 }
 </style>

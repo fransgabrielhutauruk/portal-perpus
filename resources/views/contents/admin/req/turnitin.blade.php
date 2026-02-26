@@ -261,7 +261,7 @@
                         $('#row-catatan-admin').show();
                         $('#detail-catatan_admin').text(data.catatan_admin || '-');
                     }
-                    $('#detail-status_req').html(statusBadge);
+                    $('#detail-status').html(statusBadge);
 
                     $('[jf-modal="detail"]').modal('show');
                 }

@@ -42,7 +42,7 @@
                                 </div>
                                 <div id="faq-{{ $faq->faq_id }}" class="collapse {{ $loop->first ? 'show' : '' }}"
                                     data-bs-parent="#faqAccordion">
-                                    <div class="faq-answer">
+                                    <div class="faq-answer fw-bold">
                                         <p>{!! nl2br(e($faq->jawaban)) !!}</p>
                                     </div>
                                 </div>
