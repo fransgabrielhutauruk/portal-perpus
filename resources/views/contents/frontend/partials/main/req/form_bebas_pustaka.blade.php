@@ -1,83 +1,3 @@
-<style>
-    @media (max-width: 768px) {
-
-        /* Reduce padding on form container */
-        .contact-us-form {
-            padding-left: 1rem !important;
-            padding-right: 1rem !important;
-        }
-
-        /* Tab headers responsive */
-        .nav-tabs {
-            padding-left: 0.5rem !important;
-            padding-right: 0.5rem !important;
-            font-size: 0.85rem;
-        }
-
-        .nav-tabs .nav-link {
-            padding: 0.5rem 0.25rem;
-        }
-
-        /* Form spacing */
-        .tab-content {
-            margin-top: 2rem !important;
-        }
-
-        /* Reduce form group margins */
-        .form-group {
-            margin-bottom: 1rem;
-        }
-
-        /* Buttons full width on mobile */
-        .btn-default,
-        .btn-outline-secondary {
-            width: 100%;
-            margin-bottom: 0.5rem;
-        }
-
-        .d-flex.justify-content-between {
-            flex-direction: column;
-        }
-
-        /* Alert/info boxes */
-        .d-inline-block {
-            display: block !important;
-            width: 100%;
-        }
-
-        /* Reduce heading sizes */
-        h5 {
-            font-size: 1rem;
-        }
-
-        h3 {
-            font-size: 1.25rem;
-        }
-
-        /* Form labels */
-        label {
-            font-size: 0.875rem;
-        }
-    }
-
-    /* Additional tweaks for very small screens */
-    @media (max-width: 576px) {
-        .border-3 {
-            border-width: 2px !important;
-        }
-
-        .py-3 {
-            padding-top: 1rem !important;
-            padding-bottom: 1rem !important;
-        }
-
-        .px-5 {
-            padding-left: 1rem !important;
-            padding-right: 1rem !important;
-        }
-    }
-</style>
-
 <section>
     <div class="container bg-gray-200">
         <div class="row justify-content-center">
@@ -86,7 +6,7 @@
                     <h3 class="wow fadeInUp fs-5">{{ data_get($content, 'subtitle') }}</h3>
                 </div>
 
-                <div class="contact-us-form wow fadeInUp rounded px-4 border border-3" data-wow-delay="0.4s">
+                <div class="contact-us-form wow fadeInUp rounded px-4 border border-3 pb-md-4" data-wow-delay="0.4s">
                     @include('contents.frontend.partials.components.tab-headers', [
                         'tabs' => [
                             [
@@ -160,12 +80,14 @@
                                         </div>
                                     @endif
 
-                                    <div class="d-flex">
-                                        <button type="button" class="btn btn-sm btn-outline-warning rounded-pill"
-                                            onclick="autofillForm()">
-                                            <i class="fa-solid fa-wand-magic-sparkles me-2"></i> Demo Autofill
-                                        </button>
-                                    </div>
+                                    @env('local')
+                                        <div class="d-flex">
+                                            <button type="button" class="btn btn-sm btn-outline-warning rounded-pill"
+                                                onclick="autofillForm()">
+                                                <i class="fa-solid fa-wand-magic-sparkles me-2"></i> Demo Autofill
+                                            </button>
+                                        </div>
+                                    @endenv
                                 </div>
 
                                 {{-- === TAB 2: KONFIRMASI SYARAT === --}}

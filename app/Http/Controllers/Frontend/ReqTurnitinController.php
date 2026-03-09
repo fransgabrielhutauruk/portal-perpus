@@ -2,14 +2,10 @@
 
 namespace App\Http\Controllers\Frontend;
 
-use App\Models\ReqTurnitin;
-use App\Enums\StatusRequest;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Storage;
 use App\Services\Frontend\SafeDataService;
 use App\Services\Frontend\ReqTurnitinService;
+use App\Http\Requests\Frontend\SubmitTurnitinRequest;
 
 class ReqTurnitinController extends Controller
 {
@@ -33,62 +29,23 @@ class ReqTurnitinController extends Controller
         ));
     }
 
-    public function submitTurnitin(Request $request)
+    public function submitTurnitin(SubmitTurnitinRequest $request)
     {
-        $validated = $request->validate([
-            'nama_dosen' => 'required|string|max:255',
-            'inisial_dosen' => 'required|string|max:10',
-            'email_dosen' => 'required|email',
-            'nip' => 'required|string',
-            'prodi_id' => 'required|numeric',
-            'jenis_dokumen' => 'required|in:Karya Ilmiah,Proyek Akhir',
-            'judul_dokumen' => 'required|string|max:255',
-            'file_dokumen' => 'required|file|mimes:pdf,doc,docx|max:10240',
-            'keterangan' => 'required|string',
-        ]);
+        $file = $request->hasFile('file_dokumen') ? $request->file('file_dokumen') : null;
+        
+        $result = ReqTurnitinService::submitTurnitin($request->validated(), $file);
 
-        try {
-            DB::beginTransaction();
-
-            $filePath = $request->file('file_dokumen')->store('uploads/turnitin', 'public');
-
-            $reqTurnitin = ReqTurnitin::create([
-                'prodi_id' => $request->prodi_id,
-                'nama_dosen' => $request->nama_dosen,
-                'inisial_dosen' => $request->inisial_dosen,
-                'email_dosen' => $request->email_dosen,
-                'nip' => $request->nip,
-                'jenis_dokumen' => $request->jenis_dokumen,
-                'judul_dokumen' => $request->judul_dokumen,
-                'file_dokumen' => $filePath,
-                'keterangan' => $request->keterangan,
-                'status_req' => StatusRequest::MENUNGGU->value,
-            ]);
-
-            DB::commit();
-
+        if (!$result['success']) {
             return response()->json([
-                'message' => 'Pengajuan cek turnitin berhasil dikirim!',
-                'status' => 'success',
-                'new_data' => [
-                    'nama_dosen' => $reqTurnitin->nama_dosen,
-                    'judul_dokumen' => $reqTurnitin->judul_dokumen,
-                    'jenis_dokumen' => $reqTurnitin->jenis_dokumen,
-                    'date_fmt' => tanggal($reqTurnitin->created_at, ' '),
-                    'status_req' => $reqTurnitin->status_req
-                ]
-            ]);
-        } catch (\Exception $e) {
-            DB::rollBack();
-
-            if (isset($filePath) && Storage::disk('public')->exists($filePath)) {
-                Storage::disk('public')->delete($filePath);
-            }
-
-            return response()->json([
-                'message' => 'Terjadi kesalahan sistem: ' . $e->getMessage(),
+                'message' => $result['message'],
                 'status' => 'error'
-            ], 500);
+            ], $result['status_code']);
         }
+
+        return response()->json([
+            'message' => $result['message'],
+            'status' => 'success',
+            'new_data' => $result['data']
+        ], $result['status_code']);
     }
 }

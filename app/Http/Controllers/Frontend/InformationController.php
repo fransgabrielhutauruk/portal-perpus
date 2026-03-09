@@ -3,68 +3,64 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
+use App\Services\Frontend\InformationService;
+use App\Services\Frontend\SafeDataService;
 
 class InformationController extends Controller
 {
     public function profilPerpustakaan()
     {
-        $pageConfig = [
-            'seo' => [
-                'title' => 'Profil Perpustakaan',
-                'description' => 'Profil dan sejarah Perpustakaan Politeknik Caltex Riau',
-            ]
-        ];
+        $pageConfig = SafeDataService::safeExecute(
+            fn() => InformationService::getPageConfig('profil'),
+            SafeDataService::getPageConfigFallbacks()
+        );
 
-        return view('contents.frontend.pages.about.profil', compact('pageConfig'));
+        $content = SafeDataService::safeExecute(
+            fn() => InformationService::getProfilContent(),
+            null
+        );
+
+        return view('contents.frontend.pages.about.profil', compact('pageConfig', 'content'));
     }
 
     public function pustakawan()
     {
-        $pustakawanList = \App\Models\Pustakawan::select(['pustakawan_id', 'nama', 'email', 'foto'])
-            ->whereNull('deleted_at')
-            ->orderBy('nama', 'ASC')
-            ->get();
+        $pageConfig = SafeDataService::safeExecute(
+            fn() => InformationService::getPageConfig('pustakawan'),
+            SafeDataService::getPageConfigFallbacks()
 
-        $pageConfig = [
-            'seo' => [
-                'title' => 'Pustakawan - Perpustakaan PCR',
-                'description' => 'Tim Pustakawan Perpustakaan Politeknik Caltex Riau',
-            ]
-        ];
+        );
 
-        return view('contents.frontend.pages.about.pustakawan', compact('pageConfig', 'pustakawanList'));
+        $content = SafeDataService::safeExecute(
+            fn() => InformationService::getPustakawanContent(),
+            null
+        );
+
+        $pustakawanList = SafeDataService::safeExecute(
+            fn() => InformationService::getPustakawanList(),
+            collect([])
+        );
+
+        return view('contents.frontend.pages.about.pustakawan', compact('pageConfig', 'content', 'pustakawanList'));
     }
 
     public function jamBuka()
     {
-        $jadwal = [
-            [
-                'hari' => 'Senin - Kamis',
-                'jam' => '08.00 - 16.00 WIB',
-                'icon' => 'fa-solid fa-calendar-days',
-                'color' => 'primary'
-            ],
-            [
-                'hari' => 'Jumat',
-                'jam' => '08.00 - 16.30 WIB',
-                'icon' => 'fa-solid fa-calendar-day',
-                'color' => 'success'
-            ],
-            [
-                'hari' => 'Sabtu - Minggu',
-                'jam' => 'Libur',
-                'icon' => 'fa-solid fa-calendar-xmark',
-                'color' => 'danger'
-            ]
-        ];
+        $pageConfig = SafeDataService::safeExecute(
+            fn() => InformationService::getPageConfig('jam-buka'),
+            SafeDataService::getPageConfigFallbacks()
+        );
 
-        $pageConfig = [
-            'seo' => [
-                'title' => 'Jam Buka Layanan - Perpustakaan PCR',
-                'description' => 'Jam Buka Layanan Perpustakaan Politeknik Caltex Riau',
-            ]
-        ];
+        $content = SafeDataService::safeExecute(
+            fn() => InformationService::getJamBukaContent(),
+            null
+        );
 
-        return view('contents.frontend.pages.about.jam-buka', compact('pageConfig', 'jadwal'));
+        $jadwal = SafeDataService::safeExecute(
+            fn() => InformationService::getJamBukaSchedule(),
+            []
+        );
+
+        return view('contents.frontend.pages.about.jam-buka', compact('pageConfig', 'content', 'jadwal'));
     }
 }

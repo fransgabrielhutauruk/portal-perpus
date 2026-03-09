@@ -14,9 +14,8 @@
             <div class="row">
                 <div class="col-12">
                     <div class="section-title text-center mb-5">
-                        <h3 class="wow fadeInUp">{{ data_get($content, 'page_title') }}</h2>
-                        <h2 class="wow fadeInUp" data-wow-delay="0.25s">{!! data_get($content, 'page_subtitle') !!}
-                        </h2>
+                        <h3 class="wow fadeInUp">{{ data_get($content, 'page_title') }}</h3>
+                        <h2 class="wow fadeInUp" data-wow-delay="0.25s">{!! data_get($content, 'page_subtitle') !!}</h2>
                         <p class="wow fadeInUp mt-3" data-wow-delay="0.25s">{{ data_get($content, 'page_description') }}</p>
                     </div>
                 </div>
@@ -42,7 +41,7 @@
                                 </div>
                                 <div id="faq-{{ $faq->faq_id }}" class="collapse {{ $loop->first ? 'show' : '' }}"
                                     data-bs-parent="#faqAccordion">
-                                    <div class="faq-answer fw-bold">
+                                    <div class="faq-answer">
                                         <p>{!! nl2br(e($faq->jawaban)) !!}</p>
                                     </div>
                                 </div>
@@ -59,144 +58,3 @@
         </div>
     </div>
 @endsection
-
-<style>
-    html {
-        scroll-behavior: auto !important;
-    }
-
-    .faq-page {
-        padding: 80px 0;
-    }
-
-    .faq-item {
-        background: #fff;
-        border: 1px solid #e8e8e8;
-        border-radius: 12px;
-        margin-bottom: 15px;
-        overflow: hidden;
-        transition: all 0.3s ease;
-    }
-
-    .faq-item:hover {
-        border-color: var(--primary-color, #0066cc);
-        box-shadow: 0 5px 20px rgba(0, 102, 204, 0.1);
-    }
-
-    .faq-question {
-        display: flex;
-        align-items: center;
-        gap: 15px;
-        padding: 20px 25px;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        background: #fff;
-    }
-
-    .faq-question:hover {
-        background: #f8f9fa;
-    }
-
-    .faq-question[aria-expanded="true"] {
-        background: linear-gradient(134deg, var(--primary-color, #0066cc) 0%, var(--secondary-color, #004999) 150%);
-    }
-
-    .faq-question[aria-expanded="true"] .faq-question-icon,
-    .faq-question[aria-expanded="true"] .faq-question-text h5,
-    .faq-question[aria-expanded="true"] .faq-toggle-icon {
-        color: white;
-    }
-
-    .faq-question[aria-expanded="true"] .faq-toggle-icon i {
-        transform: rotate(180deg);
-    }
-
-    .faq-question-icon {
-        flex-shrink: 0;
-        width: 40px;
-        height: 40px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: var(--primary-color, #0066cc);
-        font-size: 1.5rem;
-        transition: all 0.3s ease;
-    }
-
-    .faq-question-text {
-        flex: 1;
-    }
-
-    .faq-question-text h5 {
-        margin: 0;
-        font-size: 1.1rem;
-        font-weight: 600;
-        color: #333;
-        line-height: 1.5;
-        transition: all 0.3s ease;
-    }
-
-    .faq-toggle-icon {
-        flex-shrink: 0;
-        color: var(--primary-color, #0066cc);
-        font-size: 1.2rem;
-        transition: all 0.3s ease;
-    }
-
-    .faq-toggle-icon i {
-        transition: transform 0.3s ease;
-    }
-
-    .faq-answer {
-        padding: 20px 25px 25px 80px;
-        background: #fff;
-    }
-
-    .faq-answer p {
-        margin: 0;
-        color: #555;
-        line-height: 1.8;
-        font-size: 0.95rem;
-    }
-
-    @media (max-width: 991px) {
-        .faq-page {
-            padding: 60px 0;
-        }
-    }
-
-    @media (max-width: 767px) {
-        .faq-question {
-            padding: 15px 20px;
-            gap: 12px;
-        }
-
-        .faq-question-icon {
-            width: 35px;
-            height: 35px;
-            font-size: 1.3rem;
-        }
-
-        .faq-question-text h5 {
-            font-size: 1rem;
-        }
-
-        .faq-toggle-icon {
-            font-size: 1rem;
-        }
-
-        .faq-answer {
-            padding: 15px 20px 20px 67px;
-        }
-
-        .faq-answer p {
-            font-size: 0.9rem;
-        }
-    }
-
-    @media (max-width: 576px) {
-        .faq-answer {
-            padding: 15px 20px 20px 20px;
-        }
-    }
-</style>

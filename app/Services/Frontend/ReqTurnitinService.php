@@ -3,8 +3,9 @@
 namespace App\Services\Frontend;
 
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use App\Models\ReqTurnitin;
-use Carbon\Carbon;
+use App\Enums\StatusRequest;
 
 class ReqTurnitinService
 {
@@ -17,11 +18,7 @@ class ReqTurnitinService
     public static function getContent()
     {
         $history = self::getRecentRequests();
-        
-        $prodiList = DB::table('dm_prodi')
-            ->select('prodi_id', 'nama_prodi')
-            ->orderBy('nama_prodi', 'asc')
-            ->get();
+        $prodiList = self::getProdiList();
 
         return [
             'header'        => 'Cek Plagiarisme',
@@ -35,6 +32,118 @@ class ReqTurnitinService
                 'action_url' => route('frontend.req.turnitin.send'),
             ]
         ];
+    }
+
+    /**
+     * Get list of program studi for dropdown
+     *
+     * @return \Illuminate\Support\Collection
+     */
+    public static function getProdiList()
+    {
+        try {
+            return DB::table('dm_prodi')
+                ->select('prodi_id', 'nama_prodi')
+                ->orderBy('nama_prodi', 'asc')
+                ->get();
+        } catch (\Exception $e) {
+            return collect([]);
+        }
+    }
+
+    /**
+     * Handle file upload for turnitin document
+     *
+     * @param \Illuminate\Http\UploadedFile $file
+     * @return string|null
+     */
+    public static function handleFileUpload($file)
+    {
+        try {
+            if ($file && $file->isValid()) {
+                return $file->store('uploads/turnitin', 'public');
+            }
+            return null;
+        } catch (\Exception $e) {
+            return null;
+        }
+    }
+
+    /**
+     * Prepare data for turnitin submission
+     *
+     * @param array $validatedData
+     * @param string|null $filePath
+     * @return array
+     */
+    public static function prepareUsulanData(array $validatedData, ?string $filePath): array
+    {
+        return [
+            'prodi_id'       => $validatedData['prodi_id'],
+            'nama_dosen'     => $validatedData['nama_dosen'],
+            'inisial_dosen'  => $validatedData['inisial_dosen'],
+            'email_dosen'    => $validatedData['email_dosen'],
+            'nip'            => $validatedData['nip'],
+            'jenis_dokumen'  => $validatedData['jenis_dokumen'],
+            'judul_dokumen'  => $validatedData['judul_dokumen'],
+            'file_dokumen'   => $filePath,
+            'keterangan'     => $validatedData['keterangan'],
+            'status_req'     => StatusRequest::MENUNGGU->value,
+        ];
+    }
+
+    /**
+     * Submit turnitin request with file upload
+     *
+     * @param array $validatedData
+     * @param \Illuminate\Http\UploadedFile|null $file
+     * @return array
+     */
+    public static function submitTurnitin(array $validatedData, $file): array
+    {
+        try {
+            DB::beginTransaction();
+
+            // Handle file upload
+            $filePath = self::handleFileUpload($file);
+            
+            if (!$filePath) {
+                throw new \Exception('Gagal mengupload file dokumen');
+            }
+
+            // Prepare and create request
+            $data = self::prepareUsulanData($validatedData, $filePath);
+            $reqTurnitin = ReqTurnitin::create($data);
+
+            DB::commit();
+
+            return [
+                'success'      => true,
+                'message'      => 'Pengajuan cek plagiarisme berhasil dikirim!',
+                'status_code'  => 200,
+                'data'         => [
+                    'nama_dosen'     => $reqTurnitin->nama_dosen,
+                    'judul_dokumen'  => $reqTurnitin->judul_dokumen,
+                    'jenis_dokumen'  => $reqTurnitin->jenis_dokumen,
+                    'date_fmt'       => tanggal($reqTurnitin->created_at, ' '),
+                    'status_req'     => $reqTurnitin->status_req
+                ]
+            ];
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            // Clean up uploaded file on error
+            if (isset($filePath) && $filePath && Storage::disk('public')->exists($filePath)) {
+                Storage::disk('public')->delete($filePath);
+            }
+
+            return [
+                'success'      => false,
+                'message'      => 'Terjadi kesalahan: ' . $e->getMessage(),
+                'status_code'  => 500,
+                'data'         => []
+            ];
+        }
     }
 
     /**

@@ -8,21 +8,23 @@ class BeritaService
 {
     /**
      * Return berita content for the frontend Berita page.
-     * In future this can fetch from DB or CMS.
+     * Router method that delegates to index or show content based on slug.
      *
-     * @return array|object
+     * @param string|null $beritaSlug
+     * @return array|null
      */
-    public static function getContent($beritaSlug = null)
+    public static function getContent(?string $beritaSlug = null): ?array
     {
         return $beritaSlug ? self::getShowContent($beritaSlug) : self::getIndexContent();
     }
 
     /**
-     * Return index berita content for the frontend Berita content.
+     * Return index berita content (list of all news).
+     * Fetches latest 12 published berita with formatted data.
      *
-     * @return array|object
+     * @return array
      */
-    public static function getIndexContent()
+    public static function getIndexContent(): array
     {
         $newest        = [];
         $newestRecords = self::getLatestBerita(12);
@@ -50,11 +52,13 @@ class BeritaService
     }
 
     /**
-     * Return show berita content for the frontend Berita Read content.
+     * Return single berita content with details and related news.
+     * Fetches berita by slug with 5 latest news sidebar.
      *
-     * @return array|object
+     * @param string $beritaSlug
+     * @return array|null
      */
-    public static function getShowContent($beritaSlug)
+    public static function getShowContent(string $beritaSlug): ?array
     {
         $selectedBerita = self::getBerita($beritaSlug);
 
@@ -105,11 +109,12 @@ class BeritaService
     }
 
     /**
-     * Optional metadata for the Berita page (SEO)
+     * Get default SEO metadata for Berita page.
+     * Contains title, description, and keywords for search engines.
      *
      * @return array
      */
-    public static function getMetaData()
+    public static function getMetaData(): array
     {
         return [
             'title'       => 'Berita Perpustakaan Politeknik Caltex Riau',
@@ -119,11 +124,13 @@ class BeritaService
     }
 
     /**
-     * Optional page config including background image and SEO structure
+     * Get page configuration including background image and SEO structure.
+     * Generates dynamic SEO data based on berita content or defaults.
      *
+     * @param array|null $beritaContent
      * @return array
      */
-    public static function getPageConfig($beritaContent = null)
+    public static function getPageConfig(?array $beritaContent = null): array
     {
         $meta = self::getMetaData();
         $bg   = $beritaContent ? data_get($beritaContent, 'content.images.src') : publicMedia('berita-default.webp', 'berita');
@@ -209,9 +216,13 @@ class BeritaService
     }
 
     /**
-     * Get single berita by slug
+     * Get single berita record by slug.
+     * Returns published berita with author relationship.
+     *
+     * @param string $beritaSlug
+     * @return \App\Models\Berita|null
      */
-    public static function getBerita($beritaSlug)
+    public static function getBerita(string $beritaSlug): ?\App\Models\Berita
     {
         try {
             return Berita::where('slug_berita', $beritaSlug)
@@ -224,9 +235,13 @@ class BeritaService
     }
 
     /**
-     * Get latest berita
+     * Get latest published berita records.
+     * Returns collection ordered by date descending.
+     *
+     * @param int $dataCount Number of records to fetch
+     * @return \Illuminate\Support\Collection
      */
-    public static function getLatestBerita($dataCount = 10)
+    public static function getLatestBerita(int $dataCount = 10): \Illuminate\Support\Collection
     {
         try {
             return Berita::where('status_berita', 'published')
@@ -267,7 +282,7 @@ class BeritaService
             'content' => [
                 'subtitle' => 'Berita & Informasi',
                 'title' => '<b>Berita</b> Perpustakaan',
-                'description' => 'Informasi terbaru seputar kegiatan, layanan, dan perkembangan perpustakaan PCR',
+                'description' => 'Informasi terbaru seputar kegiatan, layanan, dan perkembangan perpustakaan PCR.',
             ],
             'highlighted' => $highlighted
         ];

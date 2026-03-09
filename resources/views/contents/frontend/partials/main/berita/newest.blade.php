@@ -19,7 +19,7 @@ $newest = data_get($content, 'newest');
                         </h3>
                         <p class="newest-grid-excerpt">
                             {!! data_get($news, 'excerpt') !!}
-                    </p>
+                        </p>
                         <span class="newest-grid-date">{{ data_get($news, 'timestamp') }}</span>
                     </div>
                 </a>

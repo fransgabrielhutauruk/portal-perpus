@@ -4,7 +4,7 @@ namespace App\Services\Frontend;
 
 use Illuminate\Support\Facades\DB;
 use App\Models\ReqBebasPustaka;
-use Carbon\Carbon;
+use App\Enums\StatusRequest;
 
 class ReqBebasPustakaService
 {
@@ -16,26 +16,13 @@ class ReqBebasPustakaService
      */
     public static function getContent()
     {
-        // 1. Fetch Recent Requests (History)
         $history = self::getRecentRequests();
-
-        // Fetch the active periode for Bebas Pustaka
-        $activePeriode = DB::table('mst_periode')
-            ->where('jenis_periode', 'req_bebas_pustaka')
-            ->whereDate('tanggal_mulai', '<=', now())
-            ->whereDate('tanggal_selesai', '>=', now())
-            ->whereNull('deleted_at')
-            ->first();
+        $activePeriode = self::getActivePeriode();
+        $prodiList = self::getProdiList();
         
         $isOpen = $activePeriode ? true : false;
         $periodeName = $activePeriode ? $activePeriode->nama_periode : '-';
 
-
-        // 2. Fetch Prodi List
-        $prodiList = DB::table('dm_prodi')
-            ->select('prodi_id', 'nama_prodi')
-            ->orderBy('nama_prodi', 'asc')
-            ->get();
         return [
             'header'        => 'Surat Bebas Pustaka',
             'title'         => 'Pengajuan Surat Bebas Pustaka',
@@ -51,10 +38,122 @@ class ReqBebasPustakaService
 
             'prodi_list'    => $prodiList,
             'form'          => [
-                // Ensure you have this route defined
                 'action_url' => route('frontend.req.bebas-pustaka.send'),
             ]
         ];
+    }
+
+    /**
+     * Get active periode for bebas pustaka
+     *
+     * @return object|null
+     */
+    public static function getActivePeriode()
+    {
+        try {
+            return DB::table('mst_periode')
+                ->where('jenis_periode', 'req_bebas_pustaka')
+                ->whereDate('tanggal_mulai', '<=', now())
+                ->whereDate('tanggal_selesai', '>=', now())
+                ->whereNull('deleted_at')
+                ->first();
+        } catch (\Exception $e) {
+            return null;
+        }
+    }
+
+    /**
+     * Get list of program studi for dropdown
+     *
+     * @return \Illuminate\Support\Collection
+     */
+    public static function getProdiList()
+    {
+        try {
+            return DB::table('dm_prodi')
+                ->select('prodi_id', 'nama_prodi')
+                ->orderBy('nama_prodi', 'asc')
+                ->get();
+        } catch (\Exception $e) {
+            return collect([]);
+        }
+    }
+
+    /**
+     * Prepare data for bebas pustaka submission
+     *
+     * @param array $validatedData
+     * @param int $periodeId
+     * @return array
+     */
+    public static function prepareUsulanData(array $validatedData, int $periodeId): array
+    {
+        return [
+            'periode_id'               => $periodeId,
+            'nama_mahasiswa'           => $validatedData['nama_mahasiswa'],
+            'email_mahasiswa'          => $validatedData['email_mahasiswa'],
+            'nim'                      => $validatedData['nim'],
+            'prodi_id'                 => $validatedData['prodi_id'],
+            'link_kp_repository'       => $validatedData['link_kp_repository'],
+            'link_pa_repository'       => $validatedData['link_pa_repository'],
+            'is_syarat_terpenuhi'      => false,
+            'status_req'               => StatusRequest::MENUNGGU->value,
+            'catatan_admin'            => null,
+            'file_hasil_bebas_pustaka' => null
+        ];
+    }
+
+    /**
+     * Submit bebas pustaka request
+     *
+     * @param array $validatedData
+     * @return array
+     */
+    public static function submitUsulan(array $validatedData): array
+    {
+        try {
+            // Check if periode is open
+            $activePeriode = self::getActivePeriode();
+            
+            if (!$activePeriode) {
+                return [
+                    'success'      => false,
+                    'message'      => 'Periode pengajuan bebas pustaka sedang tidak dibuka. Silakan hubungi admin perpustakaan.',
+                    'status_code'  => 403,
+                    'data'         => []
+                ];
+            }
+
+            DB::beginTransaction();
+
+            $data = self::prepareUsulanData($validatedData, $activePeriode->periode_id);
+            $reqBebasPustaka = ReqBebasPustaka::create($data);
+            $reqBebasPustaka->load('prodi');
+
+            DB::commit();
+
+            return [
+                'success'      => true,
+                'message'      => 'Pengajuan Surat Bebas Pustaka berhasil dikirim!',
+                'status_code'  => 200,
+                'data'         => [
+                    'nama_mahasiswa' => $reqBebasPustaka->nama_mahasiswa,
+                    'nim'            => $reqBebasPustaka->nim,
+                    'prodi_nama'     => $reqBebasPustaka->prodi->nama_prodi ?? '-',
+                    'date_fmt'       => tanggal($reqBebasPustaka->created_at, ' '),
+                    'status_req'     => $reqBebasPustaka->status_req
+                ]
+            ];
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            return [
+                'success'      => false,
+                'message'      => 'Terjadi kesalahan: ' . $e->getMessage(),
+                'status_code'  => 500,
+                'data'         => []
+            ];
+        }
     }
 
     public static function getRecentRequests($limit = 20)

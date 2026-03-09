@@ -1,84 +1,3 @@
-<style>
-    @media (max-width: 768px) {
-        .contact-us-form {
-            padding-left: 1rem !important;
-            padding-right: 1rem !important;
-        }
-
-        .nav-tabs {
-            padding-left: 0.5rem !important;
-            padding-right: 0.5rem !important;
-            font-size: 0.85rem;
-        }
-
-        .nav-tabs .nav-link {
-            padding: 0.5rem 0.25rem;
-        }
-
-        .tab-content {
-            margin-top: 2rem !important;
-        }
-
-        .form-group {
-            margin-bottom: 1rem;
-        }
-
-        .btn-default,
-        .btn-outline-secondary {
-            width: 100%;
-            margin-bottom: 0.5rem;
-        }
-
-        .d-flex.justify-content-between {
-            flex-direction: column;
-        }
-
-        .d-inline-block {
-            display: block !important;
-            width: 100%;
-        }
-
-        h5 {
-            font-size: 1rem;
-        }
-
-        h3 {
-            font-size: 1.25rem;
-        }
-
-        label {
-            font-size: 0.875rem;
-        }
-
-        @media (max-width: 576px) {
-            .btn-group {
-                flex-direction: column;
-            }
-
-            .btn-group .btn {
-                border-radius: 0.25rem !important;
-                margin-bottom: 0.5rem;
-            }
-        }
-    }
-
-    @media (max-width: 576px) {
-        .border-3 {
-            border-width: 2px !important;
-        }
-
-        .py-3 {
-            padding-top: 1rem !important;
-            padding-bottom: 1rem !important;
-        }
-
-        .px-5 {
-            padding-left: 1rem !important;
-            padding-right: 1rem !important;
-        }
-    }
-</style>
-
 <section>
     <div class="container bg-gray-200">
         <div class="row justify-content-center">
@@ -87,7 +6,7 @@
                     <h3 class="wow fadeInUp fs-5">{{ data_get($content, 'subtitle') }}</h3>
                 </div>
 
-                <div class="contact-us-form wow fadeInUp rounded px-4 border border-3" data-wow-delay="0.4s">
+                <div class="contact-us-form wow fadeInUp rounded px-4 border border-3 pb-md-4" data-wow-delay="0.4s">
                     @include('contents.frontend.partials.components.tab-headers', [
                         'tabs' => [
                             ['id' => 'tab-attention', 'label' => '1. Perhatian', 'active' => true],
@@ -120,12 +39,14 @@
                                     </button>
                                 </div>
 
-                                <div class="d-flex">
-                                    <button type="button" class="btn btn-sm btn-outline-warning rounded-pill"
-                                        onclick="autofillForm()">
-                                        <i class="fa-solid fa-wand-magic-sparkles me-2"></i> Demo Autofill
-                                    </button>
-                                </div>
+                                @env('local')
+                                    <div class="d-flex">
+                                        <button type="button" class="btn btn-sm btn-outline-warning rounded-pill"
+                                            onclick="autofillForm()">
+                                            <i class="fa-solid fa-wand-magic-sparkles me-2"></i> Demo Autofill
+                                        </button>
+                                    </div>
+                                @endenv
                             </div>
 
                             {{-- === TAB 2: DATA DOSEN === --}}
@@ -137,7 +58,8 @@
                                                 Nama Dosen <span class="text-danger">*</span>
                                             </label>
                                             <input type="text" name="nama_dosen" id="nama_dosen" class="form-control"
-                                                placeholder="Masukkan nama" required data-error="Wajib diisi">
+                                                placeholder="Masukkan nama" required
+                                                data-error="Nama dosen wajib diisi">
                                             <div class="help-block with-errors"></div>
                                         </div>
                                     </div>
@@ -148,7 +70,7 @@
                                             </label>
                                             <input type="text" name="inisial_dosen" id="inisial_dosen"
                                                 class="form-control" placeholder="Contoh: AAA" required
-                                                data-error="Wajib diisi">
+                                                data-error="Inisial wajib diisi">
                                             <div class="help-block with-errors"></div>
                                         </div>
                                     </div>
@@ -171,8 +93,8 @@
                                             <label class="fw-bold text-muted small text-uppercase" for="nip">
                                                 NIP <span class="text-danger">*</span>
                                             </label>
-                                            <input type="text" name="nip" id="nip" class="form-control"
-                                                placeholder="Masukkan NIP" required data-error="NIP Wajib diisi">
+                                            <input type="number" name="nip" id="nip" class="form-control"
+                                                placeholder="Masukkan NIP" required data-error="NIP wajib diisi">
                                             <div class="help-block with-errors"></div>
                                         </div>
                                     </div>
@@ -185,7 +107,7 @@
                                                 Program Studi <span class="text-danger">*</span>
                                             </label>
                                             <select name="prodi_id" class="form-select" required
-                                                data-error="Pilih Program Studi">
+                                                data-error="Pilih program studi">
                                                 <option value="">-- Pilih Program Studi --</option>
                                                 @foreach (data_get($content, 'prodi_list', []) as $prodi)
                                                     <option value="{{ $prodi->prodi_id }}">{{ $prodi->nama_prodi }}
@@ -215,14 +137,15 @@
                                             </label>
                                             <div class="form-check">
                                                 <input type="radio" class="form-check-input" name="jenis_dokumen"
-                                                    id="typeSkripsi" value="Karya Ilmiah" required>
+                                                    id="typeSkripsi" value="Karya Ilmiah" required
+                                                    data-error="Jenis dokumen wajib dipilih">
                                                 <label class="form-check-label" for="typeSkripsi">
                                                     Karya Ilmiah
                                                 </label>
                                             </div>
                                             <div class="form-check">
                                                 <input type="radio" class="form-check-input" name="jenis_dokumen"
-                                                    id="typeArtikel" value="Proyek Akhir" required>
+                                                    id="typeArtikel" value="Proyek Akhir">
                                                 <label class="form-check-label" for="typeArtikel">
                                                     Proyek Akhir
                                                 </label>
@@ -242,7 +165,7 @@
                                             <input type="text" name="judul_dokumen" id="judul_dokumen"
                                                 class="form-control"
                                                 placeholder="Masukkan judul dokumen (contoh: Analisis Sistem Informasi)"
-                                                required data-error="Wajib diisi">
+                                                required data-error="Judul dokumen wajib diisi">
                                             <div class="help-block with-errors"></div>
                                         </div>
                                     </div>
@@ -273,7 +196,8 @@
                                                 Keterangan / Alasan Pengajuan <span class="text-danger">*</span>
                                             </label>
                                             <textarea name="keterangan" id="keterangan" class="form-control" rows="4"
-                                                placeholder="Jelaskan alasan atau tujuan pengajuan cek turnitin ini..." required data-error="Wajib diisi"></textarea>
+                                                placeholder="Jelaskan alasan atau tujuan pengajuan cek turnitin ini..." required
+                                                data-error="Keterangan/alasan pengajuan wajib diisi"></textarea>
                                             <div class="help-block with-errors"></div>
                                         </div>
                                     </div>
@@ -285,11 +209,6 @@
                                         <button type="button" class="btn btn-outline-secondary rounded-pill px-4"
                                             onclick="switchTab('tab-dosen')">Sebelumnya</button>
                                         <div class="d-flex gap-2">
-                                            <div id="loadingIndicator" class="d-none me-2">
-                                                <div class="spinner-border text-primary" role="status">
-                                                    <span class="visually-hidden">Loading...</span>
-                                                </div>
-                                            </div>
                                             <button type="button" id="btnOpenModal" class="btn-default"
                                                 onclick="openConfirmation()">
                                                 Kirim Pengajuan
@@ -323,7 +242,8 @@
                                         <td>{{ $item->nama_dosen }}</td>
                                         <td>
                                             {{ $item->judul_dokumen }}
-                                            <span class="badge bg-secondary text-light ms-2">{{ $item->jenis_dokumen }}</span>
+                                            <span
+                                                class="badge bg-secondary text-light ms-md-2">{{ $item->jenis_dokumen }}</span>
                                         </td>
                                         <td class="text-center">
                                             @if ($item->status_req == -1)
@@ -359,7 +279,7 @@
         <div class="modal-content border-0 shadow-lg">
             <div class="modal-header bg-white border-0 pb-0">
                 <h5 class="modal-title fw-bold" style="color: var(--primary-main)" id="confirmationModalLabel">
-                    <i class="fa-solid fa-circle-question me-2"></i>Konfirmasi Pengajuan Turnitin
+                    <i class="fa-solid fa-circle-question me-2"></i>Konfirmasi Pengecekan Plagiarisme
                 </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
@@ -379,226 +299,19 @@
     </div>
 </div>
 
-{{-- === JAVASCRIPT === --}}
 <script>
-    /*! Validator v0.11.9 by @1000hz */ + function(a) {
-        "use strict";
+    function initializeFormValidation() {
+        $(document).ready(function() {
+            $('#formTurnitin').validator();
+        });
+    }
 
-        function b(b) {
-            return b.is('[type="checkbox"]') ? b.prop("checked") : b.is('[type="radio"]') ? !!a('[name="' + b.attr(
-                "name") + '"]:checked').length : b.is("select[multiple]") ? (b.val() || []).length : b.val()
-        }
-
-        function c(b) {
-            return this.each(function() {
-                var c = a(this),
-                    e = a.extend({}, d.DEFAULTS, c.data(), "object" == typeof b && b),
-                    f = c.data("bs.validator");
-                (f || "destroy" != b) && (f || c.data("bs.validator", f = new d(this, e)), "string" ==
-                    typeof b && f[b]())
-            })
-        }
-        var d = function(c, e) {
-            this.options = e, this.validators = a.extend({}, d.VALIDATORS, e.custom), this.$element = a(c), this
-                .$btn = a('button[type="submit"], input[type="submit"]').filter('[form="' + this.$element.attr(
-                    "id") + '"]').add(this.$element.find('input[type="submit"], button[type="submit"]')), this
-                .update(), this.$element.on("input.bs.validator change.bs.validator focusout.bs.validator", a.proxy(
-                    this.onInput, this)), this.$element.on("submit.bs.validator", a.proxy(this.onSubmit, this)),
-                this.$element.on("reset.bs.validator", a.proxy(this.reset, this)), this.$element.find(
-                    "[data-match]").each(function() {
-                    var c = a(this),
-                        d = c.attr("data-match");
-                    a(d).on("input.bs.validator", function() {
-                        b(c) && c.trigger("input.bs.validator")
-                    })
-                }), this.$inputs.filter(function() {
-                    return b(a(this)) && !a(this).closest(".has-error").length
-                }).trigger("focusout"), this.$element.attr("novalidate", !0)
-        };
-        d.VERSION = "0.11.9", d.INPUT_SELECTOR = ':input:not([type="hidden"], [type="submit"], [type="reset"], button)',
-            d.FOCUS_OFFSET = 20, d.DEFAULTS = {
-                delay: 500,
-                html: !1,
-                disable: !0,
-                focus: !0,
-                custom: {},
-                errors: {
-                    match: "Does not match",
-                    minlength: "Not long enough"
-                },
-                feedback: {
-                    success: "glyphicon-ok",
-                    error: "glyphicon-remove"
-                }
-            }, d.VALIDATORS = {
-                "native": function(a) {
-                    var b = a[0];
-                    return b.checkValidity ? !b.checkValidity() && !b.validity.valid && (b.validationMessage ||
-                        "error!") : void 0
-                },
-                match: function(b) {
-                    var c = b.attr("data-match");
-                    return b.val() !== a(c).val() && d.DEFAULTS.errors.match
-                },
-                minlength: function(a) {
-                    var b = a.attr("data-minlength");
-                    return a.val().length < b && d.DEFAULTS.errors.minlength
-                }
-            }, d.prototype.update = function() {
-                var b = this;
-                return this.$inputs = this.$element.find(d.INPUT_SELECTOR).add(this.$element.find(
-                    '[data-validate="true"]')).not(this.$element.find('[data-validate="false"]').each(function() {
-                    b.clearErrors(a(this))
-                })), this.toggleSubmit(), this
-            }, d.prototype.onInput = function(b) {
-                var c = this,
-                    d = a(b.target),
-                    e = "focusout" !== b.type;
-                this.$inputs.is(d) && this.validateInput(d, e).done(function() {
-                    c.toggleSubmit()
-                })
-            }, d.prototype.validateInput = function(c, d) {
-                var e = (b(c), c.data("bs.validator.errors"));
-                c.is('[type="radio"]') && (c = this.$element.find('input[name="' + c.attr("name") + '"]'));
-                var f = a.Event("validate.bs.validator", {
-                    relatedTarget: c[0]
-                });
-                if (this.$element.trigger(f), !f.isDefaultPrevented()) {
-                    var g = this;
-                    return this.runValidators(c).done(function(b) {
-                        c.data("bs.validator.errors", b), b.length ? g.showErrors(c) : g.clearErrors(c), e && b
-                            .toString() === e.toString() || (f = b.length ? a.Event("invalid.bs.validator", {
-                                relatedTarget: c[0],
-                                detail: b
-                            }) : a.Event("valid.bs.validator", {
-                                relatedTarget: c[0],
-                                detail: e
-                            }), g.$element.trigger(f)), g.toggleSubmit(), g.$element.trigger(a.Event(
-                                "validated.bs.validator", {
-                                    relatedTarget: c[0]
-                                }))
-                    })
-                }
-            }, d.prototype.runValidators = function(c) {
-                function d(a) {
-                    return c.attr("data-" + a + "-error")
-                }
-
-                function e() {
-                    var a = c[0].validity;
-                    return a.typeMismatch ? c.attr("data-type-error") : a.patternMismatch ? c.attr(
-                            "data-pattern-error") : a.stepMismatch ? c.attr("data-step-error") : a.rangeOverflow ?
-                        c.attr("data-max-error") : a.rangeUnderflow ? c.attr("data-min-error") : a
-                        .tooLong ? c.attr("data-maxlength-error") : void 0
-                }
-
-                function f() {
-                    return c.attr("data-error")
-                }
-
-                function g(a) {
-                    return d(a) || e() || f()
-                }
-                var h = [],
-                    i = a.Deferred();
-                return c.data("bs.validator.deferred") && c.data("bs.validator.deferred").reject(), c.data(
-                    "bs.validator.deferred", i), a.each(this.validators, a.proxy(function(a, d) {
-                    var e = null;
-                    !b(c) && !c.attr("required") || void 0 === c.attr("data-" + a) && "native" != a || !(e =
-                        d.call(this, c)) || (e = g(a) || e, !~h.indexOf(e) && h.push(e))
-                }, this)), !h.length && b(c) && c.attr("data-remote") ? this.defer(c, function() {
-                    var d = {};
-                    d[c.attr("name")] = b(c), a.get(c.attr("data-remote"), d).fail(function(a, b, c) {
-                        h.push(g("remote") || c)
-                    }).always(function() {
-                        i.resolve(h)
-                    })
-                }) : i.resolve(h), i.promise()
-            }, d.prototype.validate = function() {
-                var b = this;
-                return a.when(this.$inputs.map(function() {
-                    return b.validateInput(a(this), !1)
-                })).then(function() {
-                    b.toggleSubmit(), b.focusError()
-                }), this
-            }, d.prototype.focusError = function() {
-                if (this.options.focus) {
-                    var b = this.$element.find(".has-error:first :input");
-                    0 !== b.length && (a("html, body").animate({
-                        scrollTop: b.offset().top - d.FOCUS_OFFSET
-                    }, 250), b.focus())
-                }
-            }, d.prototype.showErrors = function(b) {
-                var c = this.options.html ? "html" : "text",
-                    d = b.data("bs.validator.errors"),
-                    e = b.closest(".form-group"),
-                    f = e.find(".help-block.with-errors"),
-                    g = e.find(".form-control-feedback");
-                d.length && (d = a("<ul/>").addClass("list-unstyled").append(a.map(d, function(b) {
-                    return a("<li/>")[c](b)
-                })), void 0 === f.data("bs.validator.originalContent") && f.data("bs.validator.originalContent",
-                    f.html()), f.empty().append(d), e.addClass("has-error has-danger"), e.hasClass(
-                    "has-feedback") && g.removeClass(this.options.feedback.success) && g.addClass(this.options
-                    .feedback.error) && e.removeClass("has-success"))
-            }, d.prototype.clearErrors = function(a) {
-                var c = a.closest(".form-group"),
-                    d = c.find(".help-block.with-errors"),
-                    e = c.find(".form-control-feedback");
-                d.html(d.data("bs.validator.originalContent")), c.removeClass("has-error has-danger has-success"), c
-                    .hasClass("has-feedback") && e.removeClass(this.options.feedback.error) && e.removeClass(
-                        "has-success")
-            }, d.prototype.hasErrors = function() {
-                function b() {
-                    return !!(a(this).data("bs.validator.errors") || []).length
-                }
-                return !!this.$inputs.filter(b).length
-            }, d.prototype.isIncomplete = function() {
-                function c() {
-                    var c = b(a(this));
-                    return !("string" == typeof c ? a.trim(c) : c)
-                }
-                return !!this.$inputs.filter("[required]").filter(c).length
-            }, d.prototype.onSubmit = function(a) {
-                this.validate(), (this.isIncomplete() || this.hasErrors()) && a.preventDefault()
-            }, d.prototype.toggleSubmit = function() {
-                this.options.disable && this.$btn.toggleClass("disabled", this.isIncomplete() || this.hasErrors())
-            }, d.prototype.defer = function(b, c) {
-                return c = a.proxy(c, this, b), this.options.delay ? (window.clearTimeout(b.data(
-                    "bs.validator.timeout")), void b.data("bs.validator.timeout", window.setTimeout(c, this
-                    .options.delay))) : c()
-            }, d.prototype.reset = function() {
-                return this.$element.find(".form-control-feedback").removeClass(this.options.feedback.error)
-                    .removeClass(this.options.feedback.success), this.$inputs.removeData(["bs.validator.errors",
-                        "bs.validator.deferred"
-                    ]).each(function() {
-                        a(this).closest(".form-group").removeClass("has-error has-danger has-success")
-                    }), this.$element.find(".help-block.with-errors").each(function() {
-                        var b = a(this),
-                            c = b.data("bs.validator.originalContent");
-                        b.data("bs.validator.originalContent", !1), b.html(c || "")
-                    }), this.$btn.removeClass("disabled"), this.$element.find(".has-error, .has-danger, .has-success")
-                    .removeClass("has-error has-danger has-success"), this
-            }, d.prototype.destroy = function() {
-                return this.reset(), this.$element.removeAttr("novalidate").removeData("bs.validator").off(
-                        ".bs.validator"), this.$inputs.off(".bs.validator"), this.options = null, this
-                    .validators = null, this.$element = null, this.$btn = null, this
-            };
-        var e = a.fn.validator;
-        a.fn.validator = c, a.fn.validator.Constructor = d, a.fn.validator.noConflict = function() {
-            return a.fn.validator = e, this
-        }, a(window).on("load", function() {
-            a('form[data-toggle="validator"]').each(function() {
-                var b = a(this);
-                c.call(b, b.data())
-            })
-        })
-    }(jQuery);
-</script>
-
-<script>
-    $(document).ready(function() {
-        $('#formTurnitin').validator();
-    });
+    // Start initialization when DOM is ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initializeFormValidation);
+    } else {
+        initializeFormValidation();
+    }
 
     function openConfirmation() {
         if (validateTab('tab-dokumen')) {
@@ -610,12 +323,20 @@
     function submitTurnitinAjax() {
         const form = document.getElementById('formTurnitin');
         const submitBtn = document.getElementById('btnOpenModal');
-        const loading = document.getElementById('loadingIndicator');
 
         const modal = bootstrap.Modal.getInstance(document.getElementById('confirmationModal'));
         modal.hide();
 
-        loading.classList.remove('d-none');
+        // Show loading with SweetAlert
+        Swal.fire({
+            html: 'Mengirim data...',
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+
         submitBtn.disabled = true;
 
         const formData = new FormData(form);
@@ -642,7 +363,6 @@
                 status,
                 body
             }) => {
-                loading.classList.add('d-none');
                 submitBtn.disabled = false;
 
                 if (status === 200 || status === 201) {
@@ -673,7 +393,6 @@
                 }
             })
             .catch(error => {
-                loading.classList.add('d-none');
                 submitBtn.disabled = false;
 
                 Swal.fire({
@@ -723,7 +442,7 @@
             default: '<span class="badge bg-danger rounded-pill">Ditolak</span>'
         };
 
-        const jenisBadge = `<span class="badge bg-secondary text-light ms-2">${data.jenis_dokumen}</span>`;
+        const jenisBadge = `<span class="badge bg-secondary text-light ms-md-2">${data.jenis_dokumen}</span>`;
 
         tbody.insertAdjacentHTML('afterbegin', `
             <tr class="table-success">

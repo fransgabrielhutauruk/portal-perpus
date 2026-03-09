@@ -30,7 +30,7 @@
             <div class="row g-4">
                 @forelse(data_get($content, 'panduan_list', []) as $panduan)
                     <div class="col-lg-4 col-md-6">
-                        <div class="card h-100 wow fadeInUp p-3" data-wow-delay="{{ 0.1 + $loop->index * 0.1 }}s">
+                        <div class="card h-100 wow fadeInUp p-md-3" data-wow-delay="{{ 0.1 + $loop->index * 0.1 }}s">
                             <div class="card-body d-flex flex-column">
                                 <div class="d-flex align-items-center mb-3">
                                     <div class="icon-box me-3"
@@ -69,15 +69,3 @@
         </div>
     </div>
 @endsection
-
-@push('styles')
-    <style>
-        .panduan-page {
-            padding: 80px 0;
-        }
-
-        .icon-box {
-            background: linear-gradient(135deg, var(--bs-primary) 0%, var(--bs-primary-dark, #0056b3) 100%);
-        }
-    </style>
-@endpush

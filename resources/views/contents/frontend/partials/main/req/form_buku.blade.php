@@ -1,106 +1,3 @@
-<style>
-    @media (max-width: 768px) {
-
-        /* Reduce padding on form container */
-        .contact-us-form {
-            padding-left: 1rem !important;
-            padding-right: 1rem !important;
-        }
-
-        /* Tab headers responsive */
-        .nav-tabs {
-            padding-left: 0.5rem !important;
-            padding-right: 0.5rem !important;
-            font-size: 0.85rem;
-        }
-
-        .nav-tabs .nav-link {
-            padding: 0.5rem 0.25rem;
-        }
-
-        /* Form spacing */
-        .tab-content {
-            margin-top: 2rem !important;
-        }
-
-        /* Reduce form group margins */
-        .form-group {
-            margin-bottom: 1rem;
-        }
-
-        /* Penerbit checkboxes - stack vertically on mobile */
-        .row .col-md-4 {
-            margin-bottom: 0.75rem;
-        }
-
-        /* Buttons full width on mobile */
-        .btn-default,
-        .btn-outline-secondary {
-            width: 100%;
-            margin-bottom: 0.5rem;
-        }
-
-        .d-flex.justify-content-between {
-            flex-direction: column;
-        }
-
-        /* Alert/info boxes */
-        .d-inline-block {
-            display: block !important;
-            width: 100%;
-        }
-
-        /* Table responsive */
-        .table-responsive {
-            font-size: 0.875rem;
-        }
-
-        .table th,
-        .table td {
-            padding: 0.5rem;
-        }
-
-        /* Reduce heading sizes */
-        h5 {
-            font-size: 1rem;
-        }
-
-        h3 {
-            font-size: 1.25rem;
-        }
-
-        /* Form labels */
-        label {
-            font-size: 0.875rem;
-        }
-
-        /* Checkbox/Radio inline - stack on small screens */
-        @media (max-width: 576px) {
-            .form-check-inline {
-                display: block;
-                margin-bottom: 0.5rem;
-            }
-        }
-    }
-
-    /* Additional tweaks for very small screens */
-    @media (max-width: 576px) {
-        .border-3 {
-            border-width: 2px !important;
-        }
-
-        .py-3 {
-            padding-top: 1rem !important;
-            padding-bottom: 1rem !important;
-        }
-
-        .px-5 {
-            padding-left: 1rem !important;
-            padding-right: 1rem !important;
-        }
-    }
-</style>
-
 <section>
     <div class="container bg-gray-200">
         <div class="row justify-content-center">
@@ -109,7 +6,7 @@
                     <h3 class="wow fadeInUp fs-5">{{ data_get($content, 'subtitle') }}</h3>
                 </div>
 
-                <div class="contact-us-form wow fadeInUp rounded px-4 border border-3" data-wow-delay="0.4s">
+                <div class="contact-us-form wow fadeInUp rounded px-4 border border-3 pb-4" data-wow-delay="0.4s">
                     @include('contents.frontend.partials.components.tab-headers', [
                         'tabs' => [
                             ['id' => 'tab-attention', 'label' => '1. Perhatian', 'active' => true],
@@ -118,7 +15,6 @@
                         ],
                         'tabsId' => 'usulanTabs',
                     ])
-
                     @if (!data_get($content, 'is_open'))
                         {{-- PERIODE TUTUP --}}
                         <div class="text-center py-5">
@@ -187,12 +83,14 @@
                                         </div>
                                     @endif
 
-                                    <div class="d-flex">
-                                        <button type="button" class="btn btn-sm btn-outline-warning rounded-pill"
-                                            onclick="autofillForm()">
-                                            <i class="fa-solid fa-wand-magic-sparkles me-2"></i> Demo Autofill
-                                        </button>
-                                    </div>
+                                    @env('local')
+                                        <div class="d-flex">
+                                            <button type="button" class="btn btn-sm btn-outline-warning rounded-pill"
+                                                onclick="autofillForm()">
+                                                <i class="fa-solid fa-wand-magic-sparkles me-2"></i> Demo Autofill
+                                            </button>
+                                        </div>
+                                    @endenv
                                 </div>
 
                                 {{-- === TAB 2: DATA PENGUSUL === --}}
@@ -205,7 +103,7 @@
                                                     Lengkap <span class="text-danger">*</span></label>
                                                 <input type="text" name="nama_req" id="nama_req"
                                                     class="form-control" placeholder="Masukkan nama lengkap" required
-                                                    data-error="Wajib diisi">
+                                                    data-error="Nama lengkap wajib diisi">
                                                 <div class="help-block with-errors"></div>
                                             </div>
                                         </div>
@@ -239,7 +137,7 @@
                                                 <label class="fw-bold text-muted small text-uppercase">Nomor
                                                     Identitas <span class="text-danger">*</span></label>
                                                 <input type="number" name="nim" id="input_nim" class="form-control"
-                                                    placeholder="Masukkan NIM" required data-error="NIM Wajib diisi">
+                                                    placeholder="Masukkan NIM" required data-error="NIM wajib diisi">
                                                 <input type="number" name="nip" id="input_nip"
                                                     class="form-control" placeholder="Masukkan NIP"
                                                     style="display:none;" data-error="NIP Wajib diisi">
@@ -254,7 +152,7 @@
                                                 <label class="mb-2 fw-bold text-muted small text-uppercase">Program
                                                     Studi <span class="text-danger">*</span></label>
                                                 <select name="prodi_id" class="form-select" required
-                                                    data-error="Pilih Program Studi">
+                                                    data-error="Pilih program studi">
                                                     <option value="">-- Pilih Program Studi --</option>
                                                     @foreach (data_get($content, 'prodi_list', []) as $prodi)
                                                         <option value="{{ $prodi->prodi_id }}">{{ $prodi->nama_prodi }}
@@ -285,7 +183,7 @@
                                                     Buku <span class="text-danger">*</span></label>
                                                 <input type="text" name="judul_buku" id="judul_buku"
                                                     class="form-control" placeholder="Masukkan judul buku" required
-                                                    data-error="Wajib diisi">
+                                                    data-error="Judul buku wajib diisi">
                                                 <div class="help-block with-errors"></div>
                                             </div>
                                         </div>
@@ -296,7 +194,7 @@
                                                         class="text-danger">*</span></label>
                                                 <input type="text" name="penulis_buku" id="penulis_buku"
                                                     class="form-control" placeholder="Masukkan penulis" required
-                                                    data-error="Wajib diisi">
+                                                    data-error="Penulis wajib diisi">
                                                 <div class="help-block with-errors"></div>
                                             </div>
                                         </div>
@@ -311,7 +209,7 @@
                                                         class="text-danger">*</span></label>
                                                 <input type="number" name="tahun_terbit" id="tahun_terbit"
                                                     class="form-control" placeholder="Masukkan tahun terbit" required
-                                                    data-error="Wajib diisi">
+                                                    data-error="Tahun terbit wajib diisi">
                                                 <div class="help-block with-errors"></div>
                                             </div>
                                         </div>
@@ -322,14 +220,16 @@
                                                     Pengantar Buku <span class="text-danger">*</span></label>
                                                 <div class="form-check form-check-inline">
                                                     <input class="form-check-input" type="radio" name="bahasa_buku"
-                                                        id="bahasa_indonesia" value="indonesia" required>
+                                                        id="bahasa_indonesia" value="indonesia" required
+                                                        data-error="Pilih salah satu bahasa pengantar">
                                                     <label class="form-check-label" for="bahasa_indonesia">
                                                         Indonesia
                                                     </label>
                                                 </div>
                                                 <div class="form-check form-check-inline">
                                                     <input class="form-check-input" type="radio" name="bahasa_buku"
-                                                        id="bahasa_inggris" value="inggris" required>
+                                                        id="bahasa_inggris" value="inggris" required
+                                                        data-error="Pilih salah satu bahasa pengantar">
                                                     <label class="form-check-label" for="bahasa_inggris">
                                                         Inggris
                                                     </label>
@@ -385,7 +285,7 @@
                                                 <div class="form-check">
                                                     <input class="form-check-input" type="checkbox"
                                                         id="penerbit_other" onchange="togglePenerbitOther()">
-                                                    <label class="form-check-label" for="penerbit_other">Other</label>
+                                                    <label class="form-check-label" for="penerbit_other">Lainnya</label>
                                                 </div>
                                                 <input type="text" name="penerbit[]" id="penerbit_other_text"
                                                     class="form-control" placeholder="Nama penerbit lainnya..."
@@ -438,22 +338,24 @@
                                             </div>
                                         </div>
                                         <div class="col-md-6">
-                                            <label class="fw-bold text-muted small text-uppercase"
-                                                for="link_pembelian">Link
-                                                Pembelian <span class="text-danger">*</span></label>
-                                            <input type="text" name="link_pembelian" id="link_pembelian"
-                                                class="form-control" placeholder="https://..." required
-                                                data-error="Wajib diisi">
-                                            <div class="help-block with-errors"></div>
+                                            <div class="form-group">
+                                                <label class="fw-bold text-muted small text-uppercase"
+                                                    for="link_pembelian">Link
+                                                    Pembelian <span class="text-danger">*</span></label>
+                                                <input type="text" name="link_pembelian" id="link_pembelian"
+                                                    class="form-control" placeholder="https://..." required
+                                                    data-error="Link pembelian wajib diisi">
+                                                <div class="help-block with-errors"></div>
+                                            </div>
                                         </div>
                                     </div>
 
-                                    <div class="form-group my-4">
+                                    <div class="form-group mt-md-4">
                                         <label class="fw-bold text-muted small text-uppercase"
                                             for="alasan_usulan">Alasan
                                             Usulan <span class="text-danger">*</span></label>
                                         <textarea name="alasan_usulan" id="alasan_usulan" class="form-control" rows="1"
-                                            placeholder="Masukkan alasan usulan" required data-error="Wajib diisi"></textarea>
+                                            placeholder="Masukkan alasan usulan" required data-error="Alasan usulan wajib diisi"></textarea>
                                         <div class="help-block with-errors"></div>
                                     </div>
 
@@ -468,16 +370,7 @@
                                                 Kirim Usulan
                                             </button>
                                         </div>
-
-                                        {{-- Loading & Messages --}}
-                                        <div class="mt-3 text-center">
-                                            <span id="loadingIndicator" class="text-primary d-none fw-bold">
-                                                <i class="fa-solid fa-spinner fa-spin me-2"></i> Mengirim data...
-                                            </span>
-                                            <div id="msgSubmit" class="alert d-none mt-3"></div>
-                                        </div>
                                     </div>
-
                                 </div>
                             </div>
                         </form>
@@ -563,48 +456,63 @@
 </div>
 
 <script>
-    $(document).ready(function() {
-        $('#formUsulan').validator();
+    // Ensure jQuery is loaded before initializing
+    function initializeFormValidation() {
+        $(document).ready(function() {
+            $('#formUsulan').validator();
 
-        $('.jenis-buku-checkbox').on('change', function() {
-            const anyChecked = $('.jenis-buku-checkbox:checked').length > 0;
-            const errorElement = $('#jenis-buku-error');
-            anyChecked ? errorElement.addClass('d-none') : errorElement.removeClass('d-none');
-        });
+            $('.jenis-buku-checkbox').on('change', function() {
+                const anyChecked = $('.jenis-buku-checkbox:checked').length > 0;
+                const errorElement = $('#jenis-buku-error');
+                anyChecked ? errorElement.addClass('d-none') : errorElement.removeClass('d-none');
+            });
 
-        $('.penerbit-checkbox').on('change', function() {
-            const anyChecked = $('.penerbit-checkbox:checked').length > 0 || $('#penerbit_other_text')
-                .val().trim();
-            const errorElement = $('#penerbit-error');
-            anyChecked ? errorElement.addClass('d-none') : errorElement.removeClass('d-none');
-        });
+            $('.penerbit-checkbox').on('change', function() {
+                const anyChecked = $('.penerbit-checkbox:checked').length > 0 || $('#penerbit_other_text')
+                    .val().trim();
+                const errorElement = $('#penerbit-error');
+                anyChecked ? errorElement.addClass('d-none') : errorElement.removeClass('d-none');
+            });
 
-        $('#penerbit_other_text').on('input', function() {
-            const anyChecked = $('.penerbit-checkbox:checked').length > 0 || $(this).val().trim();
-            const errorElement = $('#penerbit-error');
-            anyChecked ? errorElement.addClass('d-none') : errorElement.removeClass('d-none');
+            $('#penerbit_other_text').on('input', function() {
+                const anyChecked = $('.penerbit-checkbox:checked').length > 0 || $(this).val().trim();
+                const errorElement = $('#penerbit-error');
+                anyChecked ? errorElement.addClass('d-none') : errorElement.removeClass('d-none');
+            });
         });
-    });
+    }
+
+    // Start initialization when DOM is ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initializeFormValidation);
+    } else {
+        initializeFormValidation();
+    }
 
     function openConfirmation() {
-        console.log('tes');
         if (validateTab('tab-book')) {
             const modal = new bootstrap.Modal(document.getElementById('confirmationModal'));
             modal.show();
-            console.log('tes2');
         }
-        console.log('tes3');
     }
 
     function submitUsulanAjax() {
         const form = document.getElementById('formUsulan');
         const submitBtn = document.getElementById('btnOpenModal');
-        const loading = document.getElementById('loadingIndicator');
 
         const modal = bootstrap.Modal.getInstance(document.getElementById('confirmationModal'));
         modal.hide();
 
-        loading.classList.remove('d-none');
+        // Show loading with SweetAlert
+        Swal.fire({
+            html: 'Mengirim data...',
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+
         submitBtn.disabled = true;
 
         const formData = new FormData(form);
@@ -643,7 +551,6 @@
                 status,
                 body
             }) => {
-                loading.classList.add('d-none');
                 submitBtn.disabled = false;
 
                 if (status === 200 || status === 201) {
@@ -674,7 +581,6 @@
                 }
             })
             .catch(error => {
-                loading.classList.add('d-none');
                 submitBtn.disabled = false;
 
                 Swal.fire({
@@ -709,9 +615,6 @@
         setTimeout(() => tbody.querySelector('tr.table-success')?.classList.remove('table-success'), 2000);
     }
 
-    // ============================================
-    // VALIDATION
-    // ============================================
     function validateTab(tabId) {
         const $tab = $(`#${tabId}`);
         const $inputs = $tab.find('input:visible, select:visible, textarea:visible');
@@ -765,7 +668,11 @@
         isNim ? nip.removeAttribute('required') : nip.setAttribute('required', 'required');
 
         (isNim ? nip : nim).value = '';
-        $('#formUsulan').validator('update');
+        
+        // Update validator if jQuery is available
+        if (typeof $ !== 'undefined' && typeof $.fn.validator !== 'undefined') {
+            $('#formUsulan').validator('update');
+        }
     }
 
     function togglePenerbitOther() {
@@ -820,7 +727,10 @@
         document.getElementById('bahasa_inggris').checked = true;
         document.querySelector('textarea[name="alasan_usulan"]').value = "Referensi Skripsi";
 
-        $('#formUsulan').validator('update');
-        $('#formUsulan').find('.form-control').trigger('input');
+        // Update validator if jQuery is available
+        if (typeof $ !== 'undefined' && typeof $.fn.validator !== 'undefined') {
+            $('#formUsulan').validator('update');
+            $('#formUsulan').find('.form-control').trigger('input');
+        }
     }
 </script>

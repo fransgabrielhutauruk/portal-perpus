@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
 use App\Services\Frontend\PanduanService;
-use Illuminate\Http\Request;
+use App\Services\Frontend\SafeDataService;
 
 class PanduanController extends Controller
 {
@@ -13,8 +13,17 @@ class PanduanController extends Controller
      */
     public function index()
     {
-        $content = PanduanService::getIndexContent();
-        $pageConfig = PanduanService::getPageConfig();
+        $fallbacks = SafeDataService::getPanduanFallbacks();
+
+        $content = SafeDataService::safeExecute(
+            fn() => PanduanService::getIndexContent(),
+            $fallbacks
+        );
+
+        $pageConfig = SafeDataService::safeExecute(
+            fn() => PanduanService::getPageConfig(),
+            SafeDataService::getPageConfigFallbacks()
+        );
 
         return view('contents.frontend.pages.panduan.index', compact('content', 'pageConfig'));
     }

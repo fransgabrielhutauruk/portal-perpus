@@ -189,43 +189,15 @@ class SafeDataService
     }
 
     /**
-     * Get safe fallback data for landing page
+     * Get safe fallback data for site identity.
+     * Used by SiteIdentityComposer as fallback when SiteIdentityService fails.
      *
      * @return object
      */
     public static function getLandingFallbacks(): object
     {
         return self::createSafeStructure([
-            'hero'             => [
-                'content'         => [
-                    'titles'   => [['Politeknik Caltex Riau']],
-                    'subtitle' => 'Selamat Datang di Politeknik Caltex Riau'
-                ],
-                'media'           => ['type' => 'video'],
-                'processed_media' => []
-            ],
-            'statistics'       => [],
-            'jurusan_list'     => [],
-            'pmb_data'         => [
-                'content'    => [
-                    'title'       => 'Informasi PMB',
-                    'description' => 'Informasi penerimaan mahasiswa baru.'
-                ],
-                'highlights' => [],
-                'actions'    => ['primary' => ['url' => '#', 'text' => 'Info Lebih Lanjut']]
-            ],
-            'infografis_image' => '', // Added fallback for infografis image
-            'sdg'              => [
-                'content' => ['title' => 'SDG'],
-                'images'  => ['main' => ['src' => '', 'alt' => 'SDG']],
-                'goals'   => []
-            ],
-            'partnership'      => [
-                'content'    => ['title' => 'Partnership'],
-                'statistics' => [],
-                'partners'   => ['institutions' => [], 'instances' => [], 'industries' => []]
-            ],
-            'site_identity'    => [
+            'site_identity' => [
                 'identity'      => ['tagline' => 'Politeknik Caltex Riau'],
                 'contact'       => [
                     'address'     => ['full' => '', 'maps_url' => '#'],
@@ -235,67 +207,6 @@ class SafeDataService
                 'social_media'  => [],
                 'menus'         => ['services' => [], 'academic' => []],
                 'copyright'     => ['full_text' => '© Politeknik Caltex Riau'],
-                'hero_cta'      => [
-                    ['text' => 'Profil PCR', 'url' => '#', 'class' => 'btn-default'],
-                    ['text' => 'Daftar Sekarang', 'url' => '#', 'class' => 'btn-default']
-                ],
-                'hints_section' => [
-                    'title'    => 'Petunjuk',
-                    'subtitle' => 'Ingin <span>mudah menemukan</span> lokasi Politeknik Caltex Riau?',
-                    'intro'    => 'Politeknik Caltex Riau memiliki lokasi yang strategis dan mudah diakses. Berikut adalah beberapa petunjuk untuk membantu Anda menemukan kampus kami dengan mudah.'
-                ]
-            ],
-            /**
-             * Added by DZB for tinta-kammpus section
-             */
-            'articles'         => [
-                'content'      => ['title' => 'Artikel', 'subtitle' => '', 'description' => ''],
-                'highlighted'  => [
-                    [
-                        'title'     => '',
-                        'timestamp' => '',
-                        'url'       => '',
-                        'images'    => [
-                            'main' => [
-                                'src' => '',
-                                'alt' => ''
-                            ]
-                        ]
-                    ]
-                ],
-                'newest'       => [
-                    'title'     => '',
-                    'timestamp' => '',
-                    'url'       => '',
-                    'images'    => [
-                        'main' => [
-                            'src' => '',
-                            'alt' => ''
-                        ]
-                    ]
-                ],
-                'achievements' => [
-                    'title'     => '',
-                    'timestamp' => '',
-                    'url'       => '',
-                    'images'    => [
-                        'main' => [
-                            'src' => '',
-                            'alt' => ''
-                        ]
-                    ]
-                ],
-                'researches'   => [
-                    'title'     => '',
-                    'timestamp' => '',
-                    'url'       => '',
-                    'images'    => [
-                        'main' => [
-                            'src' => '',
-                            'alt' => ''
-                        ]
-                    ]
-                ]
             ],
         ]);
     }
@@ -406,6 +317,28 @@ class SafeDataService
             'form'        => [
                 'action_url' => route('frontend.req.turnitin.send'),
             ]
+        ]);
+    }
+
+    public static function getPanduanFallbacks(): object
+    {
+        return self::createSafeStructure([
+            'header'       => 'Panduan',
+            'title'        => 'Panduan Perpustakaan',
+            'subtitle'     => 'Panduan Penggunaan Layanan Perpustakaan',
+            'description'  => 'Temukan berbagai panduan dan tutorial untuk memanfaatkan layanan perpustakaan.',
+            'panduan_list' => [],
+        ]);
+    }
+
+    public static function getFaqFallbacks(): object
+    {
+        return self::createSafeStructure([
+            'page_title'       => 'FAQ',
+            'page_subtitle'    => 'Frequently Asked Questions',
+            'page_description' => 'Temukan jawaban untuk pertanyaan yang sering diajukan.',
+            'faq_list'         => [],
+            'total_faq'        => 0,
         ]);
     }
 }

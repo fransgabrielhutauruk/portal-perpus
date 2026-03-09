@@ -235,7 +235,7 @@ class LandingService
                 ]
             ],
             'highlights' => [
-                'Ruang Baca - Area baca dengan kapasitas 50+ tempat duduk yang nyaman',
+                'Ruang Baca - Area baca dengan kapasitas 70+ tempat duduk yang nyaman',
                 'Pojok Internet - Akses internet gratis dengan 10 komputer publik',
                 'Pojok BI - Koleksi khusus publikasi Bank Indonesia',
                 'Area Diskusi/Kolaborasi - Ruang untuk diskusi kelompok dan kerja tim',
@@ -261,13 +261,13 @@ class LandingService
             'services' => [
                 [
                     'title' => 'Usulan Buku',
-                    'description' => 'Ajukan usulan pengadaan buku baru yang dibutuhkan untuk mendukung kegiatan pembelajaran dan penelitian Anda.',
+                    'description' => 'Ajukan usulan pengadaan buku baru yang dibutuhkan untuk mendukung kegiatan pembelajaran atau hobi Anda.',
                     'icon' => 'fa-solid fa-book',
                     'url' => route('frontend.req.buku'),
                 ],
                 [
                     'title' => 'Pengajuan Modul',
-                    'description' => 'Lakukan permintaan modul semester yang tersedia di perpustakaan untuk mendukung pembelajaran.',
+                    'description' => 'Dosen melakukan permintaan modul semester yang tersedia di perpustakaan untuk mendukung pembelajaran.',
                     'icon' => 'fa-solid fa-file-lines',
                     'url' => route('frontend.req.modul'),
                 ],

@@ -90,8 +90,51 @@ class PanduanService
                 'description' => $panduanData && $panduanData->deskripsi ? $panduanData->deskripsi : $meta['description'],
                 'keywords' => $meta['keywords'],
                 'canonical' => $panduanData ? route('frontend.panduan.show', ['panduanId' => $panduanData->panduan_id]) : route('frontend.panduan.index'),
-                'og_image' => null,
+                'og_image' => $bg,
                 'og_type' => 'website',
+                'structured_data' => self::getStructuredData($bg),
+                'breadcrumb_structured_data' => self::getBreadcrumbStructuredData()
+            ]
+        ];
+    }
+
+    /**
+     * Structured Data (JSON-LD)
+     */
+    public static function getStructuredData(string $bg): array
+    {
+        $meta = self::getMetaData();
+        return [
+            '@context'      => 'https://schema.org',
+            '@type'         => 'WebPage',
+            'name'          => $meta['title'],
+            'description'   => $meta['description'],
+            'image'         => $bg,
+            'url'           => route('frontend.panduan.index')
+        ];
+    }
+
+    /**
+     * Breadcrumb Data
+     */
+    public static function getBreadcrumbStructuredData(): array
+    {
+        return [
+            '@context' => 'https://schema.org',
+            '@type'    => 'BreadcrumbList',
+            'itemListElement' => [
+                [
+                    '@type' => 'ListItem',
+                    'position' => 1,
+                    'name' => 'Beranda',
+                    'item' => route('frontend.home')
+                ],
+                [
+                    '@type' => 'ListItem',
+                    'position' => 2,
+                    'name' => 'Panduan',
+                    'item' => route('frontend.panduan.index')
+                ]
             ]
         ];
     }

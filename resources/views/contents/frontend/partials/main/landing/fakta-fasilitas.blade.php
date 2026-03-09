@@ -1,11 +1,8 @@
-@props([
-    'noPadding' => false,
-])
 @php
     $data = data_get($statisticsData, 'data', []);
 @endphp
 
-<section class="company-growth fact-statistics-section bg-section {{ $noPadding ? 'p-0' : '' }}" id="fakta-fasilitas">
+<section class="company-growth fact-statistics-section bg-section" id="fakta-fasilitas">
     <div class="container">
         {{-- Header Section --}}
         <div class="row mb-4">
@@ -41,37 +38,33 @@
 
                 {{-- Statistics Items --}}
                 <div class="row fact-statistics-items wow fadeInUp mt-4" data-wow-delay="0.25s">
-                    @if (is_array($data) && count($data) > 0)
-                        @foreach ($data as $stat)
-                            <div class="col-xl-6 col-6">
-                                <div class="fact-statistics-item wow fadeInUp fact-statistics-item-sm"
-                                    data-wow-delay="{{ $stat['delay'] }}">
-                                    <div class="fact-statistics-icon"
-                                        style="width: 45px; height: 45px; font-size: 1.2rem;">
-                                        <i class="{{ $stat['icon'] }}"></i>
-                                    </div>
-                                    <div class="fact-statistics-content">
-                                        <h2 style="font-size: 1.5rem; margin-bottom: 0.25rem;">
-                                            @if (isset($stat['counter']) && $stat['counter'])
-                                                <span class="counter">{{ $stat['value'] }}</span>
-                                            @else
-                                                {{ $stat['value'] }}
-                                            @endif
-                                            {{ $stat['suffix'] ?? '' }}
-                                        </h2>
-                                        <p style="font-size: 0.85rem; margin-bottom: 0;">{{ $stat['label'] }}</p>
-                                    </div>
+                    @forelse ($data as $stat)
+                        <div class="col-xl-6 col-6">
+                            <div class="fact-statistics-item wow fadeInUp fact-statistics-item-sm"
+                                data-wow-delay="{{ $stat['delay'] }}">
+                                <div class="fact-statistics-icon" style="width: 45px; height: 45px; font-size: 1.2rem;">
+                                    <i class="{{ $stat['icon'] }}"></i>
+                                </div>
+                                <div class="fact-statistics-content">
+                                    <h2 style="font-size: 1.5rem; margin-bottom: 0.25rem;">
+                                        @if (!empty($stat['counter']))
+                                            <span class="counter">{{ $stat['value'] }}</span>
+                                        @else
+                                            {{ $stat['value'] }}
+                                        @endif
+                                        {{ $stat['suffix'] ?? '' }}
+                                    </h2>
+                                    <p style="font-size: 0.85rem; margin-bottom: 0;">{{ $stat['label'] }}</p>
                                 </div>
                             </div>
-                        @endforeach
-                    @else
-                        {{-- Fallback jika data tidak tersedia --}}
+                        </div>
+                    @empty
                         <div class="col-12">
                             <div class="text-center">
                                 <p>Data statistik sedang tidak tersedia.</p>
                             </div>
                         </div>
-                    @endif
+                    @endforelse
                 </div>
             </div>
         </div>

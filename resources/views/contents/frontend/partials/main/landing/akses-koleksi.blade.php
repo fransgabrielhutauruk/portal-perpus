@@ -40,7 +40,7 @@
                                             <div class="service-btn mt-auto">
                                                 <a href="{{ $item['url'] }}"
                                                     class="btn-default btn-highlighted akses-koleksi-btn"
-                                                    @if (isset($item['target'])) target="{{ $item['target'] }}" @endif>
+                                                    @isset($item['target']) target="{{ $item['target'] }}" @endisset>
                                                     Akses
                                                 </a>
                                             </div>
@@ -75,49 +75,3 @@
         </div>
     </div>
 </section>
-
-<style>
-    .akses-koleksi-section .service-item-content {
-        display: flex;
-        flex-direction: column;
-        height: 100%;
-    }
-
-    .akses-koleksi-btn {
-        padding: 15px 45px 15px 20px;
-        font-size: 14px;
-    }
-
-    @media (max-width: 767px) {
-        .akses-koleksi-section {
-            padding: 60px 0;
-        }
-
-        .akses-koleksi-section .icon-box {
-            width: 50px;
-            height: 50px;
-        }
-
-        .akses-koleksi-section .service-item-content h3 {
-            font-size: 16px;
-        }
-
-        .akses-koleksi-desc {
-            font-size: 14px;
-        }
-
-        .akses-koleksi-btn {
-            padding: 12px 40px 12px 16px;
-            font-size: 13px;
-            width: 100%;
-            text-align: center;
-        }
-    }
-
-    @media (max-width: 991px) and (min-width: 768px) {
-        .akses-koleksi-btn {
-            padding: 13px 42px 13px 18px;
-            font-size: 13px;
-        }
-    }
-</style>

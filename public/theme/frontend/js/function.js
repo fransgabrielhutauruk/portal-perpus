@@ -271,7 +271,7 @@
         let scrollTop = $window.scrollTop();
         if (scrollTop > 100) {
             $body.addClass("scroll-ready");
-        } else {
+        } else if (scrollTop < 60) {
             $body.removeClass("scroll-ready");
         }
         // Add class to main-header when scrolled down

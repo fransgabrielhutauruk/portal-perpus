@@ -1,4 +1,4 @@
-<section class="our-service bg-section bg-section berita-section">
+<section class="our-service bg-section berita-section">
     <div class="container z-2 position-relative">
         <div class="row">
             <div class="col-lg-4 mb-4 mb-lg-0">
@@ -25,10 +25,11 @@
 
             <div class="col-lg-8">
                 <section class="newest-section">
-                    @if (count(data_get($beritaData, 'highlighted', [])) > 0)
+                    @php $highlights = data_get($beritaData, 'highlighted', []); @endphp
+                    @if (count($highlights) > 0)
                         <div class="swiper" id="berita-swiper">
                             <div class="swiper-wrapper berita-swiper-wrapper">
-                                @foreach (data_get($beritaData, 'highlighted', []) as $highlight)
+                                @foreach ($highlights as $highlight)
                                     <div class="swiper-slide">
                                         <a href="{{ data_get($highlight, 'url') }}" data-cursor-text="Lihat">
                                             <div class="newest-slider-img">
@@ -55,66 +56,6 @@
         </div>
     </div>
 </section>
-
-<style>
-    .berita-swiper-wrapper {
-        height: 550px;
-    }
-
-    @media (max-width: 991px) {
-        .berita-section {
-            padding: 60px 0;
-        }
-
-        .berita-section .service-content {
-            position: static;
-            margin-right: 0;
-            text-align: center;
-        }
-
-        .berita-section .service-btn {
-            justify-content: center;
-            display: flex;
-        }
-
-        .berita-swiper-wrapper {
-            height: 450px;
-        }
-    }
-
-    @media (max-width: 767px) {
-        .berita-section {
-            padding: 50px 0;
-        }
-
-        .berita-swiper-wrapper {
-            height: 300px;
-        }
-
-        .berita-section .newest-slider-content h2 {
-            font-size: 16px;
-            line-height: 1.4;
-        }
-
-        .berita-section .newest-slider-content span {
-            font-size: 12px;
-        }
-    }
-
-    @media (max-width: 480px) {
-        .berita-swiper-wrapper {
-            height: 250px;
-        }
-
-        .berita-section .newest-slider-content {
-            padding: 12px;
-        }
-
-        .berita-section .newest-slider-content h2 {
-            font-size: 14px;
-        }
-    }
-</style>
 
 @push('script')
     <script>
