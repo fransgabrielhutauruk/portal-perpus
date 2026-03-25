@@ -14,7 +14,6 @@ use Illuminate\Support\Facades\Blade;
 
 class UserController extends Controller
 {
-    public function __construct() {}
 
     public function index()
     {
@@ -29,7 +28,7 @@ class UserController extends Controller
             Column::make(['width' => '5%', 'title' => 'No', 'data' => 'no', 'orderable' => false, 'searchable' => false, 'className' => 'text-center']),
             Column::make(['title' => 'Nama', 'data' => 'name']),
             Column::make(['title' => 'Email', 'data' => 'email']),
-            Column::make(['title' => 'Role', 'data' => 'role', 'orderable' => false, 'searchable' => false]),
+            Column::make(['title' => 'Role', 'data' => 'role', 'orderable' => true, 'searchable' => false]),
             Column::make(['width' => '15%', 'title' => 'Aksi', 'data' => 'action', 'orderable' => false, 'searchable' => false, 'className' => 'text-center']),
         ]);
 
@@ -76,13 +75,15 @@ class UserController extends Controller
             $data['data'] = $resp;
 
             return response()->json($data);
-        } else if ($param1 = 'detail') {
+        } elseif ($param1 == 'detail') {
             validate_and_response([
-                'id' => ['Paramater data', 'required'],
+                'id' => ['Parameter data', 'required'],
             ]);
+            
             $currData = User::findOrFail(decid($req->input('id')));
 
             $userData = $currData->toArray();
+            $userData['id'] = $req->input('id');
             $userData['role'] = $currData->roles->value('name') ?? '';
 
             return response()->json([
@@ -95,101 +96,93 @@ class UserController extends Controller
         }
     }
 
-    public function store(Request $req, $param1 = ''): JsonResponse
+    public function store(Request $req): JsonResponse
     {
-        if ($param1 == '') {
-            validate_and_response([
-                'name' => ['Nama', 'required'],
-                'email' => ['Email', 'required|email|unique:users,email'],
-                'role' => ['Role', 'required|exists:sys_roles,name'],
+        validate_and_response([
+            'name' => ['Nama', 'required|max:255'],
+            'email' => ['Email', 'required|email|max:255|unique:users,email'],
+            'role' => ['Role', 'required|exists:sys_roles,name'],
+        ]);
+
+        $data = [
+            'name' => clean_post('name'),
+            'email' => clean_post('email'),
+            'password' => bcrypt(uniqid()),
+        ];
+        $role = clean_post('role');
+
+        DB::beginTransaction();
+        try {
+            $inserted = User::create($data);
+            $inserted->assignRole($role);
+
+            DB::commit();
+            return response()->json([
+                'status' => true,
+                'message' => 'Pengguna berhasil ditambahkan.',
+                'data' => ['id' => encid($inserted->id)]
             ]);
-
-            $data['name'] = clean_post('name');
-            $data['email'] = clean_post('email');
-            $data['password'] = bcrypt(uniqid());
-            $role = clean_post('role');
-
-            DB::beginTransaction();
-            try {
-                $inserted = User::create($data);
-
-                $inserted->assignRole($role);
-
-                DB::commit();
-                return response()->json([
-                    'status' => true,
-                    'message' => 'Pengguna berhasil ditambah.',
-                    'data' => ['id' => encid($inserted->id)]
-                ]);
-            } catch (\Throwable $th) {
-                DB::rollback();
-                abort(404, 'Tambah data gagal, ' . $th->getMessage());
-            }
-        } else {
-            abort(404, 'Halaman tidak ditemukan');
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            abort(500, 'Tambah data gagal: ' . $th->getMessage());
         }
     }
 
-    public function destroy(Request $req, $param1 = ''): JsonResponse
+    public function update(Request $req): JsonResponse
     {
-        if ($param1 == '') {
-            validate_and_response([
-                'id' => ['Parameter data', 'required'],
+        validate_and_response([
+            'id' => ['Parameter data', 'required'],
+            'name' => ['Nama', 'required|max:255'],
+            'email' => ['Email', 'required|email|max:255'],
+            'role' => ['Role', 'required|exists:sys_roles,name'],
+        ]);
+
+        $id = decid($req->input('id'));
+        $currData = User::findOrFail($id);
+
+        $data = [
+            'name' => clean_post('name'),
+            'email' => clean_post('email'),
+        ];
+        $newRole = clean_post('role');
+
+        DB::beginTransaction();
+        try {
+            $currData->update($data);
+            $currData->syncRoles([$newRole]);
+            
+            DB::commit();
+            return response()->json([
+                'status' => true,
+                'message' => 'Pengguna berhasil diperbarui.',
+                'data' => ['id' => encid($id)]
             ]);
-
-            $currData = User::findOrFail(decid($req->input('id')));
-
-            DB::beginTransaction();
-            try {
-                $currData->delete();
-
-                DB::commit();
-                return response()->json([
-                    'status' => true,
-                    'message' => 'Data berhasil dihapus'
-                ]);
-            } catch (\Throwable $th) {
-                DB::rollback();
-                abort(404, 'Hapus data gagal, ' . $th->getMessage());
-            }
-        } else {
-            abort(404, 'Halaman tidak ditemukan');
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            abort(500, 'Update data gagal: ' . $th->getMessage());
         }
     }
 
-    public function update(Request $req, $param1 = ''): JsonResponse
+    public function destroy(Request $req): JsonResponse
     {
-        if ($param1 == '') {
-            validate_and_response([
-                'name' => ['Nama', 'required'],
-                'email' => ['Email', 'required|email'],
-                'role' => ['Role', 'required|exists:sys_roles,name'],
+        validate_and_response([
+            'id' => ['Parameter data', 'required'],
+        ]);
+
+        $currData = User::findOrFail(decid($req->input('id')));
+
+        DB::beginTransaction();
+        try {
+            $currData->delete();
+
+            DB::commit();
+            return response()->json([
+                'status' => true,
+                'message' => 'Pengguna berhasil dihapus.'
             ]);
-
-            $id = $req->input('id');
-            $currData = User::findOrFail($id);
-
-            $data['name'] = clean_post('name');
-            $data['email'] = clean_post('email');
-            $newRole = clean_post('role');
-
-            DB::beginTransaction();
-            try {
-                $currData->update($data);
-
-                $currData->syncRoles([$newRole]);
-                DB::commit();
-                return response()->json([
-                    'status' => true,
-                    'message' => 'Update data berhasil.',
-                    'data' => ['id' => $id]
-                ]);
-            } catch (\Throwable $th) {
-                DB::rollback();
-                abort(404, 'Update data gagal, ' . $th->getMessage());
-            }
-        } else {
-            abort(404, 'Halaman tidak ditemukan');
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            abort(500, 'Hapus data gagal: ' . $th->getMessage());
         }
     }
 }

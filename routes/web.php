@@ -45,7 +45,7 @@ Route::prefix('app')
         Route::post('/req-turnitin/reset', [App\Http\Controllers\Admin\ReqTurnitinController::class, 'reset'])->name('app.req-turnitin.reset');
         generalRoute(App\Http\Controllers\Admin\ReqTurnitinController::class, 'req-turnitin', 'app');
 
-        Route::middleware('role:' . UserRole::ADMIN->value)->group(function () {
+        Route::middleware('role:' . UserRole::SUPER_ADMIN->value)->group(function () {
             generalRoute(App\Http\Controllers\Admin\PustakawanController::class, 'pustakawan', 'app');
             generalRoute(App\Http\Controllers\Admin\ProdiController::class, 'prodi', 'app');
             generalRoute(App\Http\Controllers\Admin\UserController::class, 'user', 'app');

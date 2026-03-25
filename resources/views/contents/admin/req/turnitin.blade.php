@@ -80,7 +80,7 @@
     </x-modal>
 
     <x-modal id="modalDetail" type="centered" :static="true" size="lg" jf-modal="detail"
-        title="Detail Request Cek Turnitin">
+        title="Detail Request Cek Plagiarisme">
         <div class="modal-body p-0">
             <div class="table-responsive">
                 <table class="table table-row-bordered table-row-gray-300 gy-4 mb-0">
@@ -214,12 +214,7 @@
 
                     $('#detail-judul_dokumen').text(data.judul_dokumen || '-');
                     $('#detail-keterangan').text(data.keterangan || '-');
-
-                    // Jenis dokumen badge
-                    var jenisBadge = data.jenis_dokumen == 'skripsi' ?
-                        '<span class="badge badge-primary">Skripsi</span>' :
-                        '<span class="badge badge-info">Artikel</span>';
-                    $('#detail-jenis_dokumen').html(jenisBadge);
+                    $('#detail-jenis_dokumen').text(data.jenis_dokumen || '-');
 
                     // Handle file if exists
                     if (data.file_dokumen) {

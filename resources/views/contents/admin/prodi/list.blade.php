@@ -25,7 +25,7 @@
 
     <x-modal id="modalForm" type="centered" :static="true" size="" jf-modal="prodi" title="prodi">
         <form id="formData" class="needs-validation" jf-form="prodi">
-            <input type="hidden" name="prodi_id" value="">
+            <input type="hidden" name="id" value="">
             <x-form.input type="text" class="mb-2" name="nama_prodi" label="Nama prodi" required />
             <x-form.input type="text" class="mb-2" name="alias_prodi" label="Alias Prodi" required />
             <x-form.input type="text" class="mb-2" name="alias_jurusan" label="Alias Jurusan" required />

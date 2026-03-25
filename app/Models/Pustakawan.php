@@ -31,9 +31,9 @@ class Pustakawan extends Model
     protected static function boot()
     {
         parent::boot();
-        static::creating(function ($model) { $model->created_by = userInisial(); });
-        static::updating(function ($model) { $model->updated_by = userInisial(); });
-        static::deleting(function ($model) { $model->deleted_by = userInisial(); $model->update(); });
+        static::creating(function ($model) { $model->created_by = userName(); });
+        static::updating(function ($model) { $model->updated_by = userName(); });
+        static::deleting(function ($model) { $model->deleted_by = userName(); $model->update(); });
         static::restoring(function ($model) { $model->deleted_by = NULL; });
     }
 
@@ -46,7 +46,7 @@ class Pustakawan extends Model
             ->useLogName(env('APP_NAME'))
             ->setDescriptionForEvent(function ($eventName) {
                 $aksi = eventActivityLogBahasa($eventName);
-                return userInisial() . " {$aksi} table pustakawan";
+                return userName() . " {$aksi} table pustakawan";
             });
     }
 
@@ -68,6 +68,8 @@ class Pustakawan extends Model
         if (isset($filter['email'])) {
             $query->where('pustakawan.email', 'like', '%' . $filter['email'] . '%');
         }
+
+        $query->orderBy('pustakawan.created_at', 'desc');
 
         return $get ? $query->get() : $query;
     }

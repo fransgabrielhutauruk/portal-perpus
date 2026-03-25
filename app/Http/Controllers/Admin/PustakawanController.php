@@ -9,7 +9,6 @@ use Illuminate\Http\JsonResponse;
 use Yajra\DataTables\Html\Column;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Blade;
 
 class PustakawanController extends Controller
@@ -86,7 +85,6 @@ class PustakawanController extends Controller
         $data = [
             'nama' => clean_post('nama'),
             'email' => clean_post('email'),
-            'created_by' => Auth::id(),
         ];
 
         if ($req->hasFile('upload_foto')) {
@@ -127,7 +125,6 @@ class PustakawanController extends Controller
         $data = [
             'nama' => clean_post('nama'),
             'email' => clean_post('email'),
-            'updated_by' => Auth::id(),
         ];
 
         if ($req->hasFile('upload_foto')) {
@@ -164,7 +161,6 @@ class PustakawanController extends Controller
 
         DB::beginTransaction();
         try {
-            $currData->update(['deleted_by' => Auth::id()]);
             $currData->delete();
 
             DB::commit();
@@ -182,7 +178,7 @@ class PustakawanController extends Controller
     {
         if ($param1 == 'list') {
             $filter = [];
-            $data = DataTables::of(Pustakawan::getDataDetail($filter, false))->toArray();
+            $data = DataTables::of(Pustakawan::getDataDetail($filter))->toArray();
 
             $start = $req->input('start');
             $resp = [];
@@ -192,7 +188,7 @@ class PustakawanController extends Controller
                 $dt['no'] = ++$start;
                 
                 if ($value['foto']) {
-                    $dt['foto'] = '<img src="' . asset('uploads/pustakawan/' . $value['foto']) . '" alt="' . $value['nama'] . '" class="rounded" style="width: 50px; height: 50px; object-fit: cover;">';
+                    $dt['foto'] = '<img src="' . asset('uploads/pustakawan/' . $value['foto']) . '" alt="' . $value['nama'] . '" class="rounded" style="height: 100px; object-fit: cover;">';
                 } else {
                     $dt['foto'] = '<div class="avatar avatar-md"><div class="avatar-initial rounded bg-label-secondary"><i class="bi bi-person fs-3"></i></div></div>';
                 }

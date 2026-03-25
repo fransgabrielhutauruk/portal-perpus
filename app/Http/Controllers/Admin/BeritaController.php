@@ -110,6 +110,7 @@ class BeritaController extends Controller
     {
         validate_and_response([
             'judul_berita' => ['Judul Berita', 'required|max:255'],
+            'isi_berita' => ['Isi Berita', 'required'],
             'status_berita' => ['Status Berita', 'required|in:draft,published,archived'],
         ]);
 
@@ -124,7 +125,6 @@ class BeritaController extends Controller
             'meta_keyword_berita' => clean_post('meta_keyword_berita'),
             'meta_desc_berita' => clean_post('meta_desc_berita'),
             'user_id_author' => Auth::id(),
-            'created_by' => Auth::id(),
         ];
 
         if ($req->hasFile('upload_file')) {
@@ -176,7 +176,6 @@ class BeritaController extends Controller
             'meta_desc_berita' => clean_post('meta_desc_berita'),
             'meta_keyword_berita' => clean_post('meta_keyword_berita'),
             'slug_berita' => $slug_berita,
-            'updated_by' => Auth::id(),
         ];
 
         if ($req->hasFile('upload_file')) {
@@ -213,7 +212,6 @@ class BeritaController extends Controller
 
         DB::beginTransaction();
         try {
-            $currData->update(['deleted_by' => Auth::id()]);
             $currData->delete();
 
             DB::commit();
@@ -231,7 +229,7 @@ class BeritaController extends Controller
     {
         if ($param1 == 'list') {
             $filter = [];
-            $data = DataTables::of(Berita::getDataDetail($filter, false))->toArray();
+            $data = DataTables::of(Berita::getDataDetail($filter, true))->toArray();
 
             $start = $req->input('start');
             $resp = [];
@@ -239,10 +237,9 @@ class BeritaController extends Controller
                 $dt = [];
 
                 $dt['no'] = ++$start;
-                $dt['judul_berita'] = $value['judul_berita'] ?? '-';
                 $dt['tanggal_berita'] = $value['tanggal_berita'] ? tanggal($value['tanggal_berita'], ' ') : '-';
                 $dt['status_berita'] = $value['status_berita'] ?? '-';
-                $dt['author_name'] = $value['author_name'] ?? '-';
+                $dt['judul_berita'] = $value['judul_berita'] ?? '-';
                 $dt['filename_berita'] = publicMedia($value['filename_berita'], 'berita');
                 $dt['slug_berita'] = $value['slug_berita'] ?? '#';
                 $dt['url_berita'] = $value['slug_berita'] ? url('berita/' . $value['slug_berita']) : '#';

@@ -14,6 +14,17 @@
             <div class="col-md">
                 <x-table.dttable :builder="$pageData->dataTable" class="align-middle" :responsive="false" jf-data="bebas-pustaka"
                     jf-list="datatable">
+                    @slot('action')
+                        <div class="d-flex align-items-center gap-3 text-nowrap py-4">
+                            <label class="form-label fs-7 fw-bold mb-0">Periode:</label>
+                            <select id="filter_periode_id" class="form-select form-select-sm" style="min-width: 280px;">
+                                <option value="all">Semua Periode</option>
+                                @foreach ($pageData->periodeReqBebasPustaka as $periode)
+                                    <option value="{{ $periode->periode_id }}">{{ $periode->nama_periode }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    @endslot
                 </x-table.dttable>
             </div>
         </div>
@@ -96,20 +107,16 @@
                             <td class="fw-bold">Program Studi</td>
                             <td><span id="detail-prodi">-</span></td>
                         </tr>
-                        <tr>
-                            <td class="fw-bold">Syarat Terpenuhi</td>
-                            <td><span id="detail-syarat_terpenuhi">-</span></td>
-                        </tr>
                         <tr id="row-link-kp" style="display:none;">
                             <td class="fw-bold">Link Repository KP</td>
                             <td><a id="detail-link_kp_repository" href="#" target="_blank"
-                                    class="btn btn-sm btn-light-info"><i class="ki-outline ki-link"></i> Buka Link KP</a>
+                                    class="text-primary">Buka Link KP</a>
                             </td>
                         </tr>
                         <tr id="row-link-pa" style="display:none;">
                             <td class="fw-bold">Link Repository PA</td>
                             <td><a id="detail-link_pa_repository" href="#" target="_blank"
-                                    class="btn btn-sm btn-light-info"><i class="ki-outline ki-link"></i> Buka Link PA</a>
+                                    class="text-primary">Buka Link PA</a>
                             </td>
                         </tr>
                     </tbody>
@@ -165,9 +172,26 @@
             base_url: `{{ route('app.req-bebas-pustaka.index') }}`
         });
 
+        let bebasPustakaTableInstance = null;
+        $(document).ready(function() {
+            const tableId = '{{ $pageData->dataTable->getTableId() }}';
+            bebasPustakaTableInstance = $('#' + tableId).DataTable();
+
+            bebasPustakaTableInstance.settings()[0].ajax.data = function(d) {
+                d.filter_periode_id = $('#filter_periode_id').val() || 'all';
+            };
+
+            $('#filter_periode_id').on('change', function() {
+                bebasPustakaTableInstance.ajax.reload(null, false);
+            });
+        });
+
         // Detail modal handler
         $(document).on('click', '[jf-data="bebas-pustaka"] [jf-detail]', function() {
-            var detailId = $(this).attr('jf-detail');
+            var detailId = parseInt($(this).attr('jf-detail'), 10) || 0;
+            if (!detailId) {
+                return;
+            }
 
             ajaxRequest({
                 link: '{{ route('app.req-bebas-pustaka.data') }}/detail',
@@ -185,30 +209,31 @@
                     // Handle repository links
                     if (data.link_kp_repository) {
                         $('#row-link-kp').show();
-                        $('#detail-link_kp_repository').attr('href', data.link_kp_repository);
+                        $('#detail-link_kp_repository')
+                            .attr('href', data.link_kp_repository)
+                            .text(data.link_kp_repository);
                     } else {
+                        $('#detail-link_kp_repository').attr('href', '#').text('Buka Link KP');
                         $('#row-link-kp').hide();
                     }
 
                     if (data.link_pa_repository) {
                         $('#row-link-pa').show();
-                        $('#detail-link_pa_repository').attr('href', data.link_pa_repository);
+                        $('#detail-link_pa_repository')
+                            .attr('href', data.link_pa_repository)
+                            .text(data.link_pa_repository);
                     } else {
+                        $('#detail-link_pa_repository').attr('href', '#').text('Buka Link PA');
                         $('#row-link-pa').hide();
                     }
-
-                    // Syarat terpenuhi badge
-                    var syaratBadge = data.is_syarat_terpenuhi ?
-                        '<span class="badge badge-success">Terpenuhi</span>' :
-                        '<span class="badge badge-warning">Belum Terpenuhi</span>';
-                    $('#detail-syarat_terpenuhi').html(syaratBadge);
 
                     // Handle file if exists
                     if (data.file_hasil_bebas_pustaka) {
                         $('#row-file').show();
-                        $('#detail-file').attr('href', data.file_url || '/storage/' + data
-                            .file_hasil_bebas_pustaka);
+                        $('#detail-file').attr('href',
+                            '{{ route('app.req-bebas-pustaka.download') }}?reqbebaspustaka_id=' + detailId);
                     } else {
+                        $('#detail-file').attr('href', '#');
                         $('#row-file').hide();
                     }
 
@@ -220,12 +245,14 @@
                         $('#detail-actions-pending').data('id', detailId);
                         $('#detail-actions-reset').hide();
                         $('#row-catatan-admin').hide();
+                        $('#detail-catatan_admin').text('-');
                     } else if (data.status_req == 1) {
                         statusBadge = '<span class="badge badge-success">Disetujui</span>';
                         $('#detail-actions-pending').hide();
                         $('#detail-actions-reset').show();
                         $('#detail-actions-reset').data('id', detailId);
                         $('#row-catatan-admin').hide();
+                        $('#detail-catatan_admin').text('-');
                     } else if (data.status_req == -1) {
                         statusBadge = '<span class="badge badge-danger">Ditolak</span>';
                         $('#detail-actions-pending').hide();

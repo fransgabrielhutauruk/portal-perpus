@@ -30,7 +30,7 @@
                 icon="ki-outline ki-shield-tick" :active="$pageData->activeMenu == 'req-turnitin'" />
         @endif
 
-        @if (auth()->user()->hasAnyRole([UserRole::ADMIN->value]))
+        @if (auth()->user()->hasAnyRole([UserRole::SUPER_ADMIN->value]))
             <div class="separator separator-dashed border-gray-10 my-2"></div>
             <x-theme.menu link="{{ route('app.pustakawan.index') }}" text="Pustakawan" icon="ki-outline ki-profile-user"
                 :active="$pageData->activeMenu == 'pustakawan'" />

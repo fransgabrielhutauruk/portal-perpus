@@ -27,9 +27,9 @@ class Faq extends Model
     protected static function boot()
     {
         parent::boot();
-        static::creating(function ($model) { $model->created_by = userInisial(); });
-        static::updating(function ($model) { $model->updated_by = userInisial(); });
-        static::deleting(function ($model) { $model->deleted_by = userInisial(); $model->update(); });
+        static::creating(function ($model) { $model->created_by = userName(); });
+        static::updating(function ($model) { $model->updated_by = userName(); });
+        static::deleting(function ($model) { $model->deleted_by = userName(); $model->update(); });
         static::restoring(function ($model) { $model->deleted_by = NULL; });
     }
 
@@ -42,7 +42,7 @@ class Faq extends Model
             ->useLogName(env('APP_NAME'))
             ->setDescriptionForEvent(function ($eventName) {
                 $aksi = eventActivityLogBahasa($eventName);
-                return userInisial() . " {$aksi} table faq";
+                return userName() . " {$aksi} table faq";
             });
     }
 

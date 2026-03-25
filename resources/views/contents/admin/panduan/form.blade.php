@@ -25,8 +25,8 @@
                         <x-form.textarea class="mb-2" rows="5" label="Deskripsi" name="deskripsi">{{ $pageData->dataPanduan['deskripsi'] }}</x-form.textarea>
                         
                         <div class="mb-2">
-                            <label class="form-label">File Panduan (PDF)</label>
-                            <input type="file" class="form-control" name="upload_file" accept=".pdf">
+                            <label class="form-label">File Panduan (PDF) <span class="text-danger">*</span></label>
+                            <input type="file" class="form-control" name="upload_file" accept=".pdf" required>
                             <div class="form-text">Format: PDF | Maksimal: 10 MB</div>
                             
                             @if ($pageData->dataPanduan['file_path'])

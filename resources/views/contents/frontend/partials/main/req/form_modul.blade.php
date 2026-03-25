@@ -322,9 +322,9 @@
                                 <tbody>
                                     @forelse(data_get($content, 'history', []) as $item)
                                         <tr>
-                                            <td>{{ tanggal($item->created_at, ' ') }}</td>
-                                            <td>{{ $item->nama_dosen }}</td>
-                                            <td>
+                                            <td class="align-middle">{{ tanggal($item->created_at, ' ') }}</td>
+                                            <td class="align-middle">{{ $item->nama_dosen }}</td>
+                                            <td class="align-middle">
                                                 {{ $item->nama_mata_kuliah }}
                                                 @if ($item->praktikum)
                                                     <span
@@ -334,8 +334,8 @@
                                                         class="badge bg-secondary text-light border ms-md-2">Teori</span>
                                                 @endif
                                             </td>
-                                            <td>{{ $item->judul_modul }}</td>
-                                            <td class="text-center">
+                                            <td class="align-middle">{{ $item->judul_modul }}</td>
+                                            <td class="text-center align-middle">
                                                 @if ($item->status_req == -1)
                                                     {!! $item->status_badge !!}
                                                     @if ($item->catatan_admin)
@@ -514,11 +514,11 @@
 
         tbody.insertAdjacentHTML('afterbegin', `
             <tr class="table-success">
-                <td>${data.date_fmt}</td>
-                <td>${data.nama_dosen}</td>
-                <td>${data.nama_mata_kuliah} ${jenisBadge}</td>
-                <td>${data.judul_modul}</td>
-                <td class="text-center">${statusBadges[data.status_req] || statusBadges.default}</td>
+                <td class="align-middle">${data.date_fmt}</td>
+                <td class="align-middle">${data.nama_dosen}</td>
+                <td class="align-middle">${data.nama_mata_kuliah} ${jenisBadge}</td>
+                <td class="align-middle">${data.judul_modul}</td>
+                <td class="text-center align-middle">${statusBadges[data.status_req] || statusBadges.default}</td>
             </tr>`);
 
         setTimeout(() => tbody.querySelector('tr.table-success')?.classList.remove('table-success'), 2000);

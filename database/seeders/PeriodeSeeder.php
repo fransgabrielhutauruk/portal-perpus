@@ -2,9 +2,9 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
 use App\Models\Periode;
 use Carbon\Carbon;
+use Illuminate\Database\Seeder;
 
 class PeriodeSeeder extends Seeder
 {
@@ -16,19 +16,19 @@ class PeriodeSeeder extends Seeder
         $periodes = [
             [
                 'nama_periode' => 'Periode Usulan Buku Semester Genap 2025/2026',
-                'jenis_periode' => 'req_buku',
+                'jenis_periode' => Periode::TYPE_REQ_BUKU,
                 'tanggal_mulai' => Carbon::now()->startOfMonth(),
                 'tanggal_selesai' => Carbon::now()->endOfMonth(),
             ],
             [
                 'nama_periode' => 'Periode Kebutuhan Modul Semester Genap 2025/2026',
-                'jenis_periode' => 'req_modul',
+                'jenis_periode' => Periode::TYPE_REQ_MODUL,
                 'tanggal_mulai' => Carbon::now()->startOfMonth(),
                 'tanggal_selesai' => Carbon::now()->endOfMonth(),
             ],
             [
                 'nama_periode' => 'Periode Bebas Pustaka Wisuda Februari 2026',
-                'jenis_periode' => 'req_bebas_pustaka',
+                'jenis_periode' => Periode::TYPE_REQ_BEBAS_PUSTAKA,
                 'tanggal_mulai' => Carbon::now()->startOfMonth(),
                 'tanggal_selesai' => Carbon::now()->addMonths(2)->endOfMonth(),
             ],

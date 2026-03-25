@@ -37,9 +37,9 @@ class Berita extends Model
     protected static function boot()
     {
         parent::boot();
-        static::creating(function ($model) { $model->created_by = userInisial(); });
-        static::updating(function ($model) { $model->updated_by = userInisial(); });
-        static::deleting(function ($model) { $model->deleted_by = userInisial(); $model->update(); });
+        static::creating(function ($model) { $model->created_by = userName(); });
+        static::updating(function ($model) { $model->updated_by = userName(); });
+        static::deleting(function ($model) { $model->deleted_by = userName(); $model->update(); });
         static::restoring(function ($model) { $model->deleted_by = NULL; });
     }
 
@@ -52,7 +52,7 @@ class Berita extends Model
             ->useLogName(env('APP_NAME'))
             ->setDescriptionForEvent(function ($eventName) {
                 $aksi = eventActivityLogBahasa($eventName);
-                return userInisial() . " {$aksi} table berita";
+                return userName() . " {$aksi} table berita";
             });
     }
 
@@ -72,6 +72,8 @@ class Berita extends Model
         if (isset($filter['status_berita'])) {
             $query->where('berita.status_berita', $filter['status_berita']);
         }
+
+        $query->orderBy('berita.created_at', 'desc');
 
         if ($get) {
             return $query->get();

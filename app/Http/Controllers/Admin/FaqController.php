@@ -10,7 +10,6 @@ use Illuminate\Http\JsonResponse;
 use Yajra\DataTables\Html\Column;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Blade;
 
 class FaqController extends Controller
@@ -84,7 +83,6 @@ class FaqController extends Controller
         $data = [
             'pertanyaan' => clean_post('pertanyaan'),
             'jawaban' => clean_post('jawaban'),
-            'created_by' => Auth::id(),
         ];
 
         DB::beginTransaction();
@@ -117,7 +115,6 @@ class FaqController extends Controller
         $data = [
             'pertanyaan' => clean_post('pertanyaan'),
             'jawaban' => clean_post('jawaban'),
-            'updated_by' => Auth::id(),
         ];
 
         DB::beginTransaction();
@@ -142,13 +139,10 @@ class FaqController extends Controller
             'id' => ['Parameter data', 'required']
         ]);
 
-        $id = decid($req->input('id'));
-        $currData = Faq::findOrFail($id);
+        $currData = Faq::findOrFail(decid($req->input('id')));
 
         DB::beginTransaction();
         try {
-            $currData->deleted_by = Auth::id();
-            $currData->save();
             $currData->delete();
 
             DB::commit();

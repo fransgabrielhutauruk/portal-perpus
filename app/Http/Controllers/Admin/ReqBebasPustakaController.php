@@ -3,17 +3,18 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Enums\StatusRequest;
-use App\Models\Kaperpus;
-use App\Models\ReqBebasPustaka;
-use Illuminate\Http\Request;
-use Yajra\DataTables\DataTables;
-use Illuminate\Http\JsonResponse;
-use Yajra\DataTables\Html\Column;
-use Illuminate\Support\Facades\DB;
-use Spatie\Permission\Models\Role;
 use App\Http\Controllers\Controller;
+use App\Models\Kaperpus;
+use App\Models\Periode;
+use App\Models\ReqBebasPustaka;
+use Carbon\Carbon;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\DB;
 use PhpOffice\PhpWord\TemplateProcessor;
+use Yajra\DataTables\DataTables;
+use Yajra\DataTables\Html\Column;
 
 class ReqBebasPustakaController extends Controller
 {
@@ -23,12 +24,17 @@ class ReqBebasPustakaController extends Controller
         $this->activeMenu = 'req-bebas-pustaka';
         $this->breadCrump[] = ['title' => 'Request Bebas Pustaka', 'link' => url()->current()];
 
-        $roles = Role::all();
+        $periodeReqBebasPustaka = Periode::query()
+            ->select(['periode_id', 'nama_periode'])
+            ->where('jenis_periode', Periode::TYPE_REQ_BEBAS_PUSTAKA)
+            ->whereNull('deleted_at')
+            ->orderBy('tanggal_mulai', 'desc')
+            ->get();
 
         $builder = app('datatables.html');
         $dataTable = $builder->serverSide(true)->ajax(route('app.req-bebas-pustaka.data') . '/list')->columns([
             Column::make(['title' => 'No', 'data' => 'no']),
-            Column::make(['title' => 'Dikirim Pada', 'data' => 'dikirim_pada']),
+            Column::make(['title' => 'Dikirim Pada', 'data' => 'dikirim_pada', 'orderable' => false]),
             Column::make(['title' => 'Nama Mahasiswa', 'data' => 'nama_mahasiswa']),
             Column::make(['title' => 'NIM', 'data' => 'nim']),
             Column::make(['title' => 'Prodi', 'data' => 'prodi_nama']),
@@ -39,25 +45,22 @@ class ReqBebasPustakaController extends Controller
 
         $this->dataView([
             'dataTable' => $dataTable,
-            'roles' => $roles
+            'periodeReqBebasPustaka' => $periodeReqBebasPustaka,
         ]);
 
         return $this->view('admin.req.bebas_pustaka');
     }
 
-    public function show($param1 = '', $param2 = '')
+    public function show(string $param1 = '', string $param2 = '')
     {
-        // Kaperpus data list (DataTable AJAX)
         if ($param1 == 'kaperpus' && $param2 == 'list') {
             return $this->kaperpusData(request());
         }
 
-        // Kaperpus set active
         if ($param1 == 'kaperpus' && $param2 == 'set-active') {
             return $this->kaperpusSetActive(request());
         }
 
-        // Kaperpus page view
         if ($param1 == 'kaperpus' && $param2 == '') {
             $this->title = 'Kelola Kaperpus';
             $this->activeMenu = 'kaperpus';
@@ -83,22 +86,19 @@ class ReqBebasPustakaController extends Controller
         abort(404, 'Halaman tidak ditemukan');
     }
 
-    // ========================
-    // KAPERPUS CRUD METHODS
-    // ========================
 
     private function kaperpusData(Request $req): JsonResponse
     {
         $filter = [];
         $data = DataTables::of(Kaperpus::getDataDetail($filter, get: true))->toArray();
-        $start = $req->input('start');
+        $start = (int) $req->input('start', 0);
         $resp = [];
-        foreach ($data['data'] as $key => $value) {
+        foreach ($data['data'] as $value) {
             $dt = [];
 
             $dt['no'] = ++$start;
             $dt['nama_kaperpus'] = $value['nama_kaperpus'] ?? '-';
-            $dt['ttd_kaperpus'] = '<img src="' . publicMedia($value['ttd_kaperpus'], 'ttd_kaperpus') . '" class="w-150px">';
+            $dt['ttd_kaperpus'] = '<img src="' . publicMedia($value['ttd_kaperpus'], 'ttd_kaperpus') . '" style="height: 100px; object-fit:cover;">';
 
             $dt['status'] = $value['is_active']
                 ? '<span class="badge badge-success">Aktif</span>'
@@ -137,11 +137,9 @@ class ReqBebasPustakaController extends Controller
 
         DB::beginTransaction();
         try {
-            // Nonaktifkan semua kaperpus
             Kaperpus::where('is_active', true)->update(['is_active' => false]);
 
-            // Aktifkan yang dipilih
-            $kaperpus = Kaperpus::findOrFail($req->input('kaperpus_id'));
+            $kaperpus = Kaperpus::findOrFail((int) $req->input('kaperpus_id'));
             $kaperpus->is_active = true;
             $kaperpus->save();
 
@@ -151,29 +149,30 @@ class ReqBebasPustakaController extends Controller
                 'message' => 'Kaperpus berhasil diaktifkan.'
             ]);
         } catch (\Throwable $th) {
-            DB::rollback();
-            abort(404, 'Gagal mengaktifkan kaperpus, ' . $th->getMessage());
+            DB::rollBack();
+            abort(500, 'Gagal mengaktifkan kaperpus: ' . $th->getMessage());
         }
     }
 
-    public function store(Request $req, $param1 = ''): JsonResponse
+    public function store(Request $req, string $param1 = ''): JsonResponse
     {
         if ($param1 == 'kaperpus') {
             validate_and_response([
                 'nama_kaperpus' => ['Nama Kaperpus', 'required'],
+                'ttd_kaperpus' => ['Tanda Tangan', 'required|image|mimes:jpg,jpeg,png|max:2048'],
             ]);
 
-            $data['nama_kaperpus'] = clean_post('nama_kaperpus');
-            $data['is_active'] = false;
-
-            // if ($req->hasFile('ttd_kaperpus')) {
-            //     $data['ttd_kaperpus'] = $req->file('ttd_kaperpus')->store('uploads/kaperpus', 'public');
-            // }
+            $data = [
+                'nama_kaperpus' => clean_post('nama_kaperpus'),
+                'is_active' => false,
+            ];
 
             if ($req->hasFile('ttd_kaperpus')) {
                 $do_upload = uploadMedia('ttd_kaperpus', 'ttd_kaperpus');
-                if (!$do_upload['status'])
+                if (!$do_upload['status']) {
                     abort(500, 'Update data gagal, ' . $do_upload['message']);
+                }
+
                 $data['ttd_kaperpus'] = $do_upload['data']['filename'];
             }
 
@@ -188,30 +187,35 @@ class ReqBebasPustakaController extends Controller
                     'data' => ['kaperpus_id' => encid($inserted->kaperpus_id)]
                 ]);
             } catch (\Throwable $th) {
-                DB::rollback();
-                abort(404, 'Tambah data gagal, ' . $th->getMessage());
+                DB::rollBack();
+                abort(500, 'Tambah data gagal: ' . $th->getMessage());
             }
         }
 
         abort(404, 'Halaman tidak ditemukan');
     }
 
-    public function update(Request $req, $param1 = ''): JsonResponse
+    public function update(Request $req, string $param1 = ''): JsonResponse
     {
         if ($param1 == 'kaperpus') {
             validate_and_response([
+                'kaperpus_id' => ['Parameter data', 'required'],
                 'nama_kaperpus' => ['Nama Kaperpus', 'required'],
             ]);
 
-            $id = $req->input('kaperpus_id');
+            $id = (int) $req->input('kaperpus_id');
             $currData = Kaperpus::findOrFail($id);
 
-            $data['nama_kaperpus'] = $req->input('nama_kaperpus');
+            $data = [
+                'nama_kaperpus' => clean_post('nama_kaperpus'),
+            ];
 
             if ($req->hasFile('ttd_kaperpus')) {
                 $do_upload = uploadMedia('ttd_kaperpus', 'ttd_kaperpus');
-                if (!$do_upload['status'])
+                if (!$do_upload['status']) {
                     abort(500, 'Update data gagal, ' . $do_upload['message']);
+                }
+
                 $data['ttd_kaperpus'] = $do_upload['data']['filename'];
             }
 
@@ -226,23 +230,34 @@ class ReqBebasPustakaController extends Controller
                     'data' => ['kaperpus_id' => $id]
                 ]);
             } catch (\Throwable $th) {
-                DB::rollback();
-                abort(404, 'Update data gagal, ' . $th->getMessage());
+                DB::rollBack();
+                abort(500, 'Update data gagal: ' . $th->getMessage());
             }
         }
 
         abort(404, 'Halaman tidak ditemukan');
     }
 
-    public function data(Request $req, $param1 = '', $param2 = ''): JsonResponse
+    /**
+     * Return req bebas pustaka and kaperpus detail payload.
+     */
+    public function data(Request $req, string $param1 = '', string $param2 = ''): JsonResponse
     {
         if ($param1 == 'list') {
             $filter = [];
-            $data = DataTables::of(ReqBebasPustaka::getDataDetail($filter, get: true))->toArray();
-            $start = $req->input('start');
+            $filterPeriodeId = (string) $req->input('filter_periode_id', 'all');
+
+            if ($filterPeriodeId !== 'all' && !ctype_digit($filterPeriodeId)) {
+                $filterPeriodeId = 'all';
+            }
+
+            $data = DataTables::of(ReqBebasPustaka::getDataDetail($filter, get: true, periodeId: $filterPeriodeId))->toArray();
+            $start = (int) $req->input('start', 0);
             $resp = [];
-            foreach ($data['data'] as $key => $value) {
+            foreach ($data['data'] as $value) {
                 $dt = [];
+                $id = (int) ($value['reqbebaspustaka_id'] ?? 0);
+                $statusReq = (int) ($value['status_req'] ?? StatusRequest::MENUNGGU->value);
 
                 $dt['no'] = ++$start;
                 $dt['dikirim_pada'] = $value['created_at'] ? date('d-m-Y H:i', strtotime($value['created_at'])) : '-';
@@ -251,24 +266,21 @@ class ReqBebasPustakaController extends Controller
                 $dt['prodi_nama'] = $value['nama_prodi'] ?? '-';
                 $dt['bukti'] = '<a href="' . ($value['link_kp_repository'] ?? '#') . '" target="_blank">Link Repository KP</a><br>' .
                     '<a href="' . ($value['link_pa_repository'] ?? '#') . '" target="_blank">Link Repository PA</a>';
-                $dt['status'] = ReqBebasPustaka::getStatusBadge($value['status_req'] ?? null);
-
-                $bebasPustaka = ReqBebasPustaka::find($value['reqbebaspustaka_id']);
-                $id = $value['reqbebaspustaka_id'];
+                $dt['status'] = ReqBebasPustaka::getStatusBadge($statusReq);
 
                 $dataAction = [
                     'id'  => encid($id),
                     'btn' => [],
                 ];
 
-                if ($bebasPustaka && $bebasPustaka->status_req == StatusRequest::MENUNGGU->value) {
+                if ($statusReq === StatusRequest::MENUNGGU->value) {
                     $dataAction['btn'] = [
                         ['action' => 'detail', 'attr' => ['jf-detail' => $id]],
                         ['action' => 'approve', 'attr' => ['jf-approve' => $id]],
                         ['action' => 'reject', 'attr' => ['jf-reject' => $id]],
                         ['action' => 'delete', 'attr' => ['jf-delete' => $id]],
                     ];
-                } elseif ($bebasPustaka && $bebasPustaka->status_req == StatusRequest::DISETUJUI->value) {
+                } elseif ($statusReq === StatusRequest::DISETUJUI->value) {
                     $dataAction['btn'] = [
                         ['action' => 'detail', 'attr' => ['jf-detail' => $id]],
                         ['action' => 'download', 'attr' => ['jf-download' => $id], 'label' => 'Download DOCX'],
@@ -288,10 +300,13 @@ class ReqBebasPustakaController extends Controller
             $data['data'] = $resp;
 
             return response()->json($data);
-        } else if ($param1 == 'detail' && $param2 == 'kaperpus') {
+        }
+
+        if ($param1 == 'detail' && $param2 == 'kaperpus') {
             validate_and_response([
                 'id' => ['Parameter data', 'required'],
             ]);
+
             $currData = Kaperpus::findOrFail(decid($req->input('id')));
 
             return response()->json([
@@ -299,11 +314,14 @@ class ReqBebasPustakaController extends Controller
                 'message' => 'Data loaded',
                 'data' => $currData->toArray()
             ]);
-        } else if ($param1 == 'detail') {
+        }
+
+        if ($param1 == 'detail') {
             validate_and_response([
                 'reqbebaspustaka_id' => ['Parameter data', 'required'],
             ]);
-            $currData = ReqBebasPustaka::with('prodi')->findOrFail($req->input('reqbebaspustaka_id'));
+
+            $currData = ReqBebasPustaka::with('prodi')->findOrFail((int) $req->input('reqbebaspustaka_id'));
 
             $userData = $currData->toArray();
             $userData['prodi_nama'] = $currData->prodi->nama_prodi ?? '-';
@@ -317,9 +335,9 @@ class ReqBebasPustakaController extends Controller
                 'message' => 'Data loaded',
                 'data' => $userData
             ]);
-        } else {
-            abort(404, 'Halaman tidak ditemukan');
         }
+
+        abort(404, 'Halaman tidak ditemukan');
     }
 
     public function approve(Request $req): JsonResponse
@@ -328,22 +346,30 @@ class ReqBebasPustakaController extends Controller
             'reqbebaspustaka_id' => ['ID Request Bebas Pustaka', 'required'],
         ]);
 
-        $bebasPustaka = ReqBebasPustaka::with('periode', 'prodi')->findOrFail($req->input('reqbebaspustaka_id'));
+        $bebasPustaka = ReqBebasPustaka::with('periode', 'prodi')->findOrFail((int) $req->input('reqbebaspustaka_id'));
 
-        //    1. LOAD TEMPLATE DOCX
         $templatePath = storage_path('app/private/template_bebas_pustaka.docx');
+        if (!file_exists($templatePath)) {
+            abort(500, 'Template surat bebas pustaka tidak ditemukan.');
+        }
+
+        $privateDir = storage_path('app/private');
+        if (!is_dir($privateDir) && !mkdir($privateDir, 0755, true) && !is_dir($privateDir)) {
+            abort(500, 'Gagal menyiapkan folder penyimpanan dokumen.');
+        }
+
+        DB::beginTransaction();
+        try {
         $templateProcessor = new TemplateProcessor($templatePath);
 
-        //    2. REPLACE PLACEHOLDER
         $templateProcessor->setValue('nama', $bebasPustaka->nama_mahasiswa);
         $templateProcessor->setValue('nim', $bebasPustaka->nim ?? '-');
         $templateProcessor->setValue('prodi', $bebasPustaka->prodi->nama_prodi ?? '-');
-        $templateProcessor->setValue('tahun', $bebasPustaka->periode->tanggal_selesai ? \Carbon\Carbon::parse($bebasPustaka->periode->tanggal_selesai)->format('Y') : '-');
+        $templateProcessor->setValue('tahun', $bebasPustaka->periode->tanggal_selesai ? Carbon::parse($bebasPustaka->periode->tanggal_selesai)->format('Y') : '-');
         $templateProcessor->setValue('tanggal', tanggal(now(), ' ', false) ?? '-');
         $kaperpus = Kaperpus::getActive();
         $templateProcessor->setValue('kaperpus', $kaperpus ? $kaperpus->nama_kaperpus : '-');
 
-        // Set tanda tangan jika ada
         if ($kaperpus && $kaperpus->ttd_kaperpus && file_exists(storage_path('app/public/ttd_kaperpus/' . $kaperpus->ttd_kaperpus))) {
             $templateProcessor->setImageValue('ttd_kaperpus', [
                 'path' => storage_path('app/public/ttd_kaperpus/' . $kaperpus->ttd_kaperpus),
@@ -352,16 +378,20 @@ class ReqBebasPustakaController extends Controller
             ]);
         }
 
-        //    3. SAVE DOCX RESULT
         $docxName = 'bebas_pustaka_' . $bebasPustaka->nim . '_' . time() . '.docx';
         $docxPath = storage_path('app/private/' . $docxName);
         $templateProcessor->saveAs($docxPath);
 
-        //    4. UPDATE DATABASE
         $bebasPustaka->file_hasil_bebas_pustaka = 'storage/private/' . $docxName;
         $bebasPustaka->status_req = StatusRequest::DISETUJUI->value;
         $bebasPustaka->is_syarat_terpenuhi = true;
         $bebasPustaka->save();
+
+        DB::commit();
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            abort(500, 'Proses persetujuan gagal: ' . $th->getMessage());
+        }
 
         return response()->json([
             'status' => true,
@@ -376,10 +406,18 @@ class ReqBebasPustakaController extends Controller
             'catatan_admin' => ['Alasan Penolakan', 'required'],
         ]);
 
-        $bebasPustaka = ReqBebasPustaka::findOrFail($req->input('reqbebaspustaka_id'));
-        $bebasPustaka->status_req = StatusRequest::DITOLAK->value;
-        $bebasPustaka->catatan_admin = $req->input('catatan_admin') ?? '-';
-        $bebasPustaka->save();
+        DB::beginTransaction();
+        try {
+            $bebasPustaka = ReqBebasPustaka::findOrFail((int) $req->input('reqbebaspustaka_id'));
+            $bebasPustaka->status_req = StatusRequest::DITOLAK->value;
+            $bebasPustaka->catatan_admin = clean_post('catatan_admin');
+            $bebasPustaka->save();
+
+            DB::commit();
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            abort(500, 'Proses penolakan gagal: ' . $th->getMessage());
+        }
 
         return response()->json([
             'status' => true,
@@ -393,7 +431,7 @@ class ReqBebasPustakaController extends Controller
             'reqbebaspustaka_id' => ['ID Request Bebas Pustaka', 'required'],
         ]);
 
-        $bebasPustaka = ReqBebasPustaka::findOrFail($req->input('reqbebaspustaka_id'));
+        $bebasPustaka = ReqBebasPustaka::findOrFail((int) $req->input('reqbebaspustaka_id'));
 
         if ($bebasPustaka->status_req != StatusRequest::DISETUJUI->value) {
             abort(403, 'File hanya dapat diunduh untuk request yang sudah disetujui.');
@@ -422,10 +460,18 @@ class ReqBebasPustakaController extends Controller
             'reqbebaspustaka_id' => ['ID Request Bebas Pustaka', 'required'],
         ]);
 
-        $bebasPustaka = ReqBebasPustaka::findOrFail($req->input('reqbebaspustaka_id'));
-        $bebasPustaka->status_req = StatusRequest::MENUNGGU->value;
-        $bebasPustaka->catatan_admin = null;
-        $bebasPustaka->save();
+        DB::beginTransaction();
+        try {
+            $bebasPustaka = ReqBebasPustaka::findOrFail((int) $req->input('reqbebaspustaka_id'));
+            $bebasPustaka->status_req = StatusRequest::MENUNGGU->value;
+            $bebasPustaka->catatan_admin = null;
+            $bebasPustaka->save();
+
+            DB::commit();
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            abort(500, 'Proses reset status gagal: ' . $th->getMessage());
+        }
 
         return response()->json([
             'status' => true,
@@ -433,7 +479,10 @@ class ReqBebasPustakaController extends Controller
         ]);
     }
 
-    public function destroy(Request $req, $param1 = ''): JsonResponse
+    /**
+     * Delete kaperpus or req bebas pustaka data.
+     */
+    public function destroy(Request $req, string $param1 = ''): JsonResponse
     {
         if ($param1 == 'kaperpus') {
             validate_and_response([
@@ -452,14 +501,16 @@ class ReqBebasPustakaController extends Controller
                     'message' => 'Data kaperpus berhasil dihapus'
                 ]);
             } catch (\Throwable $th) {
-                DB::rollback();
-                abort(404, 'Hapus data gagal, ' . $th->getMessage());
+                DB::rollBack();
+                abort(500, 'Hapus data gagal: ' . $th->getMessage());
             }
-        } elseif ($param1 == '') {
+        }
+
+        if ($param1 == '') {
             validate_and_response([
                 'id' => ['Parameter data', 'required'],
             ]);
-            $id = $req->input('id');
+            $id = (int) $req->input('id');
 
             $currData = ReqBebasPustaka::where('reqbebaspustaka_id', $id)->firstOrFail();
 
@@ -473,11 +524,11 @@ class ReqBebasPustakaController extends Controller
                     'message' => 'Data berhasil dihapus'
                 ]);
             } catch (\Throwable $th) {
-                DB::rollback();
-                abort(404, 'Hapus data gagal, ' . $th->getMessage());
+                DB::rollBack();
+                abort(500, 'Hapus data gagal: ' . $th->getMessage());
             }
-        } else {
-            abort(404, 'Halaman tidak ditemukan');
         }
+
+        abort(404, 'Halaman tidak ditemukan');
     }
 }

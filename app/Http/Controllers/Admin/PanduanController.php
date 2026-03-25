@@ -9,7 +9,6 @@ use Illuminate\Http\JsonResponse;
 use Yajra\DataTables\Html\Column;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Blade;
 
 class PanduanController extends Controller
@@ -81,12 +80,12 @@ class PanduanController extends Controller
         validate_and_response([
             'judul' => ['Judul', 'required|max:255'],
             'deskripsi' => ['Deskripsi', 'nullable'],
+            'upload_file' => ['File Panduan', 'required|file|mimes:pdf|max:10240'],
         ]);
 
         $data = [
             'judul' => clean_post('judul'),
             'deskripsi' => clean_post('deskripsi'),
-            'created_by' => Auth::id(),
         ];
 
         if ($req->hasFile('upload_file')) {
@@ -119,6 +118,7 @@ class PanduanController extends Controller
             'id' => ['Parameter data', 'required'],
             'judul' => ['Judul', 'required|max:255'],
             'deskripsi' => ['Deskripsi', 'nullable'],
+            'upload_file' => ['File Panduan', 'nullable|file|mimes:pdf|max:10240'],
         ]);
 
         $id = decid($req->input('id'));
@@ -127,7 +127,6 @@ class PanduanController extends Controller
         $data = [
             'judul' => clean_post('judul'),
             'deskripsi' => clean_post('deskripsi'),
-            'updated_by' => Auth::id(),
         ];
 
         if ($req->hasFile('upload_file')) {
@@ -164,7 +163,6 @@ class PanduanController extends Controller
 
         DB::beginTransaction();
         try {
-            $currData->update(['deleted_by' => Auth::id()]);
             $currData->delete();
 
             DB::commit();
@@ -182,7 +180,7 @@ class PanduanController extends Controller
     {
         if ($param1 == 'list') {
             $filter = [];
-            $data = DataTables::of(Panduan::getDataDetail($filter, false))->toArray();
+            $data = DataTables::of(Panduan::getDataDetail($filter, true))->toArray();
 
             $start = $req->input('start');
             $resp = [];

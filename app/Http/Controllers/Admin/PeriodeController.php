@@ -3,42 +3,36 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use App\Models\User;
 use App\Models\Periode;
-use Yajra\DataTables\DataTables;
+use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
-use Yajra\DataTables\Html\Column;
 use Illuminate\Support\Facades\DB;
-use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Blade;
+use Yajra\DataTables\DataTables;
+use Yajra\DataTables\Html\Column;
 
 class PeriodeController extends Controller
 {
-    public function __construct() {}
-
     public function index()
     {
         $this->title = 'Kelola Periode Pengajuan Usulan';
         $this->activeMenu = 'periode';
         $this->breadCrump[] = ['title' => 'Periode', 'link' => url()->current()];
 
-        $roles = Role::all();
-
         $builder = app('datatables.html');
         $dataTable = $builder->serverSide(true)->ajax(route('app.periode.data') . '/list')->columns([
             Column::make(['width' => '5%', 'title' => 'No', 'data' => 'no', 'orderable' => false, 'searchable' => false, 'className' => 'text-center']),
             Column::make(['title' => 'Nama', 'data' => 'nama_periode']),
             Column::make(['title' => 'Jenis Periode', 'data' => 'jenis_periode']),
-            Column::make(['title' => 'Tanggal Mulai', 'data' => 'tanggal_mulai']),            
+            Column::make(['title' => 'Tanggal Mulai', 'data' => 'tanggal_mulai']),
             Column::make(['title' => 'Tanggal Selesai', 'data' => 'tanggal_selesai']),
             Column::make(['title' => 'Status', 'data' => 'status', 'orderable' => false]),
-            Column::make(['title' => 'Aksi', 'data' => 'action']),            
+            Column::make(['title' => 'Aksi', 'data' => 'action']),
         ]);
 
         $this->dataView([
             'dataTable' => $dataTable,
-            'roles' => $roles
+            'periodeTypes' => Periode::getTypeOptions(),
         ]);
 
         return $this->view('admin.periode.list');
@@ -50,23 +44,29 @@ class PeriodeController extends Controller
             $filter = [];
             $data = DataTables::of(Periode::getDataDetail($filter, get: true))->toArray();
 
+            $latestPeriodeIdByJenis = Periode::getLatestIdsByType();
+
             $start = $req->input('start');
             $resp = [];
-            foreach ($data['data'] as $key => $value) {
+            foreach ($data['data'] as $value) {
                 $dt = [];
 
-                $dt['no']       = ++$start;
-                $dt['nama_periode']     = $value['nama_periode'] ?? '-';
-                $dt['jenis_periode']    = ucwords(str_replace('_', ' ', $value['jenis_periode'] ?? '-'));
-                $dt['tanggal_mulai']    = tanggal($value['tanggal_mulai'], ' ') ?? '-';
-                $dt['tanggal_selesai']    = tanggal($value['tanggal_selesai'], ' ') ?? '-';
-                
-                $today = date('Y-m-d');
+                $dt['no'] = ++$start;
+                $dt['nama_periode'] = $value['nama_periode'] ?? '-';
+                $dt['jenis_periode'] = Periode::getTypeLabel($value['jenis_periode'] ?? null);
+                $dt['tanggal_mulai'] = tanggal($value['tanggal_mulai'], ' ') ?? '-';
+                $dt['tanggal_selesai'] = tanggal($value['tanggal_selesai'], ' ') ?? '-';
+
                 $tanggalMulai = $value['tanggal_mulai'] ?? null;
                 $tanggalSelesai = $value['tanggal_selesai'] ?? null;
-                
+                $jenisPeriode = $value['jenis_periode'] ?? null;
+                $periodeId = (int) ($value['periode_id'] ?? 0);
+                $isLatestForJenis = $jenisPeriode
+                    && isset($latestPeriodeIdByJenis[$jenisPeriode])
+                    && $periodeId === (int) $latestPeriodeIdByJenis[$jenisPeriode];
+
                 if ($tanggalMulai && $tanggalSelesai) {
-                    if ($today >= $tanggalMulai && $today <= $tanggalSelesai) {
+                    if ($isLatestForJenis && periodeStatus($tanggalMulai, $tanggalSelesai, 'Y-m-d') === 'berlangsung') {
                         $dt['status'] = '<span class="badge badge-light-success">Dibuka</span>';
                     } else {
                         $dt['status'] = '<span class="badge badge-light-danger">Ditutup</span>';
@@ -74,8 +74,6 @@ class PeriodeController extends Controller
                 } else {
                     $dt['status'] = '<span class="badge badge-light-secondary">-</span>';
                 }
-
-                $Periode = Periode::find($value['periode_id']);
 
                 $id = encid($value['periode_id']);
 
@@ -90,27 +88,23 @@ class PeriodeController extends Controller
                 $dt['action'] = Blade::render('<x-btn.actiontable :id="$id" :btn="$btn"/>', $dataAction);
                 $resp[] = $dt;
             }
-
             $data['data'] = $resp;
 
             return response()->json($data);
-        } else if ($param1 = 'detail') {        
-            $id_periode = decid($req->input('id'));
-            
-            /*
+        } else if ($param1 == 'detail') {
             validate_and_response([
-                'periode_id' => [$id_periode, 'required'],
+                'id' => ['Parameter data', 'required'],
             ]);
-            */
-            $currData = Periode::findOrFail($id_periode);
 
-            $PeriodeData = $currData->toArray();
-          //  $PeriodeData['role'] = $currData->roles->value('name') ?? '';
+            $currData = Periode::findOrFail(decid($req->input('id')));
+
+            $periodeData = $currData->toArray();
+            $periodeData['id'] = $req->input('id');
 
             return response()->json([
                 'status' => true,
                 'message' => 'Data loaded',
-                'data' => $PeriodeData
+                'data' => $periodeData
             ]);
         } else {
             abort(404, 'Halaman tidak ditemukan');
@@ -120,35 +114,35 @@ class PeriodeController extends Controller
     public function store(Request $req, $param1 = ''): JsonResponse
     {
         if ($param1 == '') {
+            $jenisPeriodeRule = 'required|in:' . implode(',', Periode::getAllowedTypes());
+
             validate_and_response([
-                'nama_periode' => ['Nama', 'required'],
-                'jenis_periode' => ['Jenis Periode', 'required|in:req_buku,req_modul,req_bebas_pustaka'],
-                'tanggal_mulai' => ['tanggal_mulai', 'required|date'],
-                'tanggal_selesai' => ['tanggal_selesai', 'required|date'],
+                'nama_periode' => ['Nama Periode', 'required|max:255'],
+                'jenis_periode' => ['Jenis Periode', $jenisPeriodeRule],
+                'tanggal_mulai' => ['Tanggal Mulai', 'required|date'],
+                'tanggal_selesai' => ['Tanggal Selesai', 'required|date|after_or_equal:tanggal_mulai'],
             ]);
-           
-            $data['nama_periode'] = clean_post('nama_periode');
-            $data['jenis_periode'] = clean_post('jenis_periode');
-            $data['tanggal_mulai'] = clean_post('tanggal_mulai');
-            $data['tanggal_selesai'] = clean_post('tanggal_selesai');
-            $data['password'] = bcrypt(uniqid());
-           // $role = clean_post('role');
+
+            $data = [
+                'nama_periode' => clean_post('nama_periode'),
+                'jenis_periode' => clean_post('jenis_periode'),
+                'tanggal_mulai' => clean_post('tanggal_mulai'),
+                'tanggal_selesai' => clean_post('tanggal_selesai'),
+            ];
 
             DB::beginTransaction();
             try {
                 $inserted = Periode::create($data);
 
-               // $inserted->assignRole($role);
-
                 DB::commit();
                 return response()->json([
                     'status' => true,
-                    'message' => 'Periode berhasil ditambah.',
-                    'data' => ['periode_id' => encid($inserted->periode_id)]
+                    'message' => 'Periode berhasil ditambahkan.',
+                    'data' => ['id' => encid($inserted->periode_id)]
                 ]);
             } catch (\Throwable $th) {
-                DB::rollback();
-                abort(404, 'Tambah data gagal, ' . $th->getMessage());
+                DB::rollBack();
+                abort(500, 'Tambah data gagal: ' . $th->getMessage());
             }
         } else {
             abort(404, 'Halaman tidak ditemukan');
@@ -161,8 +155,8 @@ class PeriodeController extends Controller
             validate_and_response([
                 'id' => ['Parameter data', 'required'],
             ]);
-            $id = $req->input('id');
-            $currData = Periode::findOrFail(decid($id));
+
+            $currData = Periode::findOrFail(decid($req->input('id')));
 
             DB::beginTransaction();
             try {
@@ -171,11 +165,11 @@ class PeriodeController extends Controller
                 DB::commit();
                 return response()->json([
                     'status' => true,
-                    'message' => 'Data berhasil dihapus'
+                    'message' => 'Periode berhasil dihapus.'
                 ]);
             } catch (\Throwable $th) {
-                DB::rollback();
-                abort(404, 'Hapus data gagal, ' . $th->getMessage());
+                DB::rollBack();
+                abort(500, 'Hapus data gagal: ' . $th->getMessage());
             }
         } else {
             abort(404, 'Halaman tidak ditemukan');
@@ -183,37 +177,40 @@ class PeriodeController extends Controller
     }
 
     public function update(Request $req, $param1 = ''): JsonResponse
-    {        
+    {
         if ($param1 == '') {
+            $jenisPeriodeRule = 'required|in:' . implode(',', Periode::getAllowedTypes());
             validate_and_response([
-                'nama_periode' => ['nama_periode', 'required'],
-                'jenis_periode' => ['Jenis Periode', 'required|in:req_buku,req_modul,req_bebas_pustaka'],
-                'tanggal_mulai' => ['tanggal_mulai', 'required|date'],
-                'tanggal_selesai' => ['tanggal_selesai', 'required|date'],
-            ]);            
-            $id = $req->input('periode_id');            
-            $currData = Periode::findOrFail($id);            
+                'id' => ['Parameter data', 'required'],
+                'nama_periode' => ['Nama Periode', 'required|max:255'],
+                'jenis_periode' => ['Jenis Periode', $jenisPeriodeRule],
+                'tanggal_mulai' => ['Tanggal Mulai', 'required|date'],
+                'tanggal_selesai' => ['Tanggal Selesai', 'required|date|after_or_equal:tanggal_mulai'],
+            ]);
 
-            $data['nama_periode'] = $req->input('nama_periode');
-            $data['jenis_periode'] = $req->input('jenis_periode');
-            $data['tanggal_mulai'] = $req->input('tanggal_mulai');
-            $data['tanggal_selesai'] = $req->input('tanggal_selesai');
-           // $newRole = clean_post('role');
+            $id = decid($req->input('id'));
+            $currData = Periode::findOrFail($id);
+
+            $data = [
+                'nama_periode' => clean_post('nama_periode'),
+                'jenis_periode' => clean_post('jenis_periode'),
+                'tanggal_mulai' => clean_post('tanggal_mulai'),
+                'tanggal_selesai' => clean_post('tanggal_selesai'),
+            ];
 
             DB::beginTransaction();
             try {
                 $currData->update($data);
 
-               // $currData->syncRoles([$newRole]);
                 DB::commit();
                 return response()->json([
                     'status' => true,
-                    'message' => 'Update data berhasil.',
-                    'data' => ['periode_id' => $id]
+                    'message' => 'Periode berhasil diperbarui.',
+                    'data' => ['id' => encid($currData->periode_id)]
                 ]);
             } catch (\Throwable $th) {
-                DB::rollback();
-                abort(404, 'Update data gagal, ' . $th->getMessage());
+                DB::rollBack();
+                abort(500, 'Update data gagal: ' . $th->getMessage());
             }
         } else {
             abort(404, 'Halaman tidak ditemukan');

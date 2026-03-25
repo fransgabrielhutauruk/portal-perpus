@@ -22,7 +22,7 @@
                             {{ $pageData->dataBerita['judul_berita'] }}
                         </x-form.textarea>
                         <x-form.textarea class="mb-2" data-tinymce="advance" rows="5" label="Isi Berita"
-                            name="isi_berita" value="">{{ $pageData->dataBerita['isi_berita'] }}</x-form.textarea>
+                            name="isi_berita" value="" required>{{ $pageData->dataBerita['isi_berita'] }}</x-form.textarea>
                     </x-card>
                 </div>
                 <div class="col-md-4">

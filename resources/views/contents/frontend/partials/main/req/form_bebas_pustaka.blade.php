@@ -301,11 +301,11 @@
                             <tbody>
                                 @forelse(data_get($content, 'history', []) as $item)
                                     <tr>
-                                        <td>{{ tanggal($item->created_at, ' ') }}</td>
-                                        <td>{{ $item->nama_mahasiswa }}</td>
-                                        <td>{{ $item->nim }}</td>
-                                        <td>{{ data_get($item->prodi, 'nama_prodi', '-') }}</td>
-                                        <td class="text-center">
+                                        <td class="align-middle">{{ tanggal($item->created_at, ' ') }}</td>
+                                        <td class="align-middle">{{ $item->nama_mahasiswa }}</td>
+                                        <td class="align-middle">{{ $item->nim }}</td>
+                                        <td class="align-middle">{{ data_get($item->prodi, 'nama_prodi', '-') }}</td>
+                                        <td class="text-center align-middle">
                                             @if ($item->status_req == -1)
                                                 {!! $item->status_badge !!}
                                                 @if ($item->catatan_admin)
@@ -451,6 +451,7 @@
                 load.classList.add('d-none');
                 btn.disabled = false;
                 Swal.fire('Berhasil', res.message, 'success');
+                if (res.new_data) addHistoryRow(res.new_data);
                 form.reset();
                 switchTab('tab-attention');
             })
@@ -472,6 +473,32 @@
                 }
             });
         return valid;
+    }
+
+    function addHistoryRow(data) {
+        const tbody = document.querySelector('.history-table tbody');
+        tbody.querySelector('td[colspan="5"]')?.closest('tr')?.remove();
+
+        const statusBadges = {
+            0: '<span class="badge bg-warning text-dark rounded-pill">Menunggu</span>',
+            1: '<span class="badge bg-success rounded-pill">Disetujui</span>',
+            default: '<span class="badge bg-danger rounded-pill">Ditolak</span>'
+        };
+
+        const statusCell = data.status_req == -1 && data.catatan_admin
+            ? `${statusBadges[data.status_req] || statusBadges.default}<small class="d-block text-muted mt-1" style="font-size: 0.75rem;">[Catatan: ${data.catatan_admin}]</small>`
+            : (statusBadges[data.status_req] || statusBadges.default);
+
+        tbody.insertAdjacentHTML('afterbegin', `
+            <tr class="table-success">
+                <td class="align-middle">${data.date_fmt || '-'}</td>
+                <td class="align-middle">${data.nama_mahasiswa || '-'}</td>
+                <td class="align-middle">${data.nim || '-'}</td>
+                <td class="align-middle">${data.prodi_nama || data.nama_prodi || '-'}</td>
+                <td class="text-center align-middle">${statusCell}</td>
+            </tr>`);
+
+        setTimeout(() => tbody.querySelector('tr.table-success')?.classList.remove('table-success'), 2000);
     }
 
     function switchTab(id) {

@@ -25,13 +25,13 @@
 
 <x-modal id="modalForm" type="centered" :static="true" size="" jf-modal="periode" title="Periode">
     <form id="formData" class="needs-validation" jf-form="periode">
-        <input type="hidden" name="periode_id" value="">
+        <input type="hidden" name="id" value="">
         <x-form.input type="text" class="mb-2" name="nama_periode" label="Nama Periode" required />
         <x-form.select class="mb-2" name="jenis_periode" label="Jenis Periode" required>
             <option value="">Pilih Jenis Periode</option>
-            <option value="req_buku">Request Buku</option>
-            <option value="req_modul">Request Modul</option>
-            <option value="req_bebas_pustaka">Request Bebas Pustaka</option>
+            @foreach ($pageData->periodeTypes as $value => $label)
+                <option value="{{ $value }}">{{ $label }}</option>
+            @endforeach
         </x-form.select>
         <x-form.input type="date" class="mb-2" name="tanggal_mulai" label="Tanggal Mulai" required />
         <x-form.input type="date" class="mb-2" name="tanggal_selesai" label="Tanggal Selesai" required />

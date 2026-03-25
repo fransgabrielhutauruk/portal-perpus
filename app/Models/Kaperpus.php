@@ -73,20 +73,20 @@ class Kaperpus extends Model
         parent::boot();
 
         static::creating(function ($model) {
-            $model->created_by = userInisial();
+            $model->created_by = userName();
         });
 
         static::updating(function ($model) {
-            $model->updated_by = userInisial();
+            $model->updated_by = userName();
         });
 
         static::deleting(function ($model) {
-            $model->deleted_by = userInisial();
+            $model->deleted_by = userName();
             $model->update();
         });
 
         static::restoring(function ($model) {
-            $model->deleted_by = NULL;
+            $model->deleted_by = null;
         });
     }
 
@@ -97,7 +97,7 @@ class Kaperpus extends Model
      */
     public function getActivitylogOptions(): LogOptions
     {
-        CauserResolver::setCauser(auth()->user());
+        CauserResolver::setCauser(causerActivityLog());
         return LogOptions::defaults()
             ->useLogName('kaperpus')
             ->logOnly(['*'])

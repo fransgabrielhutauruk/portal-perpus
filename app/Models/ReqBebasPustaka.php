@@ -9,15 +9,12 @@ namespace App\Models;
 
 use App\Models\Dimension\Prodi;
 use App\Enums\StatusRequest;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Spatie\Activitylog\LogOptions;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Query\JoinClause;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Activitylog\Facades\CauserResolver;
-use Illuminate\Database\Eloquent\Casts\Attribute;
 
 class ReqBebasPustaka extends Model
 {
@@ -66,7 +63,8 @@ class ReqBebasPustaka extends Model
      * @var array
      */
     protected $casts = [
-        'reqbebaspustaka_id'    => 'string',
+        'reqbebaspustaka_id' => 'integer',
+        'is_syarat_terpenuhi' => 'boolean',
 
     ];
 
@@ -87,20 +85,20 @@ class ReqBebasPustaka extends Model
         parent::boot();
 
         static::creating(function ($model) {
-            $model->created_by = userInisial();
+            $model->created_by = userName();
         });
 
         static::updating(function ($model) {
-            $model->updated_by = userInisial();
+            $model->updated_by = userName();
         });
 
         static::deleting(function ($model) {
-            $model->deleted_by = userInisial();
+            $model->deleted_by = userName();
             $model->update();
         });
 
         static::restoring(function ($model) {
-            $model->deleted_by = NULL;
+            $model->deleted_by = null;
         });
     }
 
@@ -120,7 +118,7 @@ class ReqBebasPustaka extends Model
             ->useLogName(env('APP_NAME'))
             ->setDescriptionForEvent(function ($eventName) {
                 $aksi = eventActivityLogBahasa($eventName);
-                return userInisial() . " {$aksi} table :subject.nama_mahasiswa";
+                return userInisial() . " {$aksi} table req bebas pustaka";
             });
     }
 
@@ -182,9 +180,10 @@ class ReqBebasPustaka extends Model
     public static function deleteDataWhere($where)
     {
         $dt = self::where($where)->get();
-        if ($dt)
+        if ($dt) {
             foreach ($dt as $key => $value)
                 $value->delete();
+        }
     }
 
     /**
@@ -201,9 +200,10 @@ class ReqBebasPustaka extends Model
     public static function updateDataWhere($where, $data)
     {
         $dt = self::where($where)->get();
-        if ($dt)
+        if ($dt) {
             foreach ($dt as $key => $value)
                 $value->update($data);
+        }
     }
 
     /**
@@ -214,16 +214,26 @@ class ReqBebasPustaka extends Model
      *
      * @param  mixed $where
      */
-    public static function getDataDetail($where = [], $whereBinding = [], $get = true)
+    public static function getDataDetail($where = [], $whereBinding = [], $get = true, $periodeId = 'all')
     {
-        $query = DB::table('')
-            ->selectRaw('a.*, p.nama_prodi')
-            ->from((new self)->table . ' as a')
+        $query = DB::table((new self)->table . ' as a')
+            ->selectRaw('a.*, p.nama_prodi, b.jenis_periode')
             ->leftJoin('dm_prodi as p', 'a.prodi_id', '=', 'p.prodi_id')
+            ->leftJoin('mst_periode as b', 'a.periode_id', '=', 'b.periode_id')
             ->where(notRaw($where))
             ->whereRaw(withRaw($where), $whereBinding)
+            ->where('b.jenis_periode', Periode::TYPE_REQ_BEBAS_PUSTAKA)
             ->whereNull('a.deleted_at')
-            ->orderBy('a.created_at', 'desc');
+            ->whereNull('b.deleted_at');
+
+        if ($periodeId !== 'all') {
+            $query->where('a.periode_id', (int) $periodeId);
+        }
+
+        if ($get) {
+            $query->orderBy('a.created_at', 'desc');
+        }
+
         return $get ? $query->get() : $query;
     }
 }

@@ -11,13 +11,18 @@
         data-delay="0">
         <div class="row">
             <div class="col-md">
-                {{-- Updated jf-data to 'modul' --}}
-                <x-table.dttable :builder="$pageData->dataTable" class="align-middle" :responsive="false" jf-data="modul" jf-list="datatable">
+                <x-table.dttable :builder="$pageData->dataTable" class="align-middle" :responsive="false" jf-data="modul"
+                    jf-list="datatable">
                     @slot('action')
-                        {{-- Often admins don't add requests manually, but if needed, keep this --}}
-                        {{-- <x-btn type="primary" class="act-add w-100 w-md-auto" jf-add="modul">
-                        <i class="bi bi-plus fs-2"></i> Tambah Request
-                    </x-btn> --}}
+                        <div class="d-flex align-items-center gap-3 text-nowrap py-4">
+                            <label class="form-label fs-7 fw-bold mb-0">Periode:</label>
+                            <select id="filter_periode_id" class="form-select form-select-sm" style="min-width: 280px;">
+                                <option value="all">Semua Periode</option>
+                                @foreach ($pageData->periodeReqModul as $periode)
+                                    <option value="{{ $periode->periode_id }}">{{ $periode->nama_periode }}</option>
+                                @endforeach
+                            </select>
+                        </div>
                     @endslot
                 </x-table.dttable>
             </div>
@@ -40,9 +45,6 @@
     <x-modal id="modalApprove" type="centered" :static="true" size="" jf-modal="approve"
         title="Konfirmasi Persetujuan">
         <form id="formApprove" class="needs-validation" jf-form="approve">
-            {{-- The standard script looks for 'reqbuku_id' or 'id' based on your JS, 
-             ensure your Controller expects 'reqmodul_id' or whatever name you used. 
-             If your JS uses a generic ID field, input name="id" is safest. --}}
             <input type="hidden" name="reqmodul_id" value="">
 
             <div class="text-center py-4">
@@ -59,15 +61,14 @@
         @endslot
     </x-modal>
 
-    <x-modal id="modalReset" type="centered" :static="true" size="" jf-modal="reset"
-        title="Reset Request">
+    <x-modal id="modalReset" type="centered" :static="true" size="" jf-modal="reset" title="Reset Request">
         <form id="formReset" class="needs-validation" jf-form="reset">
             <input type="hidden" name="reqmodul_id" value="">
 
             <div class="alert alert-warning d-flex align-items-center">
                 <i class="ki-outline ki-information-5 fs-2x me-3"></i>
                 <div>
-                    <strong>Perhatian:</strong> Data akan dikembalikan ke status <strong>Menunggu</strong>. 
+                    <strong>Perhatian:</strong> Data akan dikembalikan ke status <strong>Menunggu</strong>.
                     Catatan admin akan dihapus.
                 </div>
             </div>
@@ -175,8 +176,9 @@
                                 </tr>
                                 <tr id="row-file" style="display:none;">
                                     <td class="fw-bold">File</td>
-                                    <td><a id="detail-file" href="#" target="_blank" class="btn btn-sm btn-light-primary"><i
-                                                class="ki-outline ki-file"></i> Unduh File</a></td>
+                                    <td><a id="detail-file" href="#" target="_blank"
+                                            class="btn btn-sm btn-light-primary"><i class="ki-outline ki-file"></i> Unduh
+                                            File</a></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -207,13 +209,30 @@
     <script>
         // Init Main CRUD
         jForm.init({
-            name: "modul", // Matches the jf-data above
-            base_url: `{{ route('app.usulan-modul.index') }}` // Ensure this route is correct
+            name: "modul",
+            base_url: `{{ route('app.usulan-modul.index') }}`
+        });
+
+        let modulTableInstance = null;
+        $(document).ready(function() {
+            const tableId = '{{ $pageData->dataTable->getTableId() }}';
+            modulTableInstance = $('#' + tableId).DataTable();
+
+            modulTableInstance.settings()[0].ajax.data = function(d) {
+                d.filter_periode_id = $('#filter_periode_id').val() || 'all';
+            };
+
+            $('#filter_periode_id').on('change', function() {
+                modulTableInstance.ajax.reload(null, false);
+            });
         });
 
         // Detail modal handler for usulan modul
         $(document).on('click', '[jf-data="modul"] [jf-detail]', function() {
-            var detailId = $(this).attr('jf-detail');
+            var detailId = parseInt($(this).attr('jf-detail'), 10) || 0;
+            if (!detailId) {
+                return;
+            }
 
             ajaxRequest({
                 link: '{{ route('app.usulan-modul.data') }}/detail',
@@ -239,7 +258,7 @@
 
                     // Handle praktikum badge
                     if (data.praktikum == 1 || data.praktikum === true) {
-                        $('#detail-praktikum').html('<span class="badge badge-info">Praktikum</span>');
+                        $('#detail-praktikum').html('<span class="badge badge-secondary">Praktikum</span>');
                     } else {
                         $('#detail-praktikum').html('<span class="badge badge-secondary">Teori</span>');
                     }
@@ -260,12 +279,14 @@
                         $('#detail-actions-pending').data('id', detailId);
                         $('#detail-actions-reset').hide();
                         $('#row-catatan-admin').hide();
+                        $('#detail-catatan_admin').text('-');
                     } else if (data.status_req == 1) {
                         statusBadge = '<span class="badge badge-success">Disetujui</span>';
                         $('#detail-actions-pending').hide();
                         $('#detail-actions-reset').show();
                         $('#detail-actions-reset').data('id', detailId);
                         $('#row-catatan-admin').hide();
+                        $('#detail-catatan_admin').text('-');
                     } else if (data.status_req == -1) {
                         statusBadge = '<span class="badge badge-danger">Ditolak</span>';
                         $('#detail-actions-pending').hide();
@@ -316,17 +337,17 @@
         // Custom handler for reset save button
         $(document).on('click', '[jf-save="reset"]', function(e) {
             e.preventDefault();
-            
+
             var form = $('#formReset');
             var formData = form.serializeArray();
             var data = {};
-            
+
             formData.forEach(function(field) {
                 data[field.name] = field.value;
             });
 
             ajaxRequest({
-                link: '{{ route("app.usulan-modul.reset") }}',
+                link: '{{ route('app.usulan-modul.reset') }}',
                 data: data,
                 swal_success: true,
                 callback: function() {

@@ -120,15 +120,12 @@
             $(document).on('click', '[jf-data="' + name + '"] [jf-edit]', function() {
                 
                 var form = $('[jf-form="' + name + '"]').attr('id')
-                console.log("form id", form);
                 $('[jf-form="' + name + '"]').attr('action', url.update)
-                console.log("set action to", url.update);
                 resetForm(form)
                 refreshTinyMCE()
 
                 var editId = $(this).attr('jf-edit');
                 var paramData = {}
-                console.log("editId", editId);
                 const attributes = $(this).data();
                 for (const key in attributes) {
                     if (Object.hasOwnProperty.call(attributes, key)) {
@@ -137,7 +134,6 @@
                 }
 
                 paramData['id'] = editId
-                console.log("paramData", paramData);
                 ajaxRequest({
                     link: url.edit,
                     data: paramData,
@@ -164,7 +160,6 @@
                 }
 
                 paramData['id'] = deleteId
-                console.log("deleteId", deleteId);
                 Swal.fire({
                     title: "Hapus data ?",
                     text: "Data yang sudah dihapus tidak dapat dikembalikan, pastikan data yang akan di hapus sudah sesuai",
@@ -230,9 +225,7 @@
             $(document).on('click', '[jf-data="' + name + '"] [jf-approve]', function(e) {
                 e.preventDefault();
                 var approveId = $(this).attr('jf-approve');
-                console.log("approveId", approveId);
                 var paramData = {}
-                console.log("approve clicked");
                 const attributes = $(this).data();
                 for (const key in attributes) {
                     if (Object.hasOwnProperty.call(attributes, key)) {
@@ -264,8 +257,6 @@
                     formData[field.name] = field.value;
                 });
 
-                console.log("approve save clicked with data", formData);
-
                 ajaxRequest({
                     link: base_url + '/approve',
                     data: formData,
@@ -281,9 +272,7 @@
             $(document).on('click', '[jf-data="' + name + '"] [jf-reject]', function(e) {
                 e.preventDefault();
                 var rejectId = $(this).attr('jf-reject');
-                console.log("rejectId", rejectId);
                 var paramData = {}
-                console.log("reject clicked");
                 const attributes = $(this).data();
                 for (const key in attributes) {
                     if (Object.hasOwnProperty.call(attributes, key)) {
@@ -315,8 +304,6 @@
                 $(formEl).serializeArray().forEach(function(field) {
                     formData[field.name] = field.value;
                 });
-
-                console.log("reject save clicked with data", formData);
 
                 ajaxRequest({
                     link: base_url + '/reject',

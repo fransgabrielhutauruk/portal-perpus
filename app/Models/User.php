@@ -60,7 +60,8 @@ class User extends Authenticatable
             ->selectRaw('*')
             ->from($table)
             ->where(notRaw($where))
-            ->whereRaw(withRaw($where), $whereBinding);
+            ->whereRaw(withRaw($where), $whereBinding)
+            ->orderBy('created_at', 'desc');
         return $get ? $query->get() : $query;
     }
 
@@ -73,8 +74,8 @@ class User extends Authenticatable
             ->useLogName(env('APP_NAME'))
             ->setDescriptionForEvent(function ($eventName) {
                 $aksi = eventActivityLogBahasa($eventName);
-                $inisial = Auth::check() ? userInisial() : 'system';
-                return "{$inisial} {$aksi} table users";
+                $name = Auth::check() ? userName() : 'system';
+                return "{$name} {$aksi} table users";
             });
     }
 }

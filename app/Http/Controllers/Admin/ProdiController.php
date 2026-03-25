@@ -9,7 +9,6 @@ use Yajra\DataTables\DataTables;
 use Illuminate\Http\JsonResponse;
 use Yajra\DataTables\Html\Column;
 use Illuminate\Support\Facades\DB;
-use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Blade;
 
 class ProdiController extends Controller
@@ -19,8 +18,6 @@ class ProdiController extends Controller
         $this->title = 'Kelola Program Studi';
         $this->activeMenu = 'prodi';
         $this->breadCrump[] = ['title' => 'Program Studi', 'link' => url()->current()];
-
-        $roles = Role::all();
 
         $builder = app('datatables.html');
         $dataTable = $builder->serverSide(true)->ajax(route('app.prodi.data') . '/list')->columns([
@@ -32,8 +29,7 @@ class ProdiController extends Controller
         ]);
 
         $this->dataView([
-            'dataTable' => $dataTable,
-            'roles' => $roles
+            'dataTable' => $dataTable
         ]);
 
         return $this->view('admin.prodi.list');
@@ -55,9 +51,6 @@ class ProdiController extends Controller
                 $dt['alias_prodi']    = $value['alias_prodi'] ?? '-';
                 $dt['alias_jurusan']    = $value['alias_jurusan'] ?? '-';
 
-
-                $Periode = Prodi::find($value['prodi_id']);
-
                 $id = encid($value['prodi_id']);
 
                 $dataAction = [
@@ -75,6 +68,20 @@ class ProdiController extends Controller
             $data['data'] = $resp;
 
             return response()->json($data);
+        } elseif ($param1 == 'detail') {
+            validate_and_response([
+                'id' => ['Parameter data', 'required'],
+            ]);
+
+            $id = $req->input('id');
+            $currData = Prodi::findOrFail(decid($id))->makeHidden(Prodi::$exceptEdit);
+            $currData->id = $id;
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Data loaded',
+                'data' => $currData
+            ]);
         } else {
             abort(404, 'Halaman tidak ditemukan');
         }
@@ -82,94 +89,88 @@ class ProdiController extends Controller
 
     public function store(Request $req, $param1 = ''): JsonResponse
     {
-        if ($param1 == '') {
-            validate_and_response([
-                'nama_prodi' => ['Nama', 'required'],
-                'alias_prodi' => ['alias_prodi', 'required'],
-                'alias_jurusan' => ['alias_jurusan', 'required'],
+        validate_and_response([
+            'nama_prodi' => ['Nama Program Studi', 'required|max:255'],
+            'alias_prodi' => ['Alias Program Studi', 'required|max:100'],
+            'alias_jurusan' => ['Alias Jurusan', 'required|max:100'],
+        ]);
+
+        $data = [
+            'nama_prodi' => clean_post('nama_prodi'),
+            'alias_prodi' => clean_post('alias_prodi'),
+            'alias_jurusan' => clean_post('alias_jurusan'),
+        ];
+
+        DB::beginTransaction();
+        try {
+            $inserted = Prodi::create($data);
+
+            DB::commit();
+            return response()->json([
+                'status' => true,
+                'message' => 'Program Studi berhasil ditambahkan.',
+                'data' => ['id' => encid($inserted->prodi_id)]
             ]);
-
-            $data['nama_prodi'] = clean_post('nama_prodi');
-            $data['alias_prodi'] = clean_post('alias_prodi');
-            $data['alias_jurusan'] = clean_post('alias_jurusan');
-
-            DB::beginTransaction();
-            try {
-                $inserted = Prodi::create($data);
-
-                DB::commit();
-                return response()->json([
-                    'status' => true,
-                    'message' => 'Periode berhasil ditambah.',
-                    'data' => ['prodi_id' => encid($inserted->prodi_id)]
-                ]);
-            } catch (\Throwable $th) {
-                DB::rollback();
-                abort(404, 'Tambah data gagal, ' . $th->getMessage());
-            }
-        } else {
-            abort(404, 'Halaman tidak ditemukan');
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            abort(500, 'Tambah data gagal: ' . $th->getMessage());
         }
     }
 
-    public function destroy(Request $req, $param1 = ''): JsonResponse
+    public function update(Request $req): JsonResponse
     {
-        if ($param1 == '') {
-            validate_and_response([
-                'id' => ['Parameter data', 'required'],
+        validate_and_response([
+            'id' => ['Parameter data', 'required'],
+            'nama_prodi' => ['Nama Program Studi', 'required|max:255'],
+            'alias_prodi' => ['Alias Program Studi', 'required|max:100'],
+            'alias_jurusan' => ['Alias Jurusan', 'required|max:100'],
+        ]);
+
+        $id = decid($req->input('id'));
+        $currData = Prodi::findOrFail($id);
+
+        $data = [
+            'nama_prodi' => clean_post('nama_prodi'),
+            'alias_prodi' => clean_post('alias_prodi'),
+            'alias_jurusan' => clean_post('alias_jurusan'),
+        ];
+
+        DB::beginTransaction();
+        try {
+            $currData->update($data);
+
+            DB::commit();
+            return response()->json([
+                'status' => true,
+                'message' => 'Program Studi berhasil diperbarui.',
+                'data' => ['id' => encid($id)]
             ]);
-            $id = $req->input('id');
-            $currData = Prodi::findOrFail(decid($id));
-
-            DB::beginTransaction();
-            try {
-                $currData->delete();
-
-                DB::commit();
-                return response()->json([
-                    'status' => true,
-                    'message' => 'Data berhasil dihapus'
-                ]);
-            } catch (\Throwable $th) {
-                DB::rollback();
-                abort(404, 'Hapus data gagal, ' . $th->getMessage());
-            }
-        } else {
-            abort(404, 'Halaman tidak ditemukan');
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            abort(500, 'Update data gagal: ' . $th->getMessage());
         }
     }
 
-    public function update(Request $req, $param1 = ''): JsonResponse
+    public function destroy(Request $req): JsonResponse
     {
-        if ($param1 == '') {
-            validate_and_response([
-                'nama_prodi' => ['nama_prodi', 'required'],
-                'alias_prodi' => ['alias_prodi', 'required'],
-                'alias_jurusan' => ['alias_jurusan', 'required'],
+        validate_and_response([
+            'id' => ['Parameter data', 'required'],
+        ]);
+
+        $currData = Prodi::findOrFail(decid($req->input('id')));
+
+        DB::beginTransaction();
+        try {
+            $currData->delete();
+
+            DB::commit();
+            return response()->json([
+                'status' => true,
+                'message' => 'Program Studi berhasil dihapus.'
             ]);
-            $id = $req->input('prodi_id');
-            $currData = Prodi::findOrFail($id);
-
-            $data['nama_prodi'] = $req->input('nama_prodi');
-            $data['alias_prodi'] = $req->input('alias_prodi');
-            $data['alias_jurusan'] = $req->input('alias_jurusan');
-
-            DB::beginTransaction();
-            try {
-                $currData->update($data);
-
-                DB::commit();
-                return response()->json([
-                    'status' => true,
-                    'message' => 'Update data berhasil.',
-                    'data' => ['prodi_id' => $id]
-                ]);
-            } catch (\Throwable $th) {
-                DB::rollback();
-                abort(404, 'Update data gagal, ' . $th->getMessage());
-            }
-        } else {
-            abort(404, 'Halaman tidak ditemukan');
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            abort(500, 'Hapus data gagal: ' . $th->getMessage());
         }
     }
 }

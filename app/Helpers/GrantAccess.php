@@ -18,7 +18,8 @@ function userId()
 
 function userName()
 {
-    return Auth::user() ? Auth::user()->name : NULL;
+    $name = Auth::user() ? Auth::user()->name : NULL;
+    return strlen($name) > 7 ? substr($name, 0, 7) . '...' : $name;
 }
 
 function userType()

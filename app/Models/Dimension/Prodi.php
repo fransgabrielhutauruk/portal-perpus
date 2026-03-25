@@ -74,15 +74,15 @@ class Prodi extends Model
         parent::boot();
 
         static::creating(function ($model) {
-            $model->created_by = userInisial();
+            $model->created_by = userName();
         });
 
         static::updating(function ($model) {
-            $model->updated_by = userInisial();
+            $model->updated_by = userName();
         });
 
         static::deleting(function ($model) {
-            $model->deleted_by = userInisial();
+            $model->deleted_by = userName();
             $model->update();
         });
 
@@ -107,7 +107,7 @@ class Prodi extends Model
             ->useLogName(env('APP_NAME'))
             ->setDescriptionForEvent(function ($eventName) {
                 $aksi = eventActivityLogBahasa($eventName);
-                return userInisial() . " {$aksi} table :subject.{{tableSubject}}";
+                return userName() . " {$aksi} table :subject.{{tableSubject}}";
             });
     }
 

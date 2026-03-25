@@ -8,17 +8,13 @@
 namespace App\Models;
 
 use App\Models\Dimension\Prodi;
-use App\Models\Periode;
 use App\Enums\StatusRequest;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Spatie\Activitylog\LogOptions;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Query\JoinClause;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Activitylog\Facades\CauserResolver;
-use Illuminate\Database\Eloquent\Casts\Attribute;
 
 class ReqBuku extends Model
 {
@@ -73,12 +69,12 @@ class ReqBuku extends Model
      * @var array
      */
     protected $casts = [
-        '{{tableId}}'    => 'string',
+        'reqbuku_id' => 'integer',
 
     ];
 
     public static array $exceptEdit = [
-        '{{tableId}}',
+        'reqbuku_id',
         'created_at',
         'updated_at',
         'deleted_at'
@@ -94,20 +90,20 @@ class ReqBuku extends Model
         parent::boot();
 
         static::creating(function ($model) {
-            $model->created_by = userInisial();
+            $model->created_by = userName();
         });
 
         static::updating(function ($model) {
-            $model->updated_by = userInisial();
+            $model->updated_by = userName();
         });
 
         static::deleting(function ($model) {
-            $model->deleted_by = userInisial();
+            $model->deleted_by = userName();
             $model->update();
         });
 
         static::restoring(function ($model) {
-            $model->deleted_by = NULL;
+            $model->deleted_by = null;
         });
     }
 
@@ -127,7 +123,7 @@ class ReqBuku extends Model
             ->useLogName(env('APP_NAME'))
             ->setDescriptionForEvent(function ($eventName) {
                 $aksi = eventActivityLogBahasa($eventName);
-                return userInisial() . " {$aksi} table :subject.{{tableSubject}}";
+                return userInisial() . " {$aksi} table req buku";
             });
     }
 
@@ -197,9 +193,10 @@ class ReqBuku extends Model
     public static function deleteDataWhere($where)
     {
         $dt = self::where($where)->get();
-        if ($dt)
+        if ($dt) {
             foreach ($dt as $key => $value)
                 $value->delete();
+        }
     }
 
     /**
@@ -216,9 +213,10 @@ class ReqBuku extends Model
     public static function updateDataWhere($where, $data)
     {
         $dt = self::where($where)->get();
-        if ($dt)
+        if ($dt) {
             foreach ($dt as $key => $value)
                 $value->update($data);
+        }
     }
 
     /**
@@ -229,15 +227,22 @@ class ReqBuku extends Model
      *
      * @param  mixed $where
      */
-    public static function getDataDetail($where = [], $whereBinding = [], $get = true)
+    public static function getDataDetail($where = [], $whereBinding = [], $get = true, $periodeId = 'all')
     {
-        $query = DB::table('')
-            ->selectRaw('*')
-            ->from((new self)->table . ' as a')
+        $query = DB::table((new self)->table . ' as a')
+            ->selectRaw('a.*, b.jenis_periode')
+            ->leftJoin('mst_periode as b', 'a.periode_id', '=', 'b.periode_id')
             ->where(notRaw($where))
             ->whereRaw(withRaw($where), $whereBinding)
+            ->where('b.jenis_periode', Periode::TYPE_REQ_BUKU)
             ->whereNull('a.deleted_at')
+            ->whereNull('b.deleted_at')
             ->orderBy('a.created_at', 'desc');
+
+        if ($periodeId !== 'all') {
+            $query->where('a.periode_id', (int) $periodeId);
+        }
+
         return $get ? $query->get() : $query;
     }
 }

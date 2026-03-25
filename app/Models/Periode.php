@@ -7,11 +7,8 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Query\JoinClause;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Spatie\Activitylog\Facades\CauserResolver;
 use Spatie\Activitylog\LogOptions;
@@ -21,6 +18,17 @@ class Periode extends Model
 {
     use SoftDeletes;
     use LogsActivity;
+
+    public const TYPE_REQ_BUKU = 'req_buku';
+    public const TYPE_REQ_MODUL = 'req_modul';
+    public const TYPE_REQ_BEBAS_PUSTAKA = 'req_bebas_pustaka';
+
+    public const TYPE_LABELS = [
+        self::TYPE_REQ_BUKU => 'Request Buku',
+        self::TYPE_REQ_MODUL => 'Request Modul',
+        self::TYPE_REQ_BEBAS_PUSTAKA => 'Request Bebas Pustaka',
+    ];
+
     /**
      * definisi nama table
      *
@@ -58,16 +66,45 @@ class Periode extends Model
      * @var array
      */
     protected $casts = [
-        '{{tableId}}'    => 'string',
-        
+        'periode_id' => 'integer',
+        'tanggal_mulai' => 'date:Y-m-d',
+        'tanggal_selesai' => 'date:Y-m-d',
     ];
 
     public static array $exceptEdit = [
-        '{{tableId}}',
+        'periode_id',
         'created_at',
         'updated_at',
         'deleted_at'
     ];
+
+    public static function getTypeOptions(): array
+    {
+        return self::TYPE_LABELS;
+    }
+
+    public static function getAllowedTypes(): array
+    {
+        return array_keys(self::TYPE_LABELS);
+    }
+
+    public static function getTypeLabel(?string $type): string
+    {
+        return self::TYPE_LABELS[$type] ?? '-';
+    }
+
+    public static function getLatestIdsByType(): array
+    {
+        return self::query()
+            ->select(['periode_id', 'jenis_periode'])
+            ->whereNull('deleted_at')
+            ->orderByDesc('created_at')
+            ->orderByDesc('periode_id')
+            ->get()
+            ->unique('jenis_periode')
+            ->pluck('periode_id', 'jenis_periode')
+            ->all();
+    }
 
     /**
      * fungsi yang di panggil saat event crud dijalankan
@@ -79,15 +116,15 @@ class Periode extends Model
         parent::boot();
 
         static::creating(function ($model) {
-            $model->created_by = userInisial();
+            $model->created_by = userName();
         });
 
         static::updating(function ($model) {
-            $model->updated_by = userInisial();
+            $model->updated_by = userName();
         });
 
         static::deleting(function ($model) {
-            $model->deleted_by = userInisial();
+            $model->deleted_by = userName();
             $model->update();
         });
 
@@ -112,7 +149,7 @@ class Periode extends Model
             ->useLogName(env('APP_NAME'))
             ->setDescriptionForEvent(function ($eventName) {
                 $aksi = eventActivityLogBahasa($eventName);
-                return userInisial() . " {$aksi} table :subject.{{tableSubject}}";
+                return userName() . " {$aksi} table periode";
             });
     }
 
@@ -182,13 +219,12 @@ class Periode extends Model
      */
     public static function getDataDetail($where = [], $whereBinding = [], $get = true)
     {
-        $query = DB::table('')
+        $query = DB::table((new self)->table . ' as a')
             ->selectRaw('*')
-            ->from((new self)->table.' as a')
             ->where(notRaw($where))
             ->whereRaw(withRaw($where), $whereBinding)
             ->whereNull('a.deleted_at')
-            ->orderBy('created_at', 'desc');
+            ->orderBy('a.created_at', 'desc');
         return $get ? $query->get() : $query;
     }
 }
