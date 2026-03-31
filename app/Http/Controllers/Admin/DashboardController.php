@@ -13,32 +13,31 @@ use App\Models\ReqModul;
 use App\Models\ReqBebasPustaka;
 use App\Models\ReqTurnitin;
 use App\Enums\StatusRequest;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\View\View;
 
 class DashboardController extends Controller
 {
-    function __construct()
+    /**
+     * Show dashboard summary cards.
+     */
+    public function index(): View
     {
-        /**
-         * use this if needed
-         */
-        $this->activeRoot   = '';
-        // $this->breadCrump[] = ['title' => 'Dashboard', 'link' => url('')];
-    }
-
-    function index()
-    {
-        $this->title        = 'Dashboard';
-        $this->activeMenu   = 'dashboard';
+        $this->title = 'Dashboard';
+        $this->activeMenu = 'dashboard';
         $this->breadCrump[] = ['title' => 'Dashboard', 'link' => url()->current()];
 
-        // Statistik Cards
+        $reqBuku = $this->countPendingRequests(new ReqBuku());
+        $reqModul = $this->countPendingRequests(new ReqModul());
+        $reqBebasPustaka = $this->countPendingRequests(new ReqBebasPustaka());
+        $reqTurnitin = $this->countPendingRequests(new ReqTurnitin());
+
         $stats = [
-            'totalRequests' => ReqBuku::where('status_req', StatusRequest::MENUNGGU->value)->count() + ReqModul::where('status_req', StatusRequest::MENUNGGU->value)->count() + ReqBebasPustaka::where('status_req', StatusRequest::MENUNGGU->value)->count() + ReqTurnitin::where('status_req', StatusRequest::MENUNGGU->value)->count(),
-            'reqBuku' => ReqBuku::where('status_req', StatusRequest::MENUNGGU->value)->count(),
-            'reqModul' => ReqModul::where('status_req', StatusRequest::MENUNGGU->value)->count(),
-            'reqBebasPustaka' => ReqBebasPustaka::where('status_req', StatusRequest::MENUNGGU->value)->count(),
-            'reqTurnitin' => ReqTurnitin::where('status_req', StatusRequest::MENUNGGU->value)->count(),
+            'totalRequests' => $reqBuku + $reqModul + $reqBebasPustaka + $reqTurnitin,
+            'reqBuku' => $reqBuku,
+            'reqModul' => $reqModul,
+            'reqBebasPustaka' => $reqBebasPustaka,
+            'reqTurnitin' => $reqTurnitin,
         ];
 
         $this->dataView([
@@ -51,6 +50,13 @@ class DashboardController extends Controller
     public function show($param1 = '', $param2 = '')
     {
         abort(404, 'Halaman tidak ditemukan');
+    }
+
+    private function countPendingRequests(Model $model): int
+    {
+        return (int) $model->newQuery()
+            ->where('status_req', StatusRequest::MENUNGGU->value)
+            ->count();
     }
 }
 /* This controller generate by @wahyudibinsaid laravel best practices snippets */

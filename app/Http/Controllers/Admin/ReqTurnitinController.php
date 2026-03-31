@@ -10,7 +10,6 @@ use Yajra\DataTables\DataTables;
 use Illuminate\Http\JsonResponse;
 use Yajra\DataTables\Html\Column;
 use Illuminate\Support\Facades\DB;
-use Spatie\Permission\Models\Role;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Blade;
 
@@ -21,8 +20,6 @@ class ReqTurnitinController extends Controller
         $this->title = 'Kelola Request Cek Turnitin';
         $this->activeMenu = 'req-turnitin';
         $this->breadCrump[] = ['title' => 'Request Cek Turnitin', 'link' => url()->current()];
-
-        $roles = Role::all();
 
         $builder = app('datatables.html');
         $dataTable = $builder->serverSide(true)->ajax(route('app.req-turnitin.data') . '/list')->columns([
@@ -37,8 +34,7 @@ class ReqTurnitinController extends Controller
         ]);
 
         $this->dataView([
-            'dataTable' => $dataTable,
-            'roles' => $roles
+            'dataTable' => $dataTable
         ]);
 
         return $this->view('admin.req.turnitin');
@@ -92,7 +88,7 @@ class ReqTurnitinController extends Controller
             $data['data'] = $resp;
 
             return response()->json($data);
-        } else if ($param1 = 'detail') {
+        } else if ($param1 == 'detail') {
             validate_and_response([
                 'reqturnitin_id' => ['Parameter data', 'required'],
             ]);
@@ -117,7 +113,7 @@ class ReqTurnitinController extends Controller
                 'data' => $userData
             ]);
         } else {
-            abort(404, 'Halaman tidak ditemukan');
+            abort(500, 'Halaman tidak ditemukan');
         }
     }
 
@@ -128,41 +124,55 @@ class ReqTurnitinController extends Controller
             'file_hasil' => ['File Hasil Turnitin', 'required|file|mimes:pdf,doc,docx|max:10240'],
         ]);
 
-        $turnitin = ReqTurnitin::with('prodi')->findOrFail($req->input('reqturnitin_id'));
+        $turnitin = ReqTurnitin::with('prodi')->findOrFail((int) $req->input('reqturnitin_id'));
 
-        /* ===============================
-           1. UPLOAD FILE HASIL
-        =============================== */
-        $file = $req->file('file_hasil');
-        $fileName = 'turnitin_' . $turnitin->nip . '_' . time() . '.' . $file->getClientOriginalExtension();
-        $filePath = $file->storeAs('turnitin', $fileName, 'public');
+        DB::beginTransaction();
+        try {
+            /* ===============================
+               1. UPLOAD FILE HASIL
+            =============================== */
+            $file = $req->file('file_hasil');
+            $fileName = 'turnitin_' . $turnitin->nip . '_' . time() . '.' . $file->getClientOriginalExtension();
+            $filePath = $file->storeAs('turnitin', $fileName, 'public');
 
-        /* ===============================
-           2. UPDATE DATABASE
-        =============================== */
-        $turnitin->file_hasil_turnitin = $filePath;
-        $turnitin->status_req = StatusRequest::DISETUJUI->value;
-        $turnitin->save();
+            /* ===============================
+               2. UPDATE DATABASE
+            =============================== */
+            $turnitin->file_hasil_turnitin = $filePath;
+            $turnitin->status_req = StatusRequest::DISETUJUI->value;
+            $turnitin->save();
 
-        /* ===============================
-           3. KIRIM EMAIL VIA QUEUE (BACKGROUND)
-        =============================== */
-        $dosenData = [
-            'nama' => $turnitin->nama_dosen,
-            'nip' => $turnitin->nip,
-            'email' => $turnitin->email_dosen,
-            'judul_dokumen' => $turnitin->judul_dokumen,
-        ];
+            DB::commit();
 
-        $fullFilePath = storage_path('app/public/' . $filePath);
-        SendTurnitinEmail::dispatch($dosenData, $fullFilePath);
+            /* ===============================
+               3. KIRIM EMAIL VIA QUEUE (BACKGROUND)
+            =============================== */
+            $dosenData = [
+                'nama' => $turnitin->nama_dosen,
+                'nip' => $turnitin->nip,
+                'email' => $turnitin->email_dosen,
+                'judul_dokumen' => $turnitin->judul_dokumen,
+            ];
 
-        return response()->json([
-            'status' => true,
-            'message' => 'Request cek plagiarisme telah disetujui. Email sedang dikirim ke dosen.'
-        ]);
+            $fullFilePath = storage_path('app/public/' . $filePath);
+            SendTurnitinEmail::dispatch($dosenData, $fullFilePath);
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Request cek plagiarisme telah disetujui. Email sedang dikirim ke dosen.'
+            ]);
+        } catch (\Throwable $th) {
+            DB::rollback();
+            abort(500, 'Proses persetujuan gagal, ' . $th->getMessage());
+        }
     }
 
+    /**
+     * Reject turnitin check request with admin comment
+     * 
+     * @param Request $req
+     * @return JsonResponse
+     */
     public function reject(Request $req): JsonResponse
     {
         validate_and_response([
@@ -170,44 +180,74 @@ class ReqTurnitinController extends Controller
             'catatan_admin' => ['Alasan Penolakan', 'required'],
         ]);
 
-        $turnitin = ReqTurnitin::findOrFail($req->input('reqturnitin_id'));
-        $turnitin->status_req = StatusRequest::DITOLAK->value;
-        $turnitin->catatan_admin = $req->input('catatan_admin') ?? '-';
-        $turnitin->save();
+        $turnitin = ReqTurnitin::findOrFail((int) $req->input('reqturnitin_id'));
 
-        return response()->json([
-            'status' => true,
-            'message' => 'Request cek turnitin telah ditolak.'
-        ]);
+        DB::beginTransaction();
+        try {
+            $turnitin->status_req = StatusRequest::DITOLAK->value;
+            $turnitin->catatan_admin = clean_post('catatan_admin') ?? '-';
+            $turnitin->save();
+
+            DB::commit();
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Request cek turnitin telah ditolak.'
+            ]);
+        } catch (\Throwable $th) {
+            DB::rollback();
+            abort(500, 'Proses penolakan gagal, ' . $th->getMessage());
+        }
     }
 
+    /**
+     * Reset turnitin check request to pending status
+     * 
+     * @param Request $req
+     * @return JsonResponse
+     */
     public function reset(Request $req): JsonResponse
     {
         validate_and_response([
             'reqturnitin_id' => ['ID Request Turnitin', 'required'],
         ]);
 
-        $turnitin = ReqTurnitin::findOrFail($req->input('reqturnitin_id'));
-        
-        // Reset status dan field terkait
-        $turnitin->status_req = StatusRequest::MENUNGGU->value;
-        $turnitin->catatan_admin = null;
-        $turnitin->file_hasil_turnitin = null;
-        $turnitin->save();
+        $turnitin = ReqTurnitin::findOrFail((int) $req->input('reqturnitin_id'));
 
-        return response()->json([
-            'status' => true,
-            'message' => 'Status request telah direset ke menunggu.'
-        ]);
+        DB::beginTransaction();
+        try {
+            // Reset status dan field terkait
+            $turnitin->status_req = StatusRequest::MENUNGGU->value;
+            $turnitin->catatan_admin = null;
+            $turnitin->file_hasil_turnitin = null;
+            $turnitin->save();
+
+            DB::commit();
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Status request telah direset ke menunggu.'
+            ]);
+        } catch (\Throwable $th) {
+            DB::rollback();
+            abort(500, 'Proses reset gagal, ' . $th->getMessage());
+        }
     }
 
+    /**
+     * Delete turnitin check request
+     * 
+     * @param Request $req
+     * @param string $param1
+     * @return JsonResponse
+     */
     public function destroy(Request $req, $param1 = ''): JsonResponse
     {
         if ($param1 == '') {
             validate_and_response([
                 'id' => ['Parameter data', 'required'],
             ]);
-            $id = $req->input('id');
+            $id = (int) $req->input('id');
 
             $currData = ReqTurnitin::where('reqturnitin_id', $id)->firstOrFail();
 
@@ -222,10 +262,10 @@ class ReqTurnitinController extends Controller
                 ]);
             } catch (\Throwable $th) {
                 DB::rollback();
-                abort(404, 'Hapus data gagal, ' . $th->getMessage());
+                abort(500, 'Hapus data gagal, ' . $th->getMessage());
             }
         } else {
-            abort(404, 'Halaman tidak ditemukan');
+            abort(500, 'Halaman tidak ditemukan');
         }
     }
 }

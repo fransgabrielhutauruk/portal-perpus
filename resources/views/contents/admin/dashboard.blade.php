@@ -13,6 +13,9 @@
 @endsection
 
 @section('content')
+    @php
+        $stats = $pageData->stats ?? [];
+    @endphp
     <div id="kt_app_content_container" class="app-container container-fluid">
         <div class="row g-5 g-xl-8">
             <div class="col-xl-3 col-md-6">
@@ -26,8 +29,7 @@
                             </div>
                             <div class="flex-grow-1">
                                 <span class="text-gray-600 fw-semibold d-block fs-7">Total Request</span>
-                                <span
-                                    class="text-gray-800 fw-bold fs-2x">{{ number_format($pageData->stats['totalRequests']) }}</span>
+                                <span class="text-gray-800 fw-bold fs-2x">{{ number_format($stats['totalRequests'] ?? 0) }}</span>
                             </div>
                         </div>
                         <div class="separator separator-dashed mb-4"></div>
@@ -49,8 +51,7 @@
                             </div>
                             <div class="flex-grow-1">
                                 <span class="text-gray-600 fw-semibold d-block fs-7">Request Buku</span>
-                                <span
-                                    class="text-gray-800 fw-bold fs-2x">{{ number_format($pageData->stats['reqBuku']) }}</span>
+                                <span class="text-gray-800 fw-bold fs-2x">{{ number_format($stats['reqBuku'] ?? 0) }}</span>
                             </div>
                         </div>
                         <div class="separator separator-dashed mb-4"></div>
@@ -74,8 +75,7 @@
                             </div>
                             <div class="flex-grow-1">
                                 <span class="text-gray-600 fw-semibold d-block fs-7">Request Modul</span>
-                                <span
-                                    class="text-gray-800 fw-bold fs-2x">{{ number_format($pageData->stats['reqModul']) }}</span>
+                                <span class="text-gray-800 fw-bold fs-2x">{{ number_format($stats['reqModul'] ?? 0) }}</span>
                             </div>
                         </div>
                         <div class="separator separator-dashed mb-4"></div>
@@ -99,8 +99,7 @@
                             </div>
                             <div class="flex-grow-1">
                                 <span class="text-gray-600 fw-semibold d-block fs-7">Bebas Pustaka</span>
-                                <span
-                                    class="text-gray-800 fw-bold fs-2x">{{ number_format($pageData->stats['reqBebasPustaka']) }}</span>
+                                <span class="text-gray-800 fw-bold fs-2x">{{ number_format($stats['reqBebasPustaka'] ?? 0) }}</span>
                             </div>
                         </div>
                         <div class="separator separator-dashed mb-4"></div>
@@ -124,8 +123,7 @@
                             </div>
                             <div class="flex-grow-1">
                                 <span class="text-gray-600 fw-semibold d-block fs-7">Cek Plagiarisme</span>
-                                <span
-                                    class="text-gray-800 fw-bold fs-2x">{{ number_format($pageData->stats['reqTurnitin']) }}</span>
+                                <span class="text-gray-800 fw-bold fs-2x">{{ number_format($stats['reqTurnitin'] ?? 0) }}</span>
                             </div>
                         </div>
                         <div class="separator separator-dashed mb-4"></div>

@@ -99,9 +99,13 @@ class Kaperpus extends Model
     {
         CauserResolver::setCauser(causerActivityLog());
         return LogOptions::defaults()
-            ->useLogName('kaperpus')
-            ->logOnly(['*'])
-            ->logOnlyDirty();
+            ->logOnly($this->fillable)
+            ->logOnlyDirty()
+            ->useLogName(env('APP_NAME'))
+            ->setDescriptionForEvent(function ($eventName) {
+                $aksi = eventActivityLogBahasa($eventName);
+                return "{$aksi} kaperpus";
+            });
     }
 
     /**

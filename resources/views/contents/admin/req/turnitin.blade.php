@@ -235,20 +235,21 @@
                     }
 
                     // Handle status badge
+                    var statusReq = parseInt(data.status_req) || 0;
                     var statusBadge = '';
-                    if (data.status_req == 0) {
+                    if (statusReq == 0) {
                         statusBadge = '<span class="badge badge-warning">Menunggu</span>';
                         $('#detail-actions-pending').show();
                         $('#detail-actions-pending').data('id', detailId);
                         $('#detail-actions-reset').hide();
                         $('#row-catatan-admin').hide();
-                    } else if (data.status_req == 1) {
+                    } else if (statusReq == 1) {
                         statusBadge = '<span class="badge badge-success">Disetujui</span>';
                         $('#detail-actions-pending').hide();
                         $('#detail-actions-reset').show();
                         $('#detail-actions-reset').data('id', detailId);
                         $('#row-catatan-admin').hide();
-                    } else if (data.status_req == -1) {
+                    } else if (statusReq == -1) {
                         statusBadge = '<span class="badge badge-danger">Ditolak</span>';
                         $('#detail-actions-pending').hide();
                         $('#detail-actions-reset').show();

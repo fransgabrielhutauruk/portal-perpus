@@ -69,13 +69,14 @@ class User extends Authenticatable
     {
         CauserResolver::setCauser(causerActivityLog());
         return LogOptions::defaults()
+            ->logOnly($this->fillable)
             ->logOnlyDirty()
             ->dontLogIfAttributesChangedOnly(['email_verified_at', 'remember_token', 'password'])
             ->useLogName(env('APP_NAME'))
             ->setDescriptionForEvent(function ($eventName) {
                 $aksi = eventActivityLogBahasa($eventName);
                 $name = Auth::check() ? userName() : 'system';
-                return "{$name} {$aksi} table users";
+                return "{$name} {$aksi} pengguna";
             });
     }
 }

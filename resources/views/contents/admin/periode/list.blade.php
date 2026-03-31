@@ -14,9 +14,21 @@
         <div class="col-md">
             <x-table.dttable :builder="$pageData->dataTable" class="align-middle" :responsive="false" jf-data="periode" jf-list="datatable">
                 @slot('action')
-                <x-btn type="primary" class="act-add w-100 w-md-auto" jf-add="periode">
-                    <i class="bi bi-plus fs-2"></i> Tambah data
-                </x-btn>
+                <div class="d-flex flex-wrap align-items-center gap-3 py-2">
+                    <div class="d-flex align-items-center gap-2 text-nowrap">
+                        <label class="form-label fs-7 fw-bold mb-0">Jenis Periode:</label>
+                        <select id="filter_jenis_periode" class="form-select form-select-sm" style="min-width: 260px;">
+                            <option value="all">Semua Jenis</option>
+                            @foreach ($pageData->periodeTypes as $value => $label)
+                                <option value="{{ $value }}">{{ $label }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <x-btn type="primary" class="act-add w-100 w-md-auto" jf-add="periode">
+                        <i class="bi bi-plus fs-2"></i> Tambah data
+                    </x-btn>
+                </div>
                 @endslot
             </x-table.dttable>
         </div>
@@ -48,6 +60,20 @@
     jForm.init({
         name: "periode",
         base_url: `{{ route('app.periode.index') }}`
-    })
+    });
+
+    let periodeTableInstance = null;
+    $(document).ready(function() {
+        const tableId = '{{ $pageData->dataTable->getTableId() }}';
+        periodeTableInstance = $('#' + tableId).DataTable();
+
+        periodeTableInstance.settings()[0].ajax.data = function(d) {
+            d.filter_jenis_periode = $('#filter_jenis_periode').val() || 'all';
+        };
+
+        $('#filter_jenis_periode').on('change', function() {
+            periodeTableInstance.ajax.reload(null, false);
+        });
+    });
 </script>
 @endpush

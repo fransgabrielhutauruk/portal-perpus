@@ -149,7 +149,7 @@ class Periode extends Model
             ->useLogName(env('APP_NAME'))
             ->setDescriptionForEvent(function ($eventName) {
                 $aksi = eventActivityLogBahasa($eventName);
-                return userName() . " {$aksi} table periode";
+                return "{$aksi} periode";
             });
     }
 

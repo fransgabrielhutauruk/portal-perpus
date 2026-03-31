@@ -74,76 +74,30 @@
         </div>
     </div>
 
-    <x-modal id="modalDetail" type="centered" :static="false" size="lg" title="Detail Activity Log">
-        <div id="detailContent">
-            <div class="row mb-4">
-                <div class="col-md-6">
-                    <table class="table table-sm table-borderless">
-                        <tr>
-                            <td class="fw-semibold text-muted w-120px">Waktu</td>
-                            <td>: <span id="detail_created_at"></span></td>
-                        </tr>
-                        <tr>
-                            <td class="fw-semibold text-muted">User</td>
-                            <td>: <span id="detail_causer_name"></span></td>
-                        </tr>
-                        <tr>
-                            <td class="fw-semibold text-muted">Modul</td>
-                            <td>: <span id="detail_log_name"></span></td>
-                        </tr>
-                    </table>
-                </div>
-                <div class="col-md-6">
-                    <table class="table table-sm table-borderless">
-                        <tr>
-                            <td class="fw-semibold text-muted w-120px">Aktivitas</td>
-                            <td>: <span id="detail_description"></span></td>
-                        </tr>
-                        <tr>
-                            <td class="fw-semibold text-muted">Subject</td>
-                            <td>: <span id="detail_subject"></span></td>
-                        </tr>
-                        <tr>
-                            <td class="fw-semibold text-muted">IP Address</td>
-                            <td>: <span id="detail_ip"></span></td>
-                        </tr>
-                    </table>
-                </div>
+    <x-modal id="modal-detail" type="centered" size="lg" title="Detail Log Aktivitas" :action="true">
+        <div class="row mb-4">
+            <div class="col-md-3 fw-bold">Waktu:</div>
+            <div class="col-md-9" id="detail-created-at"></div>
+        </div>
+        <div class="row mb-4">
+            <div class="col-md-3 fw-bold">User:</div>
+            <div class="col-md-9">
+                <div id="detail-user"></div>
+                <small class="text-muted" id="detail-user-email"></small>
             </div>
-
-            <div id="authInfoSection" class="d-none mb-4">
-                <div class="separator separator-dashed my-3"></div>
-                <h6 class="fw-bold text-gray-700 mb-3"><i class="ki-outline ki-shield-tick fs-4 me-2"></i> Informasi
-                    Autentikasi</h6>
-                <table class="table table-sm table-borderless">
-                    <tr>
-                        <td class="fw-semibold text-muted w-120px">User Agent</td>
-                        <td>: <span id="detail_user_agent" class="fs-8"></span></td>
-                    </tr>
-                    <tr id="providerRow" class="d-none">
-                        <td class="fw-semibold text-muted">Provider</td>
-                        <td>: <span id="detail_provider"></span></td>
-                    </tr>
-                </table>
-            </div>
-
-            <div id="changesSection" class="d-none">
-                <div class="separator separator-dashed my-3"></div>
-                <h6 class="fw-bold text-gray-700 mb-3"><i class="ki-outline ki-document fs-4 me-2"></i> Detail Perubahan
-                    Data</h6>
-                <div class="table-responsive">
-                    <table class="table table-row-bordered table-row-gray-200 align-middle gs-3 gy-2">
-                        <thead>
-                            <tr class="fw-bold text-muted bg-light">
-                                <th class="ps-3 rounded-start">Field</th>
-                                <th>Nilai Lama</th>
-                                <th class="pe-3 rounded-end">Nilai Baru</th>
-                            </tr>
-                        </thead>
-                        <tbody id="changesTableBody">
-                        </tbody>
-                    </table>
-                </div>
+        </div>
+        <div class="row mb-4">
+            <div class="col-md-3 fw-bold">Aktivitas:</div>
+            <div class="col-md-9" id="detail-description"></div>
+        </div>
+        <div class="row mb-4">
+            <div class="col-md-3 fw-bold">Subjek:</div>
+            <div class="col-md-9" id="detail-subject"></div>
+        </div>
+        <div class="row mb-4">
+            <div class="col-md-3 fw-bold">Properties:</div>
+            <div class="col-md-9">
+                <pre id="detail-properties" class="bg-light p-3 rounded" style="max-height: 300px; overflow-y: auto;"></pre>
             </div>
         </div>
     </x-modal>
@@ -153,7 +107,6 @@
     <x-script.crud2></x-script.crud2>
     <script>
         let dataTableInstance = null;
-        let baseAjaxUrl = `{{ route('app.activity-log.data') }}/list`;
 
         $(document).ready(function() {
             let tableId = '{{ $pageData->dataTable->getTableId() }}';
@@ -167,7 +120,7 @@
             };
 
             $('#btnFilter').on('click', function() {
-                dataTableInstance.ajax.reload();
+                dataTableInstance.ajax.reload(null, false);
             });
 
             $('#btnReset').on('click', function() {
@@ -175,11 +128,7 @@
                 $('#filter_event').val('').trigger('change');
                 $('#filter_date_from').val('');
                 $('#filter_date_to').val('');
-                dataTableInstance.ajax.reload();
-            });
-
-            $('#filter_date_from, #filter_date_to').on('change', function() {
-                dataTableInstance.ajax.reload();
+                dataTableInstance.ajax.reload(null, false);
             });
 
             $('#filterCollapse').on('show.bs.collapse', function() {
@@ -189,119 +138,55 @@
             });
 
             $(document).on('click', '.btn-detail', function() {
-                let id = $(this).data('id');
-                loadDetail(id);
+                let id = parseInt($(this).data('id'), 10) || 0;
+                if (!id) {
+                    return;
+                }
+
+                viewDetail(id);
             });
         });
 
-        function loadDetail(id) {
+        function viewDetail(id) {
             $.ajax({
                 url: `{{ route('app.activity-log.data') }}/detail`,
-                type: 'POST',
+                type: 'GET',
                 data: {
-                    id: id,
-                    _token: $('meta[name="csrf-token"]').attr('content')
-                },
-                beforeSend: function() {
-                    $('#changesSection').addClass('d-none');
-                    $('#authInfoSection').addClass('d-none');
-                    $('#providerRow').addClass('d-none');
-                    $('#changesTableBody').html('');
+                    id: id
                 },
                 success: function(res) {
                     if (res.status) {
                         let data = res.data;
 
-                        $('#detail_created_at').text(data.created_at || '-');
-                        $('#detail_causer_name').text(data.causer_name || 'System');
-                        $('#detail_log_name').text(data.log_name ? data.log_name.charAt(0).toUpperCase() + data
-                            .log_name.slice(1) : '-');
-                        $('#detail_description').text(data.description || '-');
-                        $('#detail_subject').text(data.subject_type ? data.subject_type + (data.subject_id ?
-                            ' #' + data.subject_id : '') : '-');
-                        $('#detail_ip').text(data.ip || '-');
+                        $('#detail-created-at').text(data.created_at || '-');
+                        $('#detail-user').text(data.causer_name || 'System');
+                        $('#detail-user-email').text(data.user_email || '');
+                        $('#detail-description').text(data.description || '-');
+                        $('#detail-subject').text((data.subject_type || '-') + ' #' + (data.subject_id || '-'));
 
-                        if (data.user_agent) {
-                            $('#authInfoSection').removeClass('d-none');
-                            $('#detail_user_agent').text(data.user_agent);
-
-                            if (data.provider) {
-                                $('#providerRow').removeClass('d-none');
-                                $('#detail_provider').text(data.provider.charAt(0).toUpperCase() + data.provider
-                                    .slice(1));
-                            }
+                        if (data.properties && Object.keys(data.properties).length > 0) {
+                            $('#detail-properties').text(JSON.stringify(data.properties, null, 2));
+                        } else {
+                            $('#detail-properties').text('Tidak ada properties');
                         }
 
-                        if (data.old || data.attributes) {
-                            $('#changesSection').removeClass('d-none');
-                            let tbody = '';
-                            let allFields = {};
-
-                            if (data.old) {
-                                Object.keys(data.old).forEach(function(key) {
-                                    allFields[key] = allFields[key] || {};
-                                    allFields[key].old = data.old[key];
-                                });
-                            }
-                            if (data.attributes) {
-                                Object.keys(data.attributes).forEach(function(key) {
-                                    allFields[key] = allFields[key] || {};
-                                    allFields[key].new = data.attributes[key];
-                                });
-                            }
-
-                            Object.keys(allFields).forEach(function(field) {
-                                let oldVal = allFields[field].old !== undefined && allFields[field]
-                                    .old !== null ? allFields[field].old :
-                                    '<span class="text-muted fst-italic">-</span>';
-                                let newVal = allFields[field].new !== undefined && allFields[field]
-                                    .new !== null ? allFields[field].new :
-                                    '<span class="text-muted fst-italic">-</span>';
-
-                                let oldStr = typeof oldVal === 'object' ? JSON.stringify(oldVal) :
-                                    String(oldVal);
-                                let newStr = typeof newVal === 'object' ? JSON.stringify(newVal) :
-                                    String(newVal);
-
-                                let isChanged = oldStr !== newStr;
-                                let highlightClass = isChanged ? 'bg-light-warning' : '';
-
-                                tbody += `<tr class="${highlightClass}">
-                                    <td class="ps-3 fw-semibold text-gray-700">${formatFieldName(field)}</td>
-                                    <td><span class="text-danger">${escapeHtml(oldStr)}</span></td>
-                                    <td class="pe-3"><span class="text-success">${escapeHtml(newStr)}</span></td>
-                                </tr>`;
-                            });
-
-                            if (tbody === '') {
-                                tbody =
-                                    '<tr><td colspan="3" class="text-center text-muted py-4">Tidak ada detail perubahan</td></tr>';
-                            }
-
-                            $('#changesTableBody').html(tbody);
-                        }
-
-                        $('#modalDetail').modal('show');
+                        $('#modal-detail').modal('show');
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: res.message
+                        });
                     }
                 },
-                error: function(xhr) {
-                    let msg = xhr.responseJSON?.message || 'Gagal memuat detail';
-                    Swal.fire('Error', msg, 'error');
+                error: function() {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Gagal memuat detail log'
+                    });
                 }
             });
-        }
-
-        function formatFieldName(field) {
-            return field.replace(/_/g, ' ').replace(/\b\w/g, function(l) {
-                return l.toUpperCase();
-            });
-        }
-
-        function escapeHtml(text) {
-            if (text === '-' || text.includes('fst-italic')) return text;
-            let div = document.createElement('div');
-            div.appendChild(document.createTextNode(text));
-            return div.innerHTML;
         }
     </script>
 @endpush

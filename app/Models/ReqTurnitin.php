@@ -38,6 +38,8 @@ class ReqTurnitin extends Model
     ];
 
     protected $casts = [
+        'prodi_id' => 'integer',
+        'status_req' => 'integer',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
         'deleted_at' => 'datetime',
@@ -61,7 +63,7 @@ class ReqTurnitin extends Model
             ->useLogName(env('APP_NAME'))
             ->setDescriptionForEvent(function ($eventName) {
                 $aksi = eventActivityLogBahasa($eventName);
-                return userInisial() . " {$aksi} table req_turnitin";
+                return "{$aksi} req turnitin";
             });
     }
 
@@ -92,16 +94,19 @@ class ReqTurnitin extends Model
     /**
      * fungsi kustom untuk menghasilkan data model secara detail (rinci) dengan seluruh kemungkinan join yang terjadi
      *
-     * @param  mixed $where
+     * @param array $where Filter conditions
+     * @param array $whereBinding Binding values for queries
+     * @param bool  $get Whether to execute and return results (true) or return query builder (false)
+     * @return \Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Query\Builder
      */
     public static function getDataDetail($where = [], $whereBinding = [], $get = true)
     {
-        $query = DB::table('')
-            ->selectRaw('a.*, p.nama_prodi')
-            ->from('req_turnitin as a')
-            ->leftJoin('dm_prodi as p', 'a.prodi_id', '=', 'p.prodi_id')
-            ->whereNull('a.deleted_at')
-            ->orderBy('a.created_at', 'desc');
+        $query = DB::table('req_turnitin')
+            ->selectRaw('req_turnitin.*, dm_prodi.nama_prodi')
+            ->leftJoin('dm_prodi', 'req_turnitin.prodi_id', '=', 'dm_prodi.prodi_id')
+            ->whereNull('req_turnitin.deleted_at')
+            ->orderBy('req_turnitin.created_at', 'desc');
+
         return $get ? $query->get() : $query;
     }
 }

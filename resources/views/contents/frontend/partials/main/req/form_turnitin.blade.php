@@ -238,14 +238,14 @@
                             <tbody>
                                 @forelse(data_get($content, 'history', []) as $item)
                                     <tr>
-                                        <td>{{ tanggal($item->created_at, ' ') }}</td>
-                                        <td>{{ $item->nama_dosen }}</td>
-                                        <td>
+                                        <td class="align-middle">{{ tanggal($item->created_at, ' ') }}</td>
+                                        <td class="align-middle">{{ $item->nama_dosen }}</td>
+                                        <td class="align-middle">
                                             {{ $item->judul_dokumen }}
                                             <span
                                                 class="badge bg-secondary text-light ms-md-2">{{ $item->jenis_dokumen }}</span>
                                         </td>
-                                        <td class="text-center">
+                                        <td class="text-center align-middle">
                                             @if ($item->status_req == -1)
                                                 {!! $item->status_badge !!}
                                                 @if ($item->catatan_admin)
@@ -446,10 +446,10 @@
 
         tbody.insertAdjacentHTML('afterbegin', `
             <tr class="table-success">
-                <td>${data.date_fmt}</td>
-                <td>${data.nama_dosen}</td>
-                <td>${data.judul_dokumen} ${jenisBadge}</td>
-                <td class="text-center">${statusBadges[data.status_req] || statusBadges.default}</td>
+                <td class="align-middle">${data.date_fmt}</td>
+                <td class="align-middle">${data.nama_dosen}</td>
+                <td class="align-middle">${data.judul_dokumen} ${jenisBadge}</td>
+                <td class="text-center align-middle">${statusBadges[data.status_req] || statusBadges.default}</td>
             </tr>`);
 
         setTimeout(() => tbody.querySelector('tr.table-success')?.classList.remove('table-success'), 2000);

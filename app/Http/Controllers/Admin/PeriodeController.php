@@ -41,8 +41,14 @@ class PeriodeController extends Controller
     public function data(Request $req, $param1 = ''): JsonResponse
     {
         if ($param1 == 'list') {
-            $filter = [];
-            $data = DataTables::of(Periode::getDataDetail($filter, get: true))->toArray();
+            $query = Periode::getDataDetail(get: false);
+
+            $filterJenisPeriode = (string) $req->input('filter_jenis_periode', 'all');
+            if ($filterJenisPeriode !== 'all' && in_array($filterJenisPeriode, Periode::getAllowedTypes(), true)) {
+                $query->where('a.jenis_periode', $filterJenisPeriode);
+            }
+
+            $data = DataTables::of($query->get())->toArray();
 
             $latestPeriodeIdByJenis = Periode::getLatestIdsByType();
 

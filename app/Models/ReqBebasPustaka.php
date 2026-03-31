@@ -118,7 +118,7 @@ class ReqBebasPustaka extends Model
             ->useLogName(env('APP_NAME'))
             ->setDescriptionForEvent(function ($eventName) {
                 $aksi = eventActivityLogBahasa($eventName);
-                return userInisial() . " {$aksi} table req bebas pustaka";
+                return "{$aksi} req bebas pustaka";
             });
     }
 

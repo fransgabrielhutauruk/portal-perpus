@@ -127,7 +127,7 @@ class ReqModul extends Model
             ->useLogName(env('APP_NAME'))
             ->setDescriptionForEvent(function ($eventName) {
                 $aksi = eventActivityLogBahasa($eventName);
-                return userInisial() . " {$aksi} table req modul";
+                return "{$aksi} req modul";
             });
     }
 
