@@ -24,6 +24,12 @@ Route::middleware('guest')->group(function () {
     Route::get('auth/{provider}/callback', [AuthController::class, 'handleGoogleCallback'])
         ->name('login.google.callback');
 
+    Route::get('auth/verify/{provider}', [AuthController::class, 'redirectToGoogleVerify'])
+        ->name('login.google.verify');
+
+    Route::get('auth/verify/{provider}/callback', [AuthController::class, 'handleGoogleVerifyCallback'])
+        ->name('login.google.verify.callback');
+
     Route::get('login', [AuthenticatedSessionController::class, 'create'])
         ->name('login');
 

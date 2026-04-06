@@ -42,7 +42,7 @@ class Faq extends Model
             ->useLogName(env('APP_NAME'))
             ->setDescriptionForEvent(function ($eventName) {
                 $aksi = eventActivityLogBahasa($eventName);
-                return userName() . " {$aksi} table faq";
+                return "{$aksi} faq";
             });
     }
 

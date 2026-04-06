@@ -25,7 +25,7 @@ return new class extends Migration
             $table->text('penerbit_buku');
             $table->string('jenis_buku');
             $table->string('bahasa_buku');
-            $table->integer('estimasi_harga')->nullable();
+            $table->string('estimasi_harga')->nullable();
             $table->string('link_pembelian');
             $table->text('alasan_usulan');
             $table->integer('status_req')->default(0);

@@ -38,6 +38,9 @@
                 :active="$pageData->activeMenu == 'prodi'" />
             <x-theme.menu link="{{ route('app.user.index') }}" text="Pengguna" icon="ki-outline ki-setting-3"
                 :active="$pageData->activeMenu == 'pengguna'" />
+            <x-theme.menu text="Master Data" icon="ki-outline ki-archive" :active="in_array($pageData->activeMenu, ['pegawai'])">
+                <x-theme.menu link="{{ route('app.master.show', 'pegawai') }}" text="Pegawai" :active="$pageData->activeMenu == 'pegawai'" />
+            </x-theme.menu>
             <x-theme.menu link="{{ route('app.activity-log.index') }}" text="Activity Log" icon="ki-outline ki-scroll"
                 :active="$pageData->activeMenu == 'activity-log'" />
         @endif

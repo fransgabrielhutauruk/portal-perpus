@@ -2,7 +2,10 @@
 
 namespace App\Http\Requests\Frontend;
 
+use App\Enums\FrontendVerificationPurpose;
+use App\Services\Frontend\GoogleVerificationService;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class SubmitBebasPustakaRequest extends FormRequest
 {
@@ -11,7 +14,7 @@ class SubmitBebasPustakaRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        return !empty($this->resolveVerifiedEmail());
     }
 
     /**
@@ -21,9 +24,16 @@ class SubmitBebasPustakaRequest extends FormRequest
      */
     public function rules(): array
     {
+        $email = $this->resolveVerifiedEmail();
+
         return [
+            'verification_token'   => 'nullable|string',
             'nama_mahasiswa'      => 'required|string|max:255',
-            'email_mahasiswa'     => 'required|email',
+            'email_mahasiswa'     => [
+                'required',
+                'email',
+                Rule::in(array_filter([$email])),
+            ],
             'nim'                 => 'required|string',
             'prodi_id'            => 'required|numeric',
             'link_kp_repository'  => 'required|url',
@@ -59,6 +69,7 @@ class SubmitBebasPustakaRequest extends FormRequest
             'nama_mahasiswa.required'      => 'Nama mahasiswa wajib diisi.',
             'email_mahasiswa.required'     => 'Email wajib diisi.',
             'email_mahasiswa.email'        => 'Format email tidak valid.',
+            'email_mahasiswa.in'           => 'Email tidak sesuai dengan akun login.',
             'nim.required'                 => 'NIM wajib diisi.',
             'prodi_id.required'            => 'Program studi wajib dipilih.',
             'link_kp_repository.required'  => 'Link repository KP wajib diisi.',
@@ -66,5 +77,13 @@ class SubmitBebasPustakaRequest extends FormRequest
             'link_pa_repository.required'  => 'Link repository PA wajib diisi.',
             'link_pa_repository.url'       => 'Format link repository PA tidak valid.',
         ];
+    }
+
+    protected function resolveVerifiedEmail(): ?string
+    {
+        return app(GoogleVerificationService::class)->resolveVerifiedEmailForSubmit(
+            $this->input('verification_token'),
+            FrontendVerificationPurpose::REQ_BEBAS_PUSTAKA->value
+        );
     }
 }

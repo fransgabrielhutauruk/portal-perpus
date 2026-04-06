@@ -123,7 +123,7 @@ class ReqBuku extends Model
             ->useLogName(env('APP_NAME'))
             ->setDescriptionForEvent(function ($eventName) {
                 $aksi = eventActivityLogBahasa($eventName);
-                return "table req buku";
+                return "{$aksi} req buku";
             });
     }
 

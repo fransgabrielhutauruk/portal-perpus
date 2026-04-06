@@ -19,6 +19,7 @@
                     <form id="formTurnitin" action="{{ data_get($content, 'form.action_url') }}" method="POST"
                         enctype="multipart/form-data" data-toggle="validator">
                         @csrf
+                        <input type="hidden" name="verification_token" id="verification_token" value="">
                         <div class="tab-content mt-5" id="turnitinTabsContent">
 
                             {{-- === TAB 1: ATTENTION === --}}
@@ -33,9 +34,15 @@
                                         mengonfirmasikan melalui Email, pastikan Email yang Anda masukkan benar.</p>
                                 </div>
 
+                                <div class="mt-3">
+                                    <p class="mb-0 text-muted">Sebelum melanjutkan, lakukan verifikasi menggunakan
+                                        email kampus.</p>
+                                </div>
+
                                 <div class="contact-form-btn mt-3">
-                                    <button type="button" class="btn-default" onclick="switchTab('tab-dosen')">
-                                        Selanjutnya
+                                    <button type="button" id="btnToStep2" class="btn-default"
+                                        onclick="handleGoogleVerification()">
+                                        Verifikasi melalui Google
                                     </button>
                                 </div>
 
@@ -107,10 +114,12 @@
                                                 Program Studi <span class="text-danger">*</span>
                                             </label>
                                             <select name="prodi_id" class="form-select" required
+                                                id="prodi_id"
                                                 data-error="Pilih program studi">
                                                 <option value="">-- Pilih Program Studi --</option>
                                                 @foreach (data_get($content, 'prodi_list', []) as $prodi)
-                                                    <option value="{{ $prodi->prodi_id }}">{{ $prodi->nama_prodi }}
+                                                    <option value="{{ $prodi->prodi_id }}"
+                                                        data-name="{{ $prodi->nama_prodi }}">{{ $prodi->nama_prodi }}
                                                     </option>
                                                 @endforeach
                                             </select>
@@ -299,7 +308,27 @@
     </div>
 </div>
 
+@if (session('error'))
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            Swal.fire({
+                icon: 'error',
+                title: 'Gagal!',
+                text: @json(session('error')),
+                confirmButtonText: 'OK',
+                confirmButtonColor: '#dc3545'
+            });
+        });
+    </script>
+@endif
+
 <script>
+    const verifyIdentityUrl = "{{ route('frontend.req.turnitin.verify') }}";
+    const googleLoginUrl = "{{ route('login.google.verify', ['provider' => 'google']) }}";
+    const googleLoginRedirect = "{{ url()->current() }}";
+    const isAuthenticated = @json(auth()->check());
+    const hasVerifiedEmail = @json(session()->has('verified_google_email'));
+
     function initializeFormValidation() {
         $(document).ready(function() {
             $('#formTurnitin').validator();
@@ -308,9 +337,17 @@
 
     // Start initialization when DOM is ready
     if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initializeFormValidation);
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeFormValidation();
+            if (hasVerifiedEmail) {
+                verifyIdentity();
+            }
+        });
     } else {
         initializeFormValidation();
+        if (hasVerifiedEmail) {
+            verifyIdentity();
+        }
     }
 
     function openConfirmation() {
@@ -323,6 +360,9 @@
     function submitTurnitinAjax() {
         const form = document.getElementById('formTurnitin');
         const submitBtn = document.getElementById('btnOpenModal');
+        const disabledFields = form.querySelectorAll(':disabled');
+
+        disabledFields.forEach(field => field.disabled = false);
 
         const modal = bootstrap.Modal.getInstance(document.getElementById('confirmationModal'));
         modal.hide();
@@ -363,6 +403,7 @@
                 status,
                 body
             }) => {
+                disabledFields.forEach(field => field.disabled = true);
                 submitBtn.disabled = false;
 
                 if (status === 200 || status === 201) {
@@ -393,6 +434,7 @@
                 }
             })
             .catch(error => {
+                disabledFields.forEach(field => field.disabled = true);
                 submitBtn.disabled = false;
 
                 Swal.fire({
@@ -430,6 +472,135 @@
 
     function validateAndNext(currentTabId, nextTabId) {
         if (validateTab(currentTabId)) switchTab(nextTabId);
+    }
+
+    function handleGoogleVerification() {
+        if (!isAuthenticated && !hasVerifiedEmail) {
+            const targetUrl = `${googleLoginUrl}?redirect=${encodeURIComponent(googleLoginRedirect)}`;
+            window.location.href = targetUrl;
+            return;
+        }
+
+        verifyIdentity();
+    }
+
+    function setFieldReadonly(fieldId, readonly) {
+        const field = document.getElementById(fieldId);
+        if (!field) return;
+        field.disabled = readonly;
+    }
+
+    function setProdiFromHomebase(homebase) {
+        const select = document.getElementById('prodi_id');
+        if (!select) return;
+
+        const prodiName = (homebase || '').toString().trim().toLowerCase();
+        const options = Array.from(select.options);
+        const match = options.find(option => (option.dataset.name || '').toLowerCase() === prodiName);
+
+        if (match) {
+            select.value = match.value;
+            select.disabled = true;
+        } else {
+            select.disabled = false;
+        }
+    }
+
+    function applyVerifiedIdentity(data) {
+        const namaField = document.getElementById('nama_dosen');
+        const inisialField = document.getElementById('inisial_dosen');
+        const emailField = document.getElementById('email_dosen');
+        const nipField = document.getElementById('nip');
+        const verificationTokenField = document.getElementById('verification_token');
+        const providedInitial = (data.inisial || '').toString().trim();
+
+        if (namaField) namaField.value = data.nama || '';
+        if (emailField) emailField.value = data.email || '';
+        if (nipField) {
+            nipField.value = data.nip || '';
+            nipField.readOnly = true;
+        }
+        if (inisialField) inisialField.value = data.inisial || '';
+
+        if (inisialField) {
+            if (providedInitial) {
+                inisialField.value = providedInitial;
+            } else if (!inisialField.value.trim()) {
+                inisialField.value = buildInitials(data.nama || '');
+            }
+        }
+
+        if (verificationTokenField) {
+            verificationTokenField.value = data.verification_token || '';
+        }
+
+        setFieldReadonly('nama_dosen', true);
+        setFieldReadonly('email_dosen', true);
+        setFieldReadonly('nip', true);
+        setFieldReadonly('inisial_dosen', true);
+        setProdiFromHomebase(data.homebase || '');
+
+        switchTab('tab-dosen');
+    }
+
+    function verifyIdentity() {
+        Swal.fire({
+            html: 'Memverifikasi akun...',
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+
+        fetch(verifyIdentityUrl, {
+                headers: {
+                    'Accept': 'application/json'
+                }
+            })
+            .then(async res => {
+                const contentType = res.headers.get('content-type') || '';
+                if (!contentType.includes('application/json')) {
+                    throw new Error('Server mengembalikan response tidak valid');
+                }
+
+                const body = await res.json();
+                return {
+                    status: res.status,
+                    body
+                };
+            })
+            .then(({
+                status,
+                body
+            }) => {
+                if (status === 401) {
+                    const targetUrl = body.login_url ||
+                        `${googleLoginUrl}?redirect=${encodeURIComponent(googleLoginRedirect)}`;
+                    window.location.href = targetUrl;
+                    return;
+                }
+
+                if (status >= 400) {
+                    throw new Error(body.message || 'Verifikasi gagal.');
+                }
+
+                if (body.status !== 'success' || !body.data) {
+                    throw new Error(body.message || 'Verifikasi gagal.');
+                }
+
+                Swal.close();
+                applyVerifiedIdentity(body.data);
+            })
+            .catch(error => {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Gagal!',
+                    text: error.message || 'Terjadi kesalahan jaringan.',
+                    confirmButtonText: 'OK',
+                    confirmButtonColor: '#dc3545'
+                });
+            });
     }
 
     function addHistoryRow(data) {

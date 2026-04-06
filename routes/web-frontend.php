@@ -26,18 +26,22 @@ Route::name('frontend.')->group(function () {
     Route::prefix('/layanan')->name('req.')->group(function () {
         Route::controller(ReqBukuController::class)->group(function () {
             Route::get('/req-buku', 'index')->name('buku');
+            Route::get('/req-buku/verify', 'verifyIdentity')->name('buku.verify');
             Route::post('/req-buku/send', 'submitUsulan')->name('buku.send');
         });
         Route::controller(ReqModulController::class)->group(function () {
             Route::get('/req-modul', 'index')->name('modul');
+            Route::get('/req-modul/verify', 'verifyIdentity')->name('modul.verify');
             Route::post('/req-modul/send', 'submitUsulanModul')->name('modul.send');
         });
         Route::controller(ReqTurnitinController::class)->group(function () {
             Route::get('/req-turnitin', 'index')->name('turnitin');
+            Route::get('/req-turnitin/verify', 'verifyIdentity')->name('turnitin.verify');
             Route::post('/req-turnitin/submit', 'submitTurnitin')->name('turnitin.send');
         });
         Route::controller(ReqBebasPustakaController::class)->group(function () {
             Route::get('/req-bebas-pustaka', 'index')->name('bebas-pustaka');
+            Route::get('/req-bebas-pustaka/verify', 'verifyIdentity')->name('bebas-pustaka.verify');
             Route::post('/req-bebas-pustaka/send', 'submit')->name('bebas-pustaka.send');
         });
     });

@@ -34,6 +34,7 @@
                         <form id="formUsulan" action="{{ data_get($content, 'form.action_url') }}" method="POST"
                             data-toggle="validator">
                             @csrf
+                            <input type="hidden" name="verification_token" id="verification_token" value="">
                             <div class="tab-content mt-5" id="usulanTabsContent">
                                 <div class="tab-pane fade show active text-center" id="tab-attention" role="tabpanel">
                                     <div class="border-top border-bottom border-2 py-2">
@@ -74,11 +75,16 @@
                                         Silakan centang persetujuan terlebih dahulu
                                     </div>
 
+                                    <div class="mt-3">
+                                        <p class="mb-0 text-muted">Sebelum melanjutkan, lakukan verifikasi menggunakan
+                                            email kampus.</p>
+                                    </div>
+
                                     @if (data_get($content, 'is_open'))
-                                        <div class="contact-form-btn mt-3">
+                                        <div class="contact-form-btn mt-2">
                                             <button type="button" id="btnToStep2" class="btn-default"
-                                                onclick="proceedToNextTab()">
-                                                Selanjutnya
+                                                onclick="handleGoogleVerification()">
+                                                Verifikasi melalui Google
                                             </button>
                                         </div>
                                     @endif
@@ -136,8 +142,9 @@
                                             <div class="form-group">
                                                 <label class="fw-bold text-muted small text-uppercase">Nomor
                                                     Identitas <span class="text-danger">*</span></label>
-                                                <input type="number" name="nim" id="input_nim" class="form-control"
-                                                    placeholder="Masukkan NIM" required data-error="NIM wajib diisi">
+                                                <input type="number" name="nim" id="input_nim"
+                                                    class="form-control" placeholder="Masukkan NIM" required
+                                                    data-error="NIM wajib diisi">
                                                 <input type="number" name="nip" id="input_nip"
                                                     class="form-control" placeholder="Masukkan NIP"
                                                     style="display:none;" data-error="NIP Wajib diisi">
@@ -151,11 +158,14 @@
                                             <div class="form-group">
                                                 <label class="mb-2 fw-bold text-muted small text-uppercase">Program
                                                     Studi <span class="text-danger">*</span></label>
-                                                <select name="prodi_id" class="form-select" required
+                                                <select name="prodi_id" id="prodi_id" class="form-select" required
                                                     data-error="Pilih program studi">
                                                     <option value="">-- Pilih Program Studi --</option>
                                                     @foreach (data_get($content, 'prodi_list', []) as $prodi)
-                                                        <option value="{{ $prodi->prodi_id }}">{{ $prodi->nama_prodi }}
+                                                        <option value="{{ $prodi->prodi_id }}"
+                                                            data-alias="{{ $prodi->alias_prodi }}"
+                                                            data-name="{{ $prodi->nama_prodi }}">
+                                                            {{ $prodi->nama_prodi }}
                                                         </option>
                                                     @endforeach
                                                 </select>
@@ -285,7 +295,8 @@
                                                 <div class="form-check">
                                                     <input class="form-check-input" type="checkbox"
                                                         id="penerbit_other" onchange="togglePenerbitOther()">
-                                                    <label class="form-check-label" for="penerbit_other">Lainnya</label>
+                                                    <label class="form-check-label"
+                                                        for="penerbit_other">Lainnya</label>
                                                 </div>
                                                 <input type="text" name="penerbit[]" id="penerbit_other_text"
                                                     class="form-control" placeholder="Nama penerbit lainnya..."
@@ -331,9 +342,8 @@
                                                 <label class="fw-bold text-muted small text-uppercase"
                                                     for="estimasi_harga">Estimasi
                                                     Harga (Jika Ada)</label>
-                                                <input type="number" name="estimasi_harga" id="estimasi_harga"
-                                                    placeholder="Masukkan estimasi harga" class="form-control"
-                                                    data-error="Wajib diisi">
+                                                <input type="text" name="estimasi_harga" id="estimasi_harga"
+                                                    placeholder="Masukkan estimasi harga" class="form-control" data-error="Wajib diisi">
                                                 <div class="help-block with-errors"></div>
                                             </div>
                                         </div>
@@ -455,7 +465,27 @@
     </div>
 </div>
 
+@if (session('error'))
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            Swal.fire({
+                icon: 'error',
+                title: 'Gagal!',
+                text: @json(session('error')),
+                confirmButtonText: 'OK',
+                confirmButtonColor: '#dc3545'
+            });
+        });
+    </script>
+@endif
+
 <script>
+    const verifyIdentityUrl = "{{ route('frontend.req.buku.verify') }}";
+    const googleLoginUrl = "{{ route('login.google.verify', ['provider' => 'google']) }}";
+    const googleLoginRedirect = "{{ url()->current() }}";
+    const isAuthenticated = @json(auth()->check());
+    const hasVerifiedEmail = @json(session()->has('verified_google_email'));
+
     // Ensure jQuery is loaded before initializing
     function initializeFormValidation() {
         $(document).ready(function() {
@@ -468,7 +498,8 @@
             });
 
             $('.penerbit-checkbox').on('change', function() {
-                const anyChecked = $('.penerbit-checkbox:checked').length > 0 || $('#penerbit_other_text')
+                const anyChecked = $('.penerbit-checkbox:checked').length > 0 || $(
+                        '#penerbit_other_text')
                     .val().trim();
                 const errorElement = $('#penerbit-error');
                 anyChecked ? errorElement.addClass('d-none') : errorElement.removeClass('d-none');
@@ -484,9 +515,17 @@
 
     // Start initialization when DOM is ready
     if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initializeFormValidation);
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeFormValidation();
+            if (hasVerifiedEmail) {
+                verifyIdentity();
+            }
+        });
     } else {
         initializeFormValidation();
+        if (hasVerifiedEmail) {
+            verifyIdentity();
+        }
     }
 
     function openConfirmation() {
@@ -499,6 +538,9 @@
     function submitUsulanAjax() {
         const form = document.getElementById('formUsulan');
         const submitBtn = document.getElementById('btnOpenModal');
+        const disabledFields = form.querySelectorAll(':disabled');
+
+        disabledFields.forEach(field => field.disabled = false);
 
         const modal = bootstrap.Modal.getInstance(document.getElementById('confirmationModal'));
         modal.hide();
@@ -551,6 +593,7 @@
                 status,
                 body
             }) => {
+                disabledFields.forEach(field => field.disabled = true);
                 submitBtn.disabled = false;
 
                 if (status === 200 || status === 201) {
@@ -581,6 +624,7 @@
                 }
             })
             .catch(error => {
+                disabledFields.forEach(field => field.disabled = true);
                 submitBtn.disabled = false;
 
                 Swal.fire({
@@ -668,7 +712,7 @@
         isNim ? nip.removeAttribute('required') : nip.setAttribute('required', 'required');
 
         (isNim ? nip : nim).value = '';
-        
+
         // Update validator if jQuery is available
         if (typeof $ !== 'undefined' && typeof $.fn.validator !== 'undefined') {
             $('#formUsulan').validator('update');
@@ -690,6 +734,7 @@
         const feedback = document.getElementById('checkboxFeedback');
 
         btn?.classList.toggle('opacity-50', !checkbox?.checked);
+        if (btn) btn.disabled = !checkbox?.checked;
         if (checkbox?.checked) feedback?.classList.add('d-none');
     }
 
@@ -707,6 +752,154 @@
         switchTab('tab-user');
     }
 
+    function handleGoogleVerification() {
+        const checkbox = document.getElementById('agreementCheck');
+        const feedback = document.getElementById('checkboxFeedback');
+
+        if (!checkbox.checked) {
+            feedback.classList.remove('d-none');
+            feedback.style.animation = 'shake 2s';
+            setTimeout(() => feedback.style.animation = '', 500);
+            return;
+        }
+
+        if (!isAuthenticated && !hasVerifiedEmail) {
+            const targetUrl = `${googleLoginUrl}?redirect=${encodeURIComponent(googleLoginRedirect)}`;
+            window.location.href = targetUrl;
+            return;
+        }
+
+        verifyIdentity();
+    }
+
+    function setFieldReadonly(fieldId, readonly) {
+        const field = document.getElementById(fieldId);
+        if (!field) return;
+        field.disabled = readonly;
+    }
+
+    function setSelectDisabled(select, disabled) {
+        if (!select) return;
+        select.disabled = disabled;
+    }
+
+    function setProdiFromIdentity(data) {
+        const select = document.getElementById('prodi_id');
+        if (!select) return;
+
+        const options = Array.from(select.options);
+        const prodiAlias = (data.prodi || '').toString().trim().toLowerCase();
+        const prodiName = (data.homebase || '').toString().trim().toLowerCase();
+
+        let match = null;
+        if (prodiAlias) {
+            match = options.find(option => (option.dataset.alias || '').toLowerCase() === prodiAlias);
+        }
+
+        if (!match && prodiName) {
+            match = options.find(option => (option.dataset.name || '').toLowerCase() === prodiName);
+        }
+
+        if (match) {
+            select.value = match.value;
+            setSelectDisabled(select, true);
+        } else {
+            setSelectDisabled(select, false);
+        }
+    }
+
+    function applyVerifiedIdentity(data) {
+        const namaField = document.getElementById('nama_req');
+        const emailField = document.getElementById('email_req');
+        const identityType = document.getElementById('identity_type');
+        const verificationTokenField = document.getElementById('verification_token');
+        const isPegawai = data.identity_type === 'pegawai';
+
+        if (namaField) namaField.value = data.nama || '';
+        if (emailField) emailField.value = data.email || '';
+        if (verificationTokenField) verificationTokenField.value = data.verification_token || '';
+
+        identityType.value = isPegawai ? 'nip' : 'nim';
+        toggleIdentity(identityType.value);
+        identityType.disabled = true;
+
+        if (isPegawai) {
+            document.getElementById('input_nip').value = data.nip || '';
+            document.getElementById('input_nip').readOnly = true;
+            document.getElementById('input_nip').disabled = true;
+        } else {
+            document.getElementById('input_nim').value = data.nim || '';
+            document.getElementById('input_nim').readOnly = true;
+            document.getElementById('input_nim').disabled = true;
+        }
+
+        setFieldReadonly('nama_req', true);
+        setFieldReadonly('email_req', true);
+
+        setProdiFromIdentity(data);
+
+        switchTab('tab-user');
+    }
+
+    function verifyIdentity() {
+        Swal.fire({
+            html: 'Memverifikasi akun...',
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+
+        fetch(verifyIdentityUrl, {
+                headers: {
+                    'Accept': 'application/json'
+                }
+            })
+            .then(async res => {
+                const contentType = res.headers.get('content-type') || '';
+                if (!contentType.includes('application/json')) {
+                    throw new Error('Server mengembalikan response tidak valid');
+                }
+                const body = await res.json();
+                return {
+                    status: res.status,
+                    body
+                };
+            })
+            .then(({
+                status,
+                body
+            }) => {
+                if (status === 401) {
+                    const targetUrl = body.login_url ||
+                        `${googleLoginUrl}?redirect=${encodeURIComponent(googleLoginRedirect)}`;
+                    window.location.href = targetUrl;
+                    return;
+                }
+
+                if (status >= 400) {
+                    throw new Error(body.message || 'Verifikasi gagal.');
+                }
+
+                if (body.status !== 'success' || !body.data) {
+                    throw new Error(body.message || 'Verifikasi gagal.');
+                }
+
+                Swal.close();
+                applyVerifiedIdentity(body.data);
+            })
+            .catch(error => {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Gagal!',
+                    text: error.message || 'Terjadi kesalahan jaringan.',
+                    confirmButtonText: 'OK',
+                    confirmButtonColor: '#dc3545'
+                });
+            });
+    }
+
     function autofillForm() {
         document.getElementById('agreementCheck').checked = true;
         toggleNextButton();
@@ -716,7 +909,9 @@
         toggleIdentity('nim');
         document.querySelector('input[name="nim"]').value = "2355301999";
         const prodi = document.querySelector('select[name="prodi_id"]');
-        if (prodi.options.length > 1) prodi.selectedIndex = 1;
+        if (prodi.options.length > 1) {
+            prodi.selectedIndex = 1;
+        }
         document.querySelector('input[name="judul_buku"]').value = "Clean Code";
         document.querySelector('input[name="penulis_buku"]').value = "Robert C. Martin";
         document.querySelector('input[name="tahun_terbit"]').value = "2008";

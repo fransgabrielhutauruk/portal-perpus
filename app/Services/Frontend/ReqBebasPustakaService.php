@@ -71,7 +71,7 @@ class ReqBebasPustakaService
     {
         try {
             return DB::table('dm_prodi')
-                ->select('prodi_id', 'nama_prodi')
+                ->select('prodi_id', 'nama_prodi', 'alias_prodi')
                 ->orderBy('nama_prodi', 'asc')
                 ->get();
         } catch (\Exception $e) {

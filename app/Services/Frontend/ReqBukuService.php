@@ -36,7 +36,8 @@ class ReqBukuService
     {
         try {
             return DB::table('dm_prodi')
-                ->select('prodi_id', 'nama_prodi')
+                ->select('prodi_id', 'alias_prodi', 'nama_prodi')
+                ->whereNull('deleted_at')
                 ->orderBy('nama_prodi', 'asc')
                 ->get();
         } catch (\Exception $e) {

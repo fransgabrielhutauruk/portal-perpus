@@ -2,7 +2,10 @@
 
 namespace App\Http\Requests\Frontend;
 
+use App\Enums\FrontendVerificationPurpose;
+use App\Services\Frontend\GoogleVerificationService;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class SubmitUsulanBukuRequest extends FormRequest
 {
@@ -11,7 +14,7 @@ class SubmitUsulanBukuRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        return !empty($this->resolveVerifiedEmail());
     }
 
     /**
@@ -21,9 +24,16 @@ class SubmitUsulanBukuRequest extends FormRequest
      */
     public function rules(): array
     {
+        $email = $this->resolveVerifiedEmail();
+
         return [
+            'verification_token' => 'nullable|string',
             'nama_req'       => 'required|string|max:255',
-            'email_req'      => 'required|email',
+            'email_req'      => [
+                'required',
+                'email',
+                Rule::in(array_filter([$email])),
+            ],
             'prodi_id'       => 'required|numeric',
             'nim'            => 'nullable|required_without:nip|numeric',
             'nip'            => 'nullable|required_without:nim|numeric',
@@ -35,7 +45,7 @@ class SubmitUsulanBukuRequest extends FormRequest
             'jenis_buku'     => 'required|array|min:1',
             'jenis_buku.*'   => 'string',
             'bahasa_buku'    => 'required|in:indonesia,inggris',
-            'estimasi_harga' => 'nullable|numeric',
+            'estimasi_harga' => 'nullable|string',
             'link_pembelian' => 'required',
             'alasan_usulan'  => 'required|string',
         ];
@@ -77,11 +87,20 @@ class SubmitUsulanBukuRequest extends FormRequest
             'required'          => ':attribute wajib diisi.',
             'required_without'  => ':attribute wajib diisi jika :values tidak diisi.',
             'email'             => 'Format :attribute tidak valid.',
+            'email_req.in'      => ':attribute tidak sesuai dengan akun login.',
             'numeric'           => ':attribute harus berupa angka.',
             'digits'            => ':attribute harus :digits digit.',
             'array'             => ':attribute harus berupa pilihan.',
             'min'               => ':attribute minimal :min item.',
             'in'                => ':attribute tidak valid.',
         ];
+    }
+
+    protected function resolveVerifiedEmail(): ?string
+    {
+        return app(GoogleVerificationService::class)->resolveVerifiedEmailForSubmit(
+            $this->input('verification_token'),
+            FrontendVerificationPurpose::REQ_BUKU->value
+        );
     }
 }

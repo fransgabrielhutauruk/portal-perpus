@@ -49,6 +49,7 @@ Route::prefix('app')
             generalRoute(App\Http\Controllers\Admin\PustakawanController::class, 'pustakawan', 'app');
             generalRoute(App\Http\Controllers\Admin\ProdiController::class, 'prodi', 'app');
             generalRoute(App\Http\Controllers\Admin\UserController::class, 'user', 'app');
+            generalRoute(App\Http\Controllers\Admin\MasterController::class, 'master', 'app');
             generalRoute(App\Http\Controllers\Admin\ActivityLogController::class, 'activity-log', 'app');
         });
     });

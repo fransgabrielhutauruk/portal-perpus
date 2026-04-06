@@ -50,6 +50,7 @@
                         <form id="formUsulan" action="{{ data_get($content, 'form.action_url') }}" method="POST"
                             data-toggle="validator">
                             @csrf
+                            <input type="hidden" name="verification_token" id="verification_token" value="">
                             <div class="tab-content mt-5" id="usulanTabsContent">
 
                                 {{-- === TAB 1: ATTENTION === --}}
@@ -71,11 +72,16 @@
                                             mengonfirmasikan melalui Email, pastikan Email yang Anda masukkan benar.</p>
                                     </div>
 
+                                    <div class="mt-3">
+                                        <p class="mb-0 text-muted">Sebelum melanjutkan, lakukan verifikasi menggunakan
+                                            email kampus.</p>
+                                    </div>
+
                                     @if (data_get($content, 'is_open'))
                                         <div class="contact-form-btn mt-3">
                                             <button type="button" id="btnToStep2" class="btn-default"
-                                                onclick="switchTab('tab-requirements')">
-                                                Selanjutnya
+                                                onclick="handleGoogleVerification()">
+                                                Verifikasi melalui Google
                                             </button>
                                         </div>
                                     @endif
@@ -249,7 +255,8 @@
                                                     data-error="Pilih Program Studi">
                                                     <option value="">-- Pilih Program Studi --</option>
                                                     @foreach (data_get($content, 'prodi_list', []) as $prodi)
-                                                        <option value="{{ $prodi->prodi_id }}">
+                                                        <option value="{{ $prodi->prodi_id }}"
+                                                            data-alias="{{ $prodi->alias_prodi }}">
                                                             {{ $prodi->nama_prodi }}
                                                         </option>
                                                     @endforeach
@@ -359,7 +366,27 @@
     </div>
 </div>
 
+@if (session('error'))
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            Swal.fire({
+                icon: 'error',
+                title: 'Gagal!',
+                text: @json(session('error')),
+                confirmButtonText: 'OK',
+                confirmButtonColor: '#dc3545'
+            });
+        });
+    </script>
+@endif
+
 <script>
+    const verifyIdentityUrl = "{{ route('frontend.req.bebas-pustaka.verify') }}";
+    const googleLoginUrl = "{{ route('login.google.verify', ['provider' => 'google']) }}";
+    const googleLoginRedirect = "{{ url()->current() }}";
+    const isAuthenticated = @json(auth()->check());
+    const hasVerifiedEmail = @json(session()->has('verified_google_email'));
+
     document.addEventListener('DOMContentLoaded', () => {
         const tabs = document.querySelectorAll('#usulanTabs button[data-bs-target]');
         tabs.forEach((btn, i) => {
@@ -371,7 +398,21 @@
                 r.addEventListener('change', () => toggleRepositoryLinkField(k, r.value));
             });
         });
+
+        if (hasVerifiedEmail) {
+            verifyIdentity();
+        }
     });
+
+    function handleGoogleVerification() {
+        if (!isAuthenticated && !hasVerifiedEmail) {
+            const targetUrl = `${googleLoginUrl}?redirect=${encodeURIComponent(googleLoginRedirect)}`;
+            window.location.href = targetUrl;
+            return;
+        }
+
+        verifyIdentity();
+    }
 
     function toggleRepositoryLinkField(key, val) {
         const box = document.getElementById(`${key}_link_container`);
@@ -434,6 +475,10 @@
         const form = document.getElementById('formUsulan');
         const btn = document.getElementById('btnOpenModal');
         const load = document.getElementById('loadingIndicator');
+        const disabledFields = form.querySelectorAll(':disabled');
+
+        disabledFields.forEach(field => field.disabled = false);
+
         bootstrap.Modal.getInstance(
             document.getElementById('confirmationModal')
         ).hide();
@@ -448,6 +493,7 @@
             })
             .then(r => r.json())
             .then(res => {
+                disabledFields.forEach(field => field.disabled = true);
                 load.classList.add('d-none');
                 btn.disabled = false;
                 Swal.fire('Berhasil', res.message, 'success');
@@ -456,6 +502,7 @@
                 switchTab('tab-attention');
             })
             .catch(() => {
+                disabledFields.forEach(field => field.disabled = true);
                 load.classList.add('d-none');
                 btn.disabled = false;
                 Swal.fire('Error', 'Gagal submit', 'error');
@@ -505,6 +552,110 @@
         const trigger = document.querySelector(`[data-bs-target="#${id}"]`);
         trigger.disabled = false;
         new bootstrap.Tab(trigger).show();
+    }
+
+    function setFieldReadonly(fieldId, readonly) {
+        const field = document.getElementById(fieldId);
+        if (!field) return;
+        field.disabled = readonly;
+    }
+
+    function setProdiFromAlias(prodiAlias) {
+        const select = document.getElementById('prodi_id');
+        if (!select) return;
+
+        const alias = (prodiAlias || '').toString().trim().toLowerCase();
+        const options = Array.from(select.options);
+        const match = options.find(option => (option.dataset.alias || '').toLowerCase() === alias);
+
+        if (match) {
+            select.value = match.value;
+            select.disabled = true;
+        } else {
+            select.disabled = false;
+        }
+    }
+
+    function applyVerifiedIdentity(data) {
+        const namaField = document.getElementById('nama_mahasiswa');
+        const emailField = document.getElementById('email_mahasiswa');
+        const nimField = document.getElementById('nim');
+        const tokenField = document.getElementById('verification_token');
+
+        if (namaField) namaField.value = data.nama || '';
+        if (emailField) emailField.value = data.email || '';
+        if (nimField) {
+            nimField.value = data.nim || '';
+            nimField.readOnly = true;
+        }
+        if (tokenField) tokenField.value = data.verification_token || '';
+
+        setFieldReadonly('nama_mahasiswa', true);
+        setFieldReadonly('email_mahasiswa', true);
+        setFieldReadonly('nim', true);
+        setProdiFromAlias(data.prodi || '');
+
+        switchTab('tab-requirements');
+    }
+
+    function verifyIdentity() {
+        Swal.fire({
+            html: 'Memverifikasi akun...',
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+
+        fetch(verifyIdentityUrl, {
+                headers: {
+                    'Accept': 'application/json'
+                }
+            })
+            .then(async res => {
+                const contentType = res.headers.get('content-type') || '';
+                if (!contentType.includes('application/json')) {
+                    throw new Error('Server mengembalikan response tidak valid');
+                }
+
+                const body = await res.json();
+                return {
+                    status: res.status,
+                    body
+                };
+            })
+            .then(({
+                status,
+                body
+            }) => {
+                if (status === 401) {
+                    const targetUrl = body.login_url ||
+                        `${googleLoginUrl}?redirect=${encodeURIComponent(googleLoginRedirect)}`;
+                    window.location.href = targetUrl;
+                    return;
+                }
+
+                if (status >= 400) {
+                    throw new Error(body.message || 'Verifikasi gagal.');
+                }
+
+                if (body.status !== 'success' || !body.data) {
+                    throw new Error(body.message || 'Verifikasi gagal.');
+                }
+
+                Swal.close();
+                applyVerifiedIdentity(body.data);
+            })
+            .catch(error => {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Gagal!',
+                    text: error.message || 'Terjadi kesalahan jaringan.',
+                    confirmButtonText: 'OK',
+                    confirmButtonColor: '#dc3545'
+                });
+            });
     }
 
     function validateAndNext(currentTabId, nextTabId) {

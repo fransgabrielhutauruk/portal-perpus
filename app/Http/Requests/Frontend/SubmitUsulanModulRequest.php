@@ -2,7 +2,10 @@
 
 namespace App\Http\Requests\Frontend;
 
+use App\Enums\FrontendVerificationPurpose;
+use App\Services\Frontend\GoogleVerificationService;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class SubmitUsulanModulRequest extends FormRequest
 {
@@ -11,7 +14,7 @@ class SubmitUsulanModulRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        return !empty($this->resolveVerifiedEmail());
     }
 
     /**
@@ -21,10 +24,17 @@ class SubmitUsulanModulRequest extends FormRequest
      */
     public function rules(): array
     {
+        $email = $this->resolveVerifiedEmail();
+
         return [
+            'verification_token'     => 'nullable|string',
             'nama_dosen'           => 'required|string|max:255',
             'inisial_dosen'        => 'required|string|max:10',
-            'email_dosen'          => 'required|email',
+            'email_dosen'          => [
+                'required',
+                'email',
+                Rule::in(array_filter([$email])),
+            ],
             'nip'                  => 'required|numeric',
             'prodi_id'             => 'required|numeric',
             'nama_mata_kuliah'     => 'required|string|max:255',
@@ -72,6 +82,7 @@ class SubmitUsulanModulRequest extends FormRequest
         return [
             'required'  => ':attribute wajib diisi.',
             'email'     => 'Format :attribute tidak valid.',
+            'email_dosen.in' => ':attribute tidak sesuai dengan akun login.',
             'numeric'   => ':attribute harus berupa angka.',
             'digits'    => ':attribute harus :digits digit.',
             'boolean'   => ':attribute tidak valid.',
@@ -79,5 +90,13 @@ class SubmitUsulanModulRequest extends FormRequest
             'mimes'     => ':attribute harus berformat :values.',
             'max'       => ':attribute maksimal :max.',
         ];
+    }
+
+    protected function resolveVerifiedEmail(): ?string
+    {
+        return app(GoogleVerificationService::class)->resolveVerifiedEmailForSubmit(
+            $this->input('verification_token'),
+            FrontendVerificationPurpose::REQ_MODUL->value
+        );
     }
 }

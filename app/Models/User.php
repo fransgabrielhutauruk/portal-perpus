@@ -76,7 +76,7 @@ class User extends Authenticatable
             ->setDescriptionForEvent(function ($eventName) {
                 $aksi = eventActivityLogBahasa($eventName);
                 $name = Auth::check() ? userName() : 'system';
-                return "{$name} {$aksi} pengguna";
+                return "{$aksi} pengguna";
             });
     }
 }
