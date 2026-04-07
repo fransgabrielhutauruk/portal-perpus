@@ -69,7 +69,7 @@
                                     </div>
                                     <div class="mb-2 mt-3">
                                         <p class="mb-0">Setelah selesai mengisi formulir ini, petugas akan
-                                            mengonfirmasikan melalui Email, pastikan Email yang Anda masukkan benar.</p>
+                                            mengonfirmasikan melalui Email.</p>
                                     </div>
 
                                     <div class="mt-3">
