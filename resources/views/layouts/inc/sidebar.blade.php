@@ -20,20 +20,24 @@
                 :active="$pageData->activeMenu == 'faq'" />
             <x-theme.menu link="{{ route('app.periode.index') }}" text="Periode" icon="ki-outline ki-abstract-45"
                 :active="$pageData->activeMenu == 'periode'" />
-            <x-theme.menu link="{{ route('app.usulan.index') }}" text="Req Buku" icon="ki-outline ki-book"
-                :active="$pageData->activeMenu == 'usulan'" />
-            <x-theme.menu link="{{ route('app.usulan-modul.index') }}" text="Req Modul" icon="ki-outline ki-book-open"
-                :active="$pageData->activeMenu == 'usulan-modul'" />
-            <x-theme.menu link="{{ route('app.req-bebas-pustaka.index') }}" text="Req Bebas Pustaka"
-                icon="ki-outline ki-verify" :active="$pageData->activeMenu == 'req-bebas-pustaka'" />
-            <x-theme.menu link="{{ route('app.req-turnitin.index') }}" text="Req Plagiarisme"
-                icon="ki-outline ki-shield-tick" :active="$pageData->activeMenu == 'req-turnitin'" />
+
+            <x-theme.menu text="Request" icon="ki-outline ki-shield-tick" :active="$pageData->activeRoot == 'request'">
+                <x-theme.submenu link="{{ route('app.usulan.index') }}" text="Usulan Buku" :active="$pageData->activeMenu == 'usulan'" />
+                <x-theme.submenu link="{{ route('app.usulan-modul.index') }}" text="Modul Semester" :active="$pageData->activeMenu == 'usulan-modul'" />
+                <x-theme.submenu link="{{ route('app.req-bebas-pustaka.index') }}" text="Bebas Pustaka"
+                    :active="$pageData->activeMenu == 'req-bebas-pustaka'" />
+                <x-theme.submenu link="{{ route('app.req-turnitin.index') }}" text="Plagiarisme" :active="$pageData->activeMenu == 'req-turnitin'" />
+            </x-theme.menu>
         @endif
 
         @if (auth()->user()->hasAnyRole([UserRole::SUPER_ADMIN->value]))
             <div class="separator separator-dashed border-gray-10 my-2"></div>
-            <x-theme.menu link="{{ route('app.pustakawan.index') }}" text="Pustakawan" icon="ki-outline ki-profile-user"
-                :active="$pageData->activeMenu == 'pustakawan'" />
+
+            <x-theme.menu text="Konten" icon="ki-outline ki-setting-3" :active="$pageData->activeRoot == 'konten'">
+                <x-theme.submenu link="{{ route('app.akses-koleksi.index') }}" text="Akses dan Koleksi" :active="$pageData->activeMenu == 'akses-koleksi'" />
+                <x-theme.submenu link="{{ route('app.pustakawan.index') }}" text="Pustakawan" :active="$pageData->activeMenu == 'pustakawan'" />
+            </x-theme.menu>
+
             <x-theme.menu link="{{ route('app.prodi.index') }}" text="Program Studi" icon="ki-outline ki-abstract-44"
                 :active="$pageData->activeMenu == 'prodi'" />
             <x-theme.menu link="{{ route('app.user.index') }}" text="Pengguna" icon="ki-outline ki-setting-3"

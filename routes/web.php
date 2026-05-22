@@ -46,6 +46,7 @@ Route::prefix('app')
         generalRoute(App\Http\Controllers\Admin\ReqTurnitinController::class, 'req-turnitin', 'app');
 
         Route::middleware('role:' . UserRole::SUPER_ADMIN->value)->group(function () {
+            generalRoute(App\Http\Controllers\Admin\AksesKoleksiController::class, 'akses-koleksi', 'app');
             generalRoute(App\Http\Controllers\Admin\PustakawanController::class, 'pustakawan', 'app');
             generalRoute(App\Http\Controllers\Admin\ProdiController::class, 'prodi', 'app');
             generalRoute(App\Http\Controllers\Admin\UserController::class, 'user', 'app');

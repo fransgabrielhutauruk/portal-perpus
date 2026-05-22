@@ -3,11 +3,29 @@
 namespace App\Http\View\Composers;
 
 use Illuminate\View\View;
+use App\Models\AksesKoleksi;
 
 class HeaderMenuComposer
 {
     public function compose(View $view)
     {
+        $aksesKoleksiList = AksesKoleksi::query()
+            ->select(['akses_koleksi_id', 'nama_akses_koleksi', 'url', 'urutan'])
+            ->where('is_active', true)
+            ->orderBy('urutan', 'asc')
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->map(function ($item) {
+                return [
+                    'id' => $item->akses_koleksi_id,
+                    'route' => $item->url,
+                    'name' => $item->nama_akses_koleksi,
+                    'target' => '_blank',
+                ];
+            })
+            ->values()
+            ->all();
+
         $menu = [
             [
                 'name'  => 'Beranda',
@@ -23,14 +41,7 @@ class HeaderMenuComposer
             ],
             [
                 'name'     => 'Akses dan Koleksi',
-                'children' => [
-                    ['name' => 'OPAC', 'route' => 'https://opac.lib.pcr.ac.id/', 'target' => '_blank'],
-                    ['name' => 'Repository', 'route' => 'https://repository.lib.pcr.ac.id/', 'target' => '_blank'],
-                    ['name' => 'ISBN Penerbit PCR', 'route' => 'https://isbn.lib.pcr.ac.id', 'target' => '_blank'],
-                    ['name' => 'E-Journal PCR', 'route' => 'https://jurnal.pcr.ac.id', 'target' => '_blank'],
-                    ['name' => 'Jurnal Tercetak', 'route' => 'https://opac.lib.pcr.ac.id/index.php?keywords=jurnal&search=search', 'target' => '_blank'],
-                    ['name' => 'E-book Langganan', 'route' => 'https://www.emerald.com/insight/', 'target' => '_blank'],
-                ],
+                'children' => $aksesKoleksiList,
             ],
             [
                 'name'     => 'Layanan',

@@ -2,6 +2,8 @@
 
 namespace App\Services\Frontend;
 
+use App\Models\AksesKoleksi;
+
 class LandingService
 {
     /**
@@ -167,54 +169,36 @@ class LandingService
      */
     public static function getAksesKoleksiData(): array
     {
+        $items = AksesKoleksi::query()
+            ->select([
+                'akses_koleksi_id',
+                'nama_akses_koleksi',
+                'deskripsi',
+                'url',
+                'urutan',
+            ])
+            ->whereNull('deleted_at')
+            ->where('is_active', true)
+            ->orderBy('urutan', 'asc')
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        $list = [];
+        foreach ($items as $item) {
+            $list[] = [
+                'name' => $item->nama_akses_koleksi,
+                'description' => $item->deskripsi,
+                'url' => $item->url,
+                'icon' => 'fa-solid fa-book',
+                'target' => '_blank',
+            ];
+        }
+
         return [
             'title'       => '<b>Akses</b> dan <b>Koleksi</b>',
             'subtitle'    => 'Sumber Informasi Digital',
             'description' => 'Akses berbagai koleksi digital dan layanan informasi perpustakaan untuk mendukung kegiatan akademik Anda.',
-            'list'        => [
-                [
-                    'name'   => 'OPAC',
-                    'description' => 'Katalog online untuk mencari dan menelusuri koleksi buku, jurnal, dan bahan pustaka lainnya.',
-                    'url'    => 'https://opac.lib.pcr.ac.id/',
-                    'icon'   => 'fa-solid fa-magnifying-glass',
-                    'target' => '_blank'
-                ],
-                [
-                    'name'   => 'Repository',
-                    'description' => 'Repositori institusi untuk mengakses karya ilmiah mahasiswa PCR.',
-                    'url'    => 'https://repository.lib.pcr.ac.id/',
-                    'icon'   => 'fa-solid fa-book-open',
-                    'target' => '_blank'
-                ],
-                [
-                    'name'   => 'ISBN Penerbit PCR',
-                    'description' => 'Layanan penerbitan dan pengelolaan ISBN untuk karya ilmiah yang diterbitkan PCR.',
-                    'url'    => 'https://isbn.lib.pcr.ac.id',
-                    'icon'   => 'fa-solid fa-barcode',
-                    'target' => '_blank'
-                ],
-                [
-                    'name'   => 'E-Journal PCR',
-                    'description' => 'Portal jurnal elektronik yang diterbitkan oleh Politeknik Caltex Riau.',
-                    'url'    => 'https://jurnal.pcr.ac.id',
-                    'icon'   => 'fa-solid fa-file-lines',
-                    'target' => '_blank'
-                ],
-                [
-                    'name'   => 'Jurnal Tercetak',
-                    'description' => 'Koleksi jurnal tercetak yang tersedia di perpustakaan PCR.',
-                    'url'    => 'https://opac.lib.pcr.ac.id/index.php?keywords=jurnal&search=search',
-                    'icon'   => 'fa-solid fa-newspaper',
-                    'target' => '_blank'
-                ],
-                [
-                    'name'   => 'E-book Langganan',
-                    'description' => 'Akses koleksi e-book berlangganan dari penerbit internasional melalui platform Emerald.',
-                    'url'    => 'https://www.emerald.com/insight/',
-                    'icon'   => 'fa-solid fa-tablet-screen-button',
-                    'target' => '_blank',
-                ]
-            ]
+            'list'        => $list,
         ];
     }
 
