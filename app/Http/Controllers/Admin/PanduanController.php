@@ -21,11 +21,11 @@ class PanduanController extends Controller
 
         $builder = app('datatables.html');
         $dataTable = $builder->serverSide(true)->ajax(route('app.panduan.data') . '/list')->columns([
+            Column::make(['title' => 'Aksi', 'data' => 'action', 'orderable' => false, 'searchable' => false, 'className' => 'text-center']),
             Column::make(['width' => '5%', 'title' => 'No', 'data' => 'no', 'orderable' => false, 'searchable' => false, 'className' => 'text-center']),
             Column::make(['width' => '', 'title' => 'Judul', 'data' => 'judul']),
-            Column::make(['width' => '30%', 'title' => 'Deskripsi', 'data' => 'deskripsi']),
-            Column::make(['width' => '15%', 'title' => 'File', 'data' => 'file', 'className' => 'text-center']),
-            Column::make(['width' => '15%', 'title' => 'Aksi', 'data' => 'action', 'orderable' => false, 'searchable' => false, 'className' => 'text-center']),
+            Column::make(['width' => '50%', 'title' => 'Deskripsi', 'data' => 'deskripsi']),
+            Column::make(['width' => '15%', 'title' => 'File', 'data' => 'file', 'className' => 'text-center'])
         ]);
 
         $this->dataView([

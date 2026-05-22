@@ -18,6 +18,7 @@ class ReqModulController extends Controller
     public function index()
     {
         $this->title = 'Kelola Request Modul';
+        $this->activeRoot   = 'request';
         $this->activeMenu = 'usulan-modul';
         $this->breadCrump[] = ['title' => 'Request Modul', 'link' => url()->current()];
 
@@ -32,6 +33,7 @@ class ReqModulController extends Controller
         $dataTable = $builder->serverSide(true)
             ->ajax(route('app.usulan-modul.data') . '/list')
             ->columns([
+                Column::make(['title' => 'Aksi', 'data' => 'action', 'class' => 'text-center']),
                 Column::make(['title' => 'No', 'data' => 'no']),
                 Column::make(['title' => 'Dikirim Pada', 'data' => 'dikirim_pada', 'orderable' => false]),
                 Column::make(['title' => 'Judul Modul', 'data' => 'judul_modul']),
@@ -40,7 +42,6 @@ class ReqModulController extends Controller
                 Column::make(['title' => 'Jenis', 'data' => 'jenis_modul']),
                 Column::make(['title' => 'Jumlah', 'data' => 'jumlah_dibutuhkan']),
                 Column::make(['title' => 'Status', 'data' => 'status_req']),
-                Column::make(['title' => 'Aksi', 'data' => 'action', 'class' => 'text-center']),
             ]);
 
         $this->dataView([
@@ -129,7 +130,7 @@ class ReqModulController extends Controller
             ]);
         } else {
             abort(404, 'Halaman tidak ditemukan');
-            }
+        }
     }
 
     /**

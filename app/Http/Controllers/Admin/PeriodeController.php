@@ -21,13 +21,13 @@ class PeriodeController extends Controller
 
         $builder = app('datatables.html');
         $dataTable = $builder->serverSide(true)->ajax(route('app.periode.data') . '/list')->columns([
+            Column::make(['width' => '8%', 'title' => 'Aksi', 'data' => 'action', 'className' => 'text-center']),
             Column::make(['width' => '5%', 'title' => 'No', 'data' => 'no', 'orderable' => false, 'searchable' => false, 'className' => 'text-center']),
             Column::make(['title' => 'Nama', 'data' => 'nama_periode']),
             Column::make(['title' => 'Jenis Periode', 'data' => 'jenis_periode']),
             Column::make(['title' => 'Tanggal Mulai', 'data' => 'tanggal_mulai']),
             Column::make(['title' => 'Tanggal Selesai', 'data' => 'tanggal_selesai']),
-            Column::make(['title' => 'Status', 'data' => 'status', 'orderable' => false]),
-            Column::make(['title' => 'Aksi', 'data' => 'action']),
+            Column::make(['title' => 'Status', 'data' => 'status', 'orderable' => false])
         ]);
 
         $this->dataView([

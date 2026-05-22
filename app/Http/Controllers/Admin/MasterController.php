@@ -40,13 +40,13 @@ class MasterController extends Controller
 
             $builder   = app('datatables.html');
             $dataTable = $builder->serverSide(true)->ajax(route('app.master.data') . '/pegawai-list')->columns([
+                Column::make(['title' => 'Aksi', 'data' => 'action', 'orderable' => false, 'searchable' => false, 'className' => 'text-nowrap text-center']),
                 Column::make(['title' => 'No', 'data' => 'no', 'orderable' => false, 'className' => 'text-center']),
                 Column::make(['title' => 'NIP', 'data' => 'nip']),
                 Column::make(['title' => 'Nama Pegawai', 'data' => 'nama']),
                 Column::make(['title' => 'Inisial', 'data' => 'inisial']),
                 Column::make(['title' => 'Email', 'data' => 'email']),
                 Column::make(['title' => 'Homebase', 'data' => 'homebase']),
-                Column::make(['title' => 'Aksi', 'data' => 'action', 'orderable' => false, 'searchable' => false, 'className' => 'text-nowrap text-center']),
             ]);
 
             $this->dataView([

@@ -18,11 +18,13 @@ class ReqTurnitinController extends Controller
     public function index()
     {
         $this->title = 'Kelola Request Cek Turnitin';
+        $this->activeRoot   = 'request';
         $this->activeMenu = 'req-turnitin';
         $this->breadCrump[] = ['title' => 'Request Cek Turnitin', 'link' => url()->current()];
 
         $builder = app('datatables.html');
         $dataTable = $builder->serverSide(true)->ajax(route('app.req-turnitin.data') . '/list')->columns([
+            Column::make(['title' => 'Aksi', 'data' => 'action', 'class' => 'text-center']),
             Column::make(['title' => 'No', 'data' => 'no']),
             Column::make(['title' => 'Dikirim Pada', 'data' => 'dikirim_pada', 'orderable' => false]),
             Column::make(['title' => 'Nama Dosen', 'data' => 'nama_dosen']),
@@ -30,7 +32,6 @@ class ReqTurnitinController extends Controller
             Column::make(['title' => 'Judul Dokumen', 'data' => 'judul_dokumen']),
             Column::make(['title' => 'Jenis', 'data' => 'jenis_dokumen']),
             Column::make(['title' => 'Status', 'data' => 'status_req']),
-            Column::make(['title' => 'Aksi', 'data' => 'action', 'class' => 'text-center']),
         ]);
 
         $this->dataView([

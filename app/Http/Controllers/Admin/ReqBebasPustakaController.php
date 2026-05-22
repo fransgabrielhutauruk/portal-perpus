@@ -21,6 +21,7 @@ class ReqBebasPustakaController extends Controller
     public function index()
     {
         $this->title = 'Kelola Request Bebas Pustaka';
+        $this->activeRoot   = 'request';
         $this->activeMenu = 'req-bebas-pustaka';
         $this->breadCrump[] = ['title' => 'Request Bebas Pustaka', 'link' => url()->current()];
 
@@ -33,6 +34,7 @@ class ReqBebasPustakaController extends Controller
 
         $builder = app('datatables.html');
         $dataTable = $builder->serverSide(true)->ajax(route('app.req-bebas-pustaka.data') . '/list')->columns([
+            Column::make(['title' => 'Aksi', 'data' => 'action', 'class' => 'text-center']),
             Column::make(['title' => 'No', 'data' => 'no']),
             Column::make(['title' => 'Dikirim Pada', 'data' => 'dikirim_pada', 'orderable' => false]),
             Column::make(['title' => 'Nama Mahasiswa', 'data' => 'nama_mahasiswa']),
@@ -40,7 +42,6 @@ class ReqBebasPustakaController extends Controller
             Column::make(['title' => 'Prodi', 'data' => 'prodi_nama']),
             Column::make(['title' => 'Bukti', 'data' => 'bukti']),
             Column::make(['title' => 'Status', 'data' => 'status']),
-            Column::make(['title' => 'Aksi', 'data' => 'action', 'class' => 'text-center']),
         ]);
 
         $this->dataView([
@@ -69,11 +70,11 @@ class ReqBebasPustakaController extends Controller
 
             $builder = app('datatables.html');
             $dataTable = $builder->serverSide(true)->ajax(route('app.req-bebas-pustaka.show', ['param1' => 'kaperpus', 'param2' => 'list']))->columns([
+                Column::make(['title' => 'Aksi', 'data' => 'action', 'class' => 'text-center']),
                 Column::make(['width' => '5%', 'title' => 'No', 'data' => 'no', 'orderable' => false, 'searchable' => false, 'className' => 'text-center']),
                 Column::make(['title' => 'Nama Kaperpus', 'data' => 'nama_kaperpus']),
                 Column::make(['title' => 'Tanda Tangan', 'data' => 'ttd_kaperpus']),
                 Column::make(['title' => 'Status', 'data' => 'status']),
-                Column::make(['title' => 'Aksi', 'data' => 'action', 'class' => 'text-center']),
             ]);
 
             $this->dataView([
@@ -360,34 +361,34 @@ class ReqBebasPustakaController extends Controller
 
         DB::beginTransaction();
         try {
-        $templateProcessor = new TemplateProcessor($templatePath);
+            $templateProcessor = new TemplateProcessor($templatePath);
 
-        $templateProcessor->setValue('nama', $bebasPustaka->nama_mahasiswa);
-        $templateProcessor->setValue('nim', $bebasPustaka->nim ?? '-');
-        $templateProcessor->setValue('prodi', $bebasPustaka->prodi->nama_prodi ?? '-');
-        $templateProcessor->setValue('tahun', $bebasPustaka->periode->tanggal_selesai ? Carbon::parse($bebasPustaka->periode->tanggal_selesai)->format('Y') : '-');
-        $templateProcessor->setValue('tanggal', tanggal(now(), ' ', false) ?? '-');
-        $kaperpus = Kaperpus::getActive();
-        $templateProcessor->setValue('kaperpus', $kaperpus ? $kaperpus->nama_kaperpus : '-');
+            $templateProcessor->setValue('nama', $bebasPustaka->nama_mahasiswa);
+            $templateProcessor->setValue('nim', $bebasPustaka->nim ?? '-');
+            $templateProcessor->setValue('prodi', $bebasPustaka->prodi->nama_prodi ?? '-');
+            $templateProcessor->setValue('tahun', $bebasPustaka->periode->tanggal_selesai ? Carbon::parse($bebasPustaka->periode->tanggal_selesai)->format('Y') : '-');
+            $templateProcessor->setValue('tanggal', tanggal(now(), ' ', false) ?? '-');
+            $kaperpus = Kaperpus::getActive();
+            $templateProcessor->setValue('kaperpus', $kaperpus ? $kaperpus->nama_kaperpus : '-');
 
-        if ($kaperpus && $kaperpus->ttd_kaperpus && file_exists(storage_path('app/public/ttd_kaperpus/' . $kaperpus->ttd_kaperpus))) {
-            $templateProcessor->setImageValue('ttd_kaperpus', [
-                'path' => storage_path('app/public/ttd_kaperpus/' . $kaperpus->ttd_kaperpus),
-                'width' => 150,
-                'height' => 75,
-            ]);
-        }
+            if ($kaperpus && $kaperpus->ttd_kaperpus && file_exists(storage_path('app/public/ttd_kaperpus/' . $kaperpus->ttd_kaperpus))) {
+                $templateProcessor->setImageValue('ttd_kaperpus', [
+                    'path' => storage_path('app/public/ttd_kaperpus/' . $kaperpus->ttd_kaperpus),
+                    'width' => 150,
+                    'height' => 75,
+                ]);
+            }
 
-        $docxName = 'bebas_pustaka_' . $bebasPustaka->nim . '_' . time() . '.docx';
-        $docxPath = storage_path('app/private/' . $docxName);
-        $templateProcessor->saveAs($docxPath);
+            $docxName = 'bebas_pustaka_' . $bebasPustaka->nim . '_' . time() . '.docx';
+            $docxPath = storage_path('app/private/' . $docxName);
+            $templateProcessor->saveAs($docxPath);
 
-        $bebasPustaka->file_hasil_bebas_pustaka = 'storage/private/' . $docxName;
-        $bebasPustaka->status_req = StatusRequest::DISETUJUI->value;
-        $bebasPustaka->is_syarat_terpenuhi = true;
-        $bebasPustaka->save();
+            $bebasPustaka->file_hasil_bebas_pustaka = 'storage/private/' . $docxName;
+            $bebasPustaka->status_req = StatusRequest::DISETUJUI->value;
+            $bebasPustaka->is_syarat_terpenuhi = true;
+            $bebasPustaka->save();
 
-        DB::commit();
+            DB::commit();
         } catch (\Throwable $th) {
             DB::rollBack();
             abort(500, 'Proses persetujuan gagal: ' . $th->getMessage());

@@ -25,11 +25,11 @@ class UserController extends Controller
 
         $builder = app('datatables.html');
         $dataTable = $builder->serverSide(true)->ajax(route('app.user.data') . '/list')->columns([
+            Column::make(['width' => '10%', 'title' => 'Aksi', 'data' => 'action', 'orderable' => false, 'searchable' => false, 'className' => 'text-center']),
             Column::make(['width' => '5%', 'title' => 'No', 'data' => 'no', 'orderable' => false, 'searchable' => false, 'className' => 'text-center']),
             Column::make(['title' => 'Nama', 'data' => 'name']),
             Column::make(['title' => 'Email', 'data' => 'email']),
             Column::make(['title' => 'Role', 'data' => 'role', 'orderable' => true, 'searchable' => false]),
-            Column::make(['width' => '15%', 'title' => 'Aksi', 'data' => 'action', 'orderable' => false, 'searchable' => false, 'className' => 'text-center']),
         ]);
 
         $this->dataView([
@@ -79,7 +79,7 @@ class UserController extends Controller
             validate_and_response([
                 'id' => ['Parameter data', 'required'],
             ]);
-            
+
             $currData = User::findOrFail(decid($req->input('id')));
 
             $userData = $currData->toArray();
@@ -150,7 +150,7 @@ class UserController extends Controller
         try {
             $currData->update($data);
             $currData->syncRoles([$newRole]);
-            
+
             DB::commit();
             return response()->json([
                 'status' => true,

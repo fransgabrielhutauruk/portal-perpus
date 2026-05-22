@@ -21,11 +21,11 @@ class ProdiController extends Controller
 
         $builder = app('datatables.html');
         $dataTable = $builder->serverSide(true)->ajax(route('app.prodi.data') . '/list')->columns([
+            Column::make(['width' => '8%', 'title' => 'Aksi', 'data' => 'action', 'className' => 'text-center']),
             Column::make(['width' => '5%', 'title' => 'No', 'data' => 'no', 'orderable' => false, 'searchable' => false, 'className' => 'text-center']),
             Column::make(['title' => 'Nama Program Studi', 'data' => 'nama_prodi']),
             Column::make(['title' => 'Alias Program Studi', 'data' => 'alias_prodi']),
             Column::make(['title' => 'Alias Jurusan', 'data' => 'alias_jurusan']),
-            Column::make(['title' => 'Aksi', 'data' => 'action']),
         ]);
 
         $this->dataView([

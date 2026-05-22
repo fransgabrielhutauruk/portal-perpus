@@ -22,6 +22,7 @@ class BeritaController extends Controller
 
         $builder = app('datatables.html');
         $dataTable = $builder->serverSide(true)->ajax(route('app.berita.data') . '/list')->columns([
+            Column::make(['title' => 'Aksi', 'data' => 'action', 'orderable' => false, 'searchable' => false, 'className' => 'text-center']),
             Column::make(['width' => '5%', 'title' => 'No', 'data' => 'no', 'orderable' => false, 'searchable' => false, 'className' => 'text-center']),
             Column::make(['width' => '15%', 'title' => 'Tanggal', 'data' => 'tanggal_berita', 'className' => 'text-center']),
             Column::make(['width' => '15%', 'title' => 'Status', 'data' => 'status_berita', 'className' => 'text-center', 'render' => 'renderStatus(full.status_berita)']),
@@ -43,8 +44,7 @@ class BeritaController extends Controller
                     </div>
                 </div>
             `'
-            ]),
-            Column::make(['width' => '15%', 'title' => 'Aksi', 'data' => 'action', 'orderable' => false, 'searchable' => false, 'className' => 'text-center']),
+            ])
         ]);
 
         $this->dataView([

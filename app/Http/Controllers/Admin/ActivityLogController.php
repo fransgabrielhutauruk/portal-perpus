@@ -23,12 +23,12 @@ class ActivityLogController extends Controller
         $dataTable = $builder->serverSide(true)
             ->ajax(route('app.activity-log.data') . '/list')
             ->columns([
+                Column::make(['width' => '15%', 'title' => 'Detail', 'data' => 'detail', 'orderable' => false, 'searchable' => false, 'className' => 'text-center']),
                 Column::make(['width' => '5%', 'title' => 'No', 'data' => 'no', 'orderable' => false, 'searchable' => false, 'className' => 'text-center']),
                 Column::make(['width' => '15%', 'title' => 'Waktu', 'data' => 'created_at', 'orderable' => false, 'className' => 'text-center']),
                 Column::make(['width' => '12%', 'title' => 'User', 'data' => 'causer_name']),
                 Column::make(['width' => '', 'title' => 'Aktivitas', 'data' => 'description']),
                 Column::make(['title' => 'Subject', 'data' => 'subject_type', 'className' => 'text-center']),
-                Column::make(['width' => '15%', 'title' => 'Detail', 'data' => 'detail', 'orderable' => false, 'searchable' => false, 'className' => 'text-center']),
             ]);
 
         // Get distinct users for filter dropdown

@@ -22,10 +22,10 @@ class FaqController extends Controller
 
         $builder = app('datatables.html');
         $dataTable = $builder->serverSide(true)->ajax(route('app.faq.data') . '/list')->columns([
+            Column::make(['width' => '8%', 'title' => 'Aksi', 'data' => 'action', 'orderable' => false, 'searchable' => false, 'className' => 'text-center']),
             Column::make(['width' => '5%', 'title' => 'No', 'data' => 'no', 'orderable' => false, 'searchable' => false, 'className' => 'text-center']),
             Column::make(['width' => '35%', 'title' => 'Pertanyaan', 'data' => 'pertanyaan']),
             Column::make(['width' => '', 'title' => 'Jawaban', 'data' => 'jawaban']),
-            Column::make(['width' => '15%', 'title' => 'Aksi', 'data' => 'action', 'orderable' => false, 'searchable' => false, 'className' => 'text-center']),
         ]);
 
         $this->dataView([

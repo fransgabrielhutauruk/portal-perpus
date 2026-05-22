@@ -18,6 +18,7 @@ class ReqBukuController extends Controller
     public function index()
     {
         $this->title = 'Kelola Usulan Buku';
+        $this->activeRoot   = 'request';
         $this->activeMenu = 'usulan';
         $this->breadCrump[] = ['title' => 'Usulan Buku', 'link' => url()->current()];
 
@@ -30,6 +31,7 @@ class ReqBukuController extends Controller
 
         $builder = app('datatables.html');
         $dataTable = $builder->serverSide(true)->ajax(route('app.usulan.data') . '/list')->columns([
+            Column::make(['title' => 'Aksi', 'data' => 'action', 'orderable' => false, 'class' => 'text-center']),
             Column::make(['title' => 'No', 'data' => 'no']),
             Column::make(['title' => 'Dikirim Pada', 'data' => 'dikirim_pada', 'orderable' => false]),
             Column::make(['title' => 'Judul Buku', 'data' => 'judul_buku']),
@@ -37,7 +39,6 @@ class ReqBukuController extends Controller
             Column::make(['title' => 'Nama', 'data' => 'nama_req']),
             Column::make(['title' => 'Email', 'data' => 'email_req']),
             Column::make(['title' => 'Status', 'data' => 'status_req']),
-            Column::make(['title' => 'Aksi', 'data' => 'action', 'orderable' => false, 'class' => 'text-center']),
         ]);
 
         $this->dataView([
