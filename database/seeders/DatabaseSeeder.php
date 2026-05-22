@@ -19,6 +19,8 @@ class DatabaseSeeder extends Seeder
             ProdiSeeder::class,
             PeriodeSeeder::class,
             BeritaSeeder::class,
+            AksesKoleksiSeeder::class,
+            PustakawanSeeder::class,
         ]);
     }
 }

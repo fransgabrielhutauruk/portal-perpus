@@ -16,16 +16,17 @@ class PustakawanController extends Controller
     public function index()
     {
         $this->title = 'Kelola Pustakawan';
+        $this->activeRoot = 'konten';
         $this->activeMenu = 'pustakawan';
         $this->breadCrump[] = ['title' => 'Pustakawan', 'link' => url()->current()];
 
         $builder = app('datatables.html');
         $dataTable = $builder->serverSide(true)->ajax(route('app.pustakawan.data') . '/list')->columns([
+            Column::make(['width' => '15%', 'title' => 'Aksi', 'data' => 'action', 'orderable' => false, 'searchable' => false, 'className' => 'text-center']),
             Column::make(['width' => '5%', 'title' => 'No', 'data' => 'no', 'orderable' => false, 'searchable' => false, 'className' => 'text-center']),
             Column::make(['width' => '10%', 'title' => 'Foto', 'data' => 'foto', 'orderable' => false, 'searchable' => false, 'className' => 'text-center']),
             Column::make(['width' => '', 'title' => 'Nama', 'data' => 'nama']),
             Column::make(['width' => '25%', 'title' => 'Email', 'data' => 'email']),
-            Column::make(['width' => '15%', 'title' => 'Aksi', 'data' => 'action', 'orderable' => false, 'searchable' => false, 'className' => 'text-center']),
         ]);
 
         $this->dataView([
@@ -186,7 +187,7 @@ class PustakawanController extends Controller
                 $dt = [];
 
                 $dt['no'] = ++$start;
-                
+
                 if ($value['foto']) {
                     $dt['foto'] = '<img src="' . asset('uploads/pustakawan/' . $value['foto']) . '" alt="' . $value['nama'] . '" class="rounded" style="height: 100px; object-fit: cover;">';
                 } else {

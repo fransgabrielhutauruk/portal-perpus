@@ -1,4 +1,6 @@
 *
 !perpus/
 !perpus/**
+!pustakawan/
+!pustakawan/**
 !.gitignore
